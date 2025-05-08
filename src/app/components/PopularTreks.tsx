@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useRef} from 'react';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 
 const trips = [
@@ -58,10 +58,7 @@ const trips = [
     },
 ];
 
-const categories = ['Adventure', 'Nature', 'Food'];
-
 export default function PopularTrips() {
-    const [activeCategory, setActiveCategory] = useState('Adventure');
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const scrollLeft = () => {
