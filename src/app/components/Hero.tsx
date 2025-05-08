@@ -1,0 +1,56 @@
+'use client';
+
+import Image from "next/image";
+import hero from "../../../public/images/home/hero.svg";
+
+export default function Hero() {
+  return (
+    <div className="relative h-[800px] w-full">
+      {/* Background image */}
+      <Image
+        src={hero}
+        alt="Background"
+        fill
+        className="object-cover"
+        quality={100}
+        priority
+      />
+
+      {/* Content */}
+      <div className="absolute z-20 inset-0 flex flex-col justify-start top-[200px] items-center text-white text-center px-4">
+        <p className="text-sm md:text-base mb-2">
+          Search, compare and book 150,000+ worldwide tours all over the world
+        </p>
+        <h2 className="text-3xl md:text-5xl font-bold">
+          Tours and Trip packages,
+          <br />
+          Globally
+        </h2>
+      </div>
+
+      {/* Search bar */}
+      <div className="absolute bottom-[65px] left-1/2 transform -translate-x-1/2 w-full max-w-4xl px-4 z-40">
+        <div className="bg-white rounded-full shadow-md flex items-center gap-2 px-4 py-2 text-black w-full">
+          <input
+            type="text"
+            placeholder="Where"
+            className="flex-1 px-4 py-2 outline-none rounded-full"
+          />
+          <input
+            type="text"
+            placeholder="When"
+            className="flex-1 px-4 py-2 outline-none rounded-full"
+          />
+          <input
+            type="text"
+            placeholder="Tour Type"
+            className="flex-1 px-4 py-2 outline-none rounded-full"
+          />
+          <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full font-semibold whitespace-nowrap">
+            Search
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
