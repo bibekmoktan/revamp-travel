@@ -4,59 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
-
-const trips = [
-    {
-        id: 1,
-        city: 'Paris, France',
-        title: 'Centipede Tour – Guided Arizona Desert Tour by ATV',
-        rating: 4.8,
-        reviews: 243,
-        duration: '4 days',
-        price: '$189.25',
-        image: '/images/home/card-1.svg',
-    },
-    {
-        id: 2,
-        city: 'New York, USA',
-        title: 'All Inclusive Ultimate Circle Island Day Tour with Lunch',
-        rating: 4.8,
-        reviews: 243,
-        duration: '4 days',
-        price: '$77.00',
-        image: '/images/home/card-2.svg',
-    },
-    {
-        id: 3,
-        city: 'Paris, France',
-        title: 'Centipede Tour – Guided Arizona Desert Tour by ATV',
-        rating: 5.0,
-        reviews: 260,
-        duration: '4 days',
-        price: '$189.25',
-        image: '/images/home/card-3.svg',
-    },
-    {
-        id: 4,
-        city: 'London, UK',
-        title: 'Westminster Walking Tour & Westminster Abbey Entry',
-        rating: 5.0,
-        reviews: 120,
-        duration: '4 days',
-        price: '$943.00',
-        image: '/images/home/card-4.svg',
-    },
-    {
-        id: 5,
-        city: 'London, UK',
-        title: 'Westminster Walking Tour & Westminster Abbey Entry',
-        rating: 5.0,
-        reviews: 120,
-        duration: '4 days',
-        price: '$943.00',
-        image: '/images/home/card-5.svg',
-    },
-];
+import { tours } from '../../data/tours';
 
 const categories = ['Adventure', 'Nature', 'Food'];
 
@@ -64,12 +12,14 @@ export default function FeaturedTrips() {
     const [activeCategory, setActiveCategory] = useState('Adventure');
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    // Function to scroll the trip cards left
     const scrollLeft = () => {
         if (scrollRef.current) {
             scrollRef.current.scrollBy({ left: -320, behavior: 'smooth' });
         }
     };
 
+    // Function to scroll the trip cards right
     const scrollRight = () => {
         if (scrollRef.current) {
             scrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
@@ -103,46 +53,66 @@ export default function FeaturedTrips() {
                     ref={scrollRef}
                     className="flex gap-6 overflow-x-auto pb-2 no-scrollbar"
                 >
-                    {trips.map((trip) => (
-                        <div
-                            key={trip.id}
-                            className="w-[300px] h-[392px] bg-white rounded-2xl overflow-hidden shadow-sm transition hover:shadow-md flex-shrink-0"
+                    {tours.map((trip) => (
+                        <Link 
+                            key={trip.id} 
+                            href={`/tour/${trip.slug}`}
+                            className="block flex-shrink-0"
                         >
-                            <div className="relative h-[192px] w-full z-0">
-                                <Image
-                                    src={trip.image}
-                                    alt={trip.title}
-                                    fill
-                                    className="object-cover"
-                                />
-                            </div>
-
-                            {/* Content section overlapping the image */}
-                            <div className="relative z-10 -mt-6 bg-white rounded-t-[18px] p-4">
-                                <p className="text-xs text-gray-400">{trip.city}</p>
-                                <h3 className="text-sm font-semibold mt-1 line-clamp-2">
-                                    {trip.title}
-                                </h3>
-                                <div className="flex items-center gap-1 text-xs mt-2 text-gray-600">
-                                    ⭐ {trip.rating} ({trip.reviews})
+                            <div className="w-[300px] h-[392px] bg-white rounded-2xl overflow-hidden shadow-sm transition hover:shadow-md cursor-pointer">
+                                {/* Trip image */}
+                                <div className="relative h-[192px] w-full z-0">
+                                    <Image
+                                        src={trip.image}
+                                        alt={trip.title}
+                                        fill
+                                        className="object-cover"
+                                    />
                                 </div>
-                                <div className="flex justify-between items-center mt-4 text-sm">
 
-                                    <span className="text-gray-500 flex items-center gap-1">
-                                        <Clock className="w-4 h-4" /> {trip.duration}
-                                    </span>
-                                    <span className="font-semibold text-right">
-                                        From {trip.price}
-                                    </span>
+                                {/* Content section overlapping the image */}
+                                <div className="relative z-10 -mt-6 bg-white rounded-t-[18px] p-4">
+                                    <p className="text-xs text-gray-400">{trip.city}</p>
+                                    <h3 className="text-sm font-semibold mt-1 line-clamp-2 hover:text-[#fa7436] transition-colors">
+                                        {trip.title}
+                                    </h3>
+                                    
+                                    {/* Rating display */}
+                                    <div className="flex items-center gap-1 text-xs mt-2 text-gray-600">
+                                        ⭐ {trip.rating} ({trip.reviews})
+                                    </div>
+                                    
+                                    {/* Duration and price */}
+                                    <div className="flex justify-between items-center mt-4 text-sm">
+                                        <span className="text-gray-500 flex items-center gap-1">
+                                            <Clock className="w-4 h-4" /> {trip.duration}
+                                        </span>
+                                        <span className="font-semibold text-right">
+                                            From {trip.price}
+                                        </span>
+                                    </div>
+                                    
+                                    {/* Action buttons */}
+                                    <div className="flex gap-2 mt-6">
+                                        <button 
+                                            className="flex-1 bg-gray-100 text-gray-700 text-sm font-medium px-4 py-2 rounded-full shadow-sm hover:bg-gray-200 transition"
+                                            onClick={(e) => e.stopPropagation()} // Prevent card click when clicking button
+                                        >
+                                            View Details
+                                        </button>
+                                        <button 
+                                            className="flex-1 bg-[#fa7436] text-white text-sm font-medium px-4 py-2 rounded-full shadow-md hover:bg-[#e96124] transition"
+                                            onClick={(e) => {
+                                                e.preventDefault(); // Prevent card navigation
+                                                window.location.href = '/booking'; // Navigate to booking
+                                            }}
+                                        >
+                                            Book Now
+                                        </button>
+                                    </div>
                                 </div>
-                                <Link href="/booking" className="">
-                                    <button className="bg-[#fa7436] mt-6 text-white text-sm font-medium px-4 py-2 rounded-full shadow-md hover:bg-[#e96124] transition">
-                                        Book Now
-                                    </button>
-                                </Link>
                             </div>
-                        </div>
-
+                        </Link>
                     ))}
                 </div>
 
