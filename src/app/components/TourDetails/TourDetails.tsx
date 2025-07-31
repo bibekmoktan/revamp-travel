@@ -224,7 +224,7 @@ const TourDetails = ({ tour }: TourDetailsProps) => {
                         <span className="font-medium text-gray-900">Google</span>
                         <button className="text-blue-600 text-sm">OK</button>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">This page can't load Google Maps correctly.</p>
+                      <p className="text-sm text-gray-600 mb-2">This page can&apos;t load Google Maps correctly.</p>
                       <p className="text-xs text-blue-600 underline cursor-pointer">Do you own this website?</p>
                     </div>
                   </div>

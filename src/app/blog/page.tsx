@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 // Sample blog data
 const blogPosts = [

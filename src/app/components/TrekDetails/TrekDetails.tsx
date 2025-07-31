@@ -2,7 +2,7 @@
 
 import { Trek } from '../../../data/treks';
 import Image from 'next/image';
-import { Star, Clock, Mountain, Users, MapPin, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
+import { Star, Clock, Mountain, Users, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
 interface TrekDetailsProps {
@@ -138,7 +138,7 @@ const TrekDetails = ({ trek }: TrekDetailsProps) => {
 
           {/* What's Included */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">What&apos;s Included</h2>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {trek.includes.map((item, index) => (
                 <li key={index} className="flex items-start gap-3">

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const destinations = [
   { title: "Cruises", image: "/images/home/top1.svg" },
@@ -27,20 +28,22 @@ const TrendingDestinations = () => {
             <div className="flex gap-4 h-1/2">
               {/* Box 1 - Cruises */}
               <div className="w-1/3 relative overflow-hidden rounded-xl">
-                <img
+                <Image
                   src={destinations[0].image}
                   alt={destinations[0].title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  fill
+                  className="object-cover transition-transform duration-300 hover:scale-110"
                 />
                 <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[0].title}</div>
               </div>
 
               {/* Box 2 - Beach Tours */}
               <div className="w-2/3 relative overflow-hidden rounded-xl">
-                <img
+                <Image
                   src={destinations[1].image}
                   alt={destinations[1].title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  fill
+                  className="object-cover transition-transform duration-300 hover:scale-110"
                 />
                 <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[1].title}</div>
               </div>
@@ -50,10 +53,11 @@ const TrendingDestinations = () => {
             <div className="flex gap-4 h-1/2">
               {/* Box 3 - Museum Tour */}
               <div className="w-1/3 relative overflow-hidden rounded-xl">
-                <img
+                <Image
                   src={destinations[3].image}
                   alt={destinations[3].title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  fill
+                  className="object-cover transition-transform duration-300 hover:scale-110"
                 />
                 <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[3].title}</div>
               </div>
@@ -62,20 +66,22 @@ const TrendingDestinations = () => {
               <div className="w-2/3 flex gap-4">
                 {/* Box 4 - Food */}
                 <div className="w-1/3 relative overflow-hidden rounded-xl">
-                  <img
+                  <Image
                     src={destinations[4].image}
                     alt={destinations[4].title}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-300 hover:scale-110"
                   />
                   <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[4].title}</div>
                 </div>
 
                 {/* Box 5 - Hiking */}
                 <div className="w-2/3 relative overflow-hidden rounded-xl">
-                  <img
+                  <Image
                     src={destinations[5].image}
                     alt={destinations[5].title}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-300 hover:scale-110"
                   />
                   <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[5].title}</div>
                 </div>
@@ -85,10 +91,11 @@ const TrendingDestinations = () => {
 
           {/* Right Column - City Tours */}
           <div className="w-1/3 h-[515px] relative overflow-hidden rounded-xl">
-            <img
+            <Image
               src={destinations[2].image}
               alt={destinations[2].title}
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+              fill
+              className="object-cover transition-transform duration-300 hover:scale-110"
             />
             <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[2].title}</div>
           </div>

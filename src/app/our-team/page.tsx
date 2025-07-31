@@ -113,8 +113,8 @@ export default function AboutPage() {
               Adventure Begins Here
             </h1>
             <p className="text-xl md:text-2xl mb-8 leading-relaxed">
-              For over 15 years, we've been crafting extraordinary mountain adventures 
-              that connect you with nature's most spectacular places and cultures.
+              For over 15 years, we&apos;ve been crafting extraordinary mountain adventures 
+              that connect you with nature&apos;s most spectacular places and cultures.
             </p>
             <div className="flex justify-center gap-8 text-sm">
               <div className="flex items-center gap-2">
@@ -164,7 +164,7 @@ export default function AboutPage() {
                 </p>
                 <p>
                   What started as weekend hiking trips has grown into a premier adventure travel 
-                  company, taking thousands of adventurers to some of the world's most spectacular 
+                  company, taking thousands of adventurers to some of the world&apos;s most spectacular 
                   mountain destinations.
                 </p>
                 <p>

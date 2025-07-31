@@ -1,17 +1,20 @@
 import { notFound } from 'next/navigation';
 import TourDetails from '../../components/TourDetails/TourDetails';
-import { getTourBySlug, getAllTourSlugs, Tour } from '../../../data/tours';
+import { getTourBySlug, getAllTourSlugs } from '../../../data/tours';
 
 // Define the props interface for the page component
 interface TourPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function TourPage({ params }: TourPageProps) {
+export default async function TourPage({ params }: TourPageProps) {
+  // Await the params since they're now a Promise in Next.js 15+
+  const { slug } = await params;
+  
   // Fetch tour data by slug
-  const tour = getTourBySlug(params.slug);
+  const tour = getTourBySlug(slug);
   
   // If tour not found, show 404 page
   if (!tour) {
@@ -27,7 +30,9 @@ export default function TourPage({ params }: TourPageProps) {
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: TourPageProps) {
-  const tour = getTourBySlug(params.slug);
+  // Await the params since they're now a Promise in Next.js 15+
+  const { slug } = await params;
+  const tour = getTourBySlug(slug);
   
   if (!tour) {
     return {

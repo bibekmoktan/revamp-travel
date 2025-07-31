@@ -4,14 +4,17 @@ import { getTrekBySlug, getAllTrekSlugs } from '../../../data/treks';
 
 // Define the props interface for the page component
 interface TrekPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function TrekPage({ params }: TrekPageProps) {
+export default async function TrekPage({ params }: TrekPageProps) {
+  // Await the params since they're now a Promise in Next.js 15+
+  const { slug } = await params;
+  
   // Fetch trek data by slug
-  const trek = getTrekBySlug(params.slug);
+  const trek = getTrekBySlug(slug);
   
   // If trek not found, show 404 page
   if (!trek) {
@@ -27,7 +30,9 @@ export default function TrekPage({ params }: TrekPageProps) {
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: TrekPageProps) {
-  const trek = getTrekBySlug(params.slug);
+  // Await the params since they're now a Promise in Next.js 15+
+  const { slug } = await params;
+  const trek = getTrekBySlug(slug);
   
   if (!trek) {
     return {
