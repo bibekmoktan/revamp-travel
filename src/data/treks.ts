@@ -59,9 +59,9 @@ export const treks: Trek[] = [
     reviews: 215,
     altitude: "5,364 m",
     season: ["March", "April", "May", "September", "October", "November"],
-    image: "/images/treks/everest.jpeg",
-    description: "Experience the breathtaking beauty of the Himalayas and reach the base of the world's highest mountain.",
-    additionalDescription: "This iconic trek takes you through Sherpa villages, ancient monasteries, and stunning mountain landscapes. You'll experience the unique culture of the Khumbu region while challenging yourself physically and mentally on this once-in-a-lifetime adventure.",
+    image: "/images/treks/bg-3.jpg",
+    description: "Everest Base Camp (EBC) is one of the most iconic trekking destinations in the world, located in the heart of the Himalayas in Nepal. Positioned at an altitude of approximately 5,364 meters (17,598 feet), it serves as the starting point for climbers attempting to summit Mount Everest, the highest mountain on Earth.",
+    additionalDescription: "The trek to Everest Base Camp is a breathtaking journey through the Khumbu region, offering stunning views of towering peaks like Lhotse, Nuptse, and Ama Dablam. Along the trail, trekkers pass through traditional Sherpa villages such as Namche Bazaar and Tengboche, rich in culture and hospitality. The route also includes ancient monasteries, suspension bridges, and rhododendron forests, providing a blend of adventure and cultural experience.",
     highlights: [
       "Scenic flight to Lukla",
       "Namche Bazaar cultural experience",
@@ -226,7 +226,7 @@ export const treks: Trek[] = [
     reviews: 180,
     altitude: "3,800 m",
     season: ["December", "January", "February", "March"],
-    image: "/images/treks/kedarkantha.jpg",
+    image: "/images/treks/trek.jpg",
     description: "Perfect for beginners, the Kedarkantha trek offers a snowy adventure with stunning summit views.",
     additionalDescription: "Known as the 'Queen of Winter Treks', Kedarkantha offers spectacular snow-covered landscapes, frozen lakes, and panoramic Himalayan views. This trek is perfect for first-time winter trekkers.",
     highlights: [
@@ -335,7 +335,7 @@ export const treks: Trek[] = [
     reviews: 140,
     altitude: "5,200 m",
     season: ["June", "July", "August", "September"],
-    image: "/images/treks/markha.jpg",
+    image: "/images/treks/bg-2.jpg",
     description: "Traverse the high mountain passes and remote villages in the majestic Ladakhi landscapes.",
     additionalDescription: "Experience the unique culture of Ladakh while trekking through dramatic landscapes, ancient monasteries, and traditional villages. This trek offers stunning views of snow-capped peaks and insight into Ladakhi Buddhist culture.",
     highlights: [
@@ -447,7 +447,7 @@ export const treks: Trek[] = [
     reviews: 130,
     altitude: "4,270 m",
     season: ["June", "July", "August", "September"],
-    image: "/images/treks/hampta.jpg",
+    image: "/images/treks/bg-1.jpg",
     description: "A dramatic crossover trek from lush green valleys of Kullu to arid landscapes of Spiti.",
     additionalDescription: "This unique trek showcases the dramatic contrast between the lush green Kullu valley and the barren beauty of Spiti. Cross the historic Hampta Pass and witness some of the most diverse landscapes in the Himalayas.",
     highlights: [
@@ -534,7 +534,7 @@ export const treks: Trek[] = [
     reviews: 90,
     altitude: "3,636 m",
     season: ["March", "April", "October", "November"],
-    image: "/images/treks/sandakphu.jpg",
+    image: "/images/treks/bg-2.jpg",
     description: "See four of the five highest peaks in the world in a single view along the India-Nepal border.",
     additionalDescription: "Known as the 'Trekker's Wonderland', this trek offers stunning views of the world's highest peaks including Everest, Kanchenjunga, Lhotse, and Makalu. Experience the unique culture of the Darjeeling hills and Nepal border region.",
     highlights: [

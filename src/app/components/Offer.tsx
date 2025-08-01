@@ -18,7 +18,7 @@ const Offer = () => {
                     {/* Text Content */}
                     <div className="relative z-10">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-                            Grab up to <span className="text-orange-500">35% off</span>
+                            Grab up to <span className="text-sky-600">35% off</span>
                             <br />
                             on your favorite <br />
                             Destination
@@ -26,7 +26,7 @@ const Offer = () => {
                         <p className="text-sm text-gray-600 mb-6">
                             Limited time offer, don’t miss the opportunity
                         </p>
-                        <button className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition">
+                        <button className="bg-sky-600 text-white px-6 py-2 rounded-md hover:bg-sky-700 transition">
                             Book Now
                         </button>
                     </div>

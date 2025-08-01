@@ -2,12 +2,12 @@ import React from "react";
 import Image from "next/image";
 
 const destinations = [
-  { title: "Cruises", image: "/images/home/top1.svg" },
-  { title: "Beach Tours", image: "/images/home/top2.svg" },
-  { title: "City Tours", image: "/images/home/top3.svg" },
-  { title: "Museum Tour", image: "/images/home/top4.svg" },
-  { title: "Food", image: "/images/home/top5.svg" },
-  { title: "Hiking", image: "/images/home/top6.svg" },
+  { title: "Chitwan", image: "/images/home/chitwan.jpg" },
+  { title: "Eastern Nepal", image: "/images/home/Eastern-nepal.jpg" },
+  { title: "Pokhara", image: "/images/home/pokhara.jpg" },
+  { title: "Rara Lake", image: "/images/home/rara.jpg" },
+  { title: "Kathmandu", image: "/images/home/kathmandu.jpg" },
+  { title: "Mustang", image: "/images/home/mustang.jpg" },
 ];
 
 const TrendingDestinations = () => {

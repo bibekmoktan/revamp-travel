@@ -5,16 +5,29 @@ import hero from "../../../public/images/home/hero.svg";
 
 export default function Hero() {
   return (
-    <div className="relative h-[800px] w-full">
-      {/* Background image */}
-      <Image
-        src={hero}
-        alt="Background"
-        fill
-        className="object-cover"
-        quality={100}
-        priority
-      />
+    <div className="relative h-screen w-full overflow-hidden">
+      {/* Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      >
+        <source src="/images/home/bg-hero.mp4" type="video/mp4" />
+        {/* Fallback image if video fails to load */}
+        <Image
+          src={hero}
+          alt="Background"
+          fill
+          className="object-cover"
+          quality={100}
+          priority
+        />
+      </video>
+
+      {/* Optional overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/30 z-10"></div>
 
       {/* Content */}
       <div className="absolute z-20 inset-0 flex flex-col justify-start top-[200px] items-center text-white text-center px-4">
@@ -29,7 +42,7 @@ export default function Hero() {
       </div>
 
       {/* Search bar */}
-      <div className="absolute bottom-[65px] left-1/2 transform -translate-x-1/2 w-full max-w-4xl px-4 z-40">
+      {/* <div className="absolute bottom-[65px] left-1/2 transform -translate-x-1/2 w-full max-w-4xl px-4 z-40">
         <div className="bg-white rounded-full shadow-md flex items-center gap-2 px-4 py-2 text-black w-full">
           <input
             type="text"
@@ -50,7 +63,7 @@ export default function Hero() {
             Search
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
