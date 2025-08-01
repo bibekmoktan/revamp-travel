@@ -2,15 +2,51 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { ChevronLeft, ChevronRight, Clock, Mountain } from 'lucide-react';
 import { motion } from "motion/react";
 import { treks } from '../../data/treks';
 
-const categories = ['Adventure', 'Nature', 'Food'];
+// Travel package categories data
+const travelPackages = [
+    {
+        id: 1,
+        title: "Nepal Trekking",
+        packageCount: "91 Packages",
+        image: "/images/treks/bg-1.jpg", // Using string path instead of import
+        bgColor: "bg-blue-100"
+    },
+    {
+        id: 2,
+        title: "One Day Activities in Nepal",
+        packageCount: "17 Packages", 
+        image: "/images/treks/bg-2.jpg",
+        bgColor: "bg-purple-100"
+    },
+    {
+        id: 3,
+        title: "Nepal Tour Packages",
+        packageCount: "26 Packages",
+        image: "/images/treks/bg-2.jpg",
+        bgColor: "bg-orange-100"
+    },
+    {
+        id: 4,
+        title: "Peak Climbing in Nepal",
+        packageCount: "9 Packages",
+        image: "/images/treks/bg-2.jpg",
+        bgColor: "bg-blue-200"
+    },
+    {
+        id: 5,
+        title: "Helicopter Tour in Nepal",
+        packageCount: "12 Packages",
+        image: "/images/treks/bg-2.jpg",
+        bgColor: "bg-gray-100"
+    }
+];
 
 export default function FeaturedTrips() {
-    const [activeCategory, setActiveCategory] = useState('Adventure');
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Function to scroll the trip cards left
@@ -29,16 +65,56 @@ export default function FeaturedTrips() {
 
     return (
         <motion.section 
-            className="relative z-20 bg-[#F3F6FB] py-16 px-6 md:px-16 rounded-t-[100px] -mt-[250px]"
+            className="relative z-20 bg-sky-50 py-8 px-6 md:px-16 rounded-t-[100px] -mt-[280px]"
             initial={{ y: 300, opacity: 1 }} // Start from bottom (100px down) with no opacity
             animate={{ y: 1, opacity: 1 }} // Move to original position with full opacity
             transition={{ 
                 duration: 1, // Animation duration
                 ease: "easeOut", // Smooth easing
-                delay: 0.4 // Small delay for better effect
+                delay: 0.2 // Small delay for better effect
             }}
         >
-            <div className="max-w-[1320px] mx-auto mt-[60px]">
+            <div className="max-w-[1320px] mx-auto">
+                {/* Travel Packages Section - Added before header */}
+                <div className="mb-12">
+                    {/* Package cards container */}
+                    <div className="relative">
+                        <div
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
+                        >
+                            {travelPackages.map((packageItem) => (
+                                <Link 
+                                    key={packageItem.id}
+                                    href={`/packages/${packageItem.title.toLowerCase().replace(/\s+/g, '-')}`}
+                                    className="block flex-shrink-0"
+                                >
+                                    <div className="w-full max-w-[250px] max-h-[200px] bg-white rounded-[0px] overflow-hidden shadow-md group">
+                                        {/* Package Image */}
+                                        <div className="relative min-h-[120px] w-full overflow-hidden ">
+                                            <Image
+                                                src={packageItem.image}
+                                                alt={packageItem.title}
+                                                fill
+                                                className="object-cover group-hover:scale-120 transition-all duration-600"
+                                            />
+                                        </div>
+
+                                        {/* Package Content */}
+                                        <div className="p-6">
+                                            <h3 className="text-[16px] font-[500] text-black mb-1 leading-tight">
+                                                {packageItem.title}
+                                            </h3>
+                                            <p className="text-sky-600 font-[500] text-[14px]">
+                                                {packageItem.packageCount}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
                 {/* Header and category filter */}
                 <div className="flex justify-between items-center mb-10">
                     <h2 className="text-2xl font-bold text-[#1e1e1e]">Featured Treks</h2>

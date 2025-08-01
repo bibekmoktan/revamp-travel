@@ -6,14 +6,14 @@ const Offer = () => {
         <section className="px-6 py-12 relative z-0">
             <div className="max-w-[1320px] mx-auto rounded-2xl overflow-hidden flex flex-col md:flex-row relative z-10">
                 {/* Left Section */}
-                <div className="w-full md:w-1/2 p-10 flex flex-col justify-center relative z-10">
+                <div className="w-full md:w-1/2 p-10 flex flex-col justify-center relative z-10 bg-sky-100">
                     {/* Decorative Background */}
-                    <Image
+                    {/* <Image
                         src="/images/home/bg-vector.png"
                         alt="Decorative background"
                         fill
                         className="absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none z-0"
-                    />
+                    /> */}
 
                     {/* Text Content */}
                     <div className="relative z-10">

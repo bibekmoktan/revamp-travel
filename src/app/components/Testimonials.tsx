@@ -1,142 +1,144 @@
 "use client";
-import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Testimonials() {
-  // Sample testimonial data with trekker images
+  // Updated testimonial data to match the design style
   const testimonials = [
     {
       id: 1,
-      name: "TREKKER NAME",
-      location: "Nepal",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, tempor ut sed mauris, tempor vehicula mauris ut. Sed eros, elit quis scelerisque ororem sit tristique.",
-      image: "/images/testimonials/trekker1.jpg"
+      text: "Our travel experience with this company was absolutely incredible. The attention to detail, personalized service, and expertly planned itinerary made our Nepal trek an unforgettable adventure. Every moment was perfectly orchestrated.",
+      author: "Sarah Johnson",
+      position: "Adventure Enthusiast",
+      company: "Mountain Explorers"
     },
     {
       id: 2,
-      name: "TREKKER NAME",
-      location: "Nepal",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, tempor ut sed mauris, tempor vehicula mauris ut. Sed eros, elit quis scelerisque ororem sit tristique.",
-      image: "/images/testimonials/trekker2.jpg"
+      text: "From the initial consultation to the final farewell, everything exceeded our expectations. The local guides were knowledgeable, the accommodations were excellent, and the entire journey was seamless and worry-free.",
+      author: "Michael Chen",
+      position: "Travel Blogger",
+      company: "Wanderlust Chronicles"
     },
     {
       id: 3,
-      name: "TREKKER NAME",
-      location: "Nepal",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, tempor ut sed mauris, tempor vehicula mauris ut. Sed eros, elit quis scelerisque ororem sit tristique.",
-      image: "/images/testimonials/trekker3.jpg"
+      text: "What sets this travel company apart is their genuine care for creating authentic experiences. They didn't just show us tourist spots - they immersed us in the local culture and created memories that will last a lifetime.",
+      author: "Emma Rodriguez",
+      position: "Cultural Explorer",
+      company: "Heritage Travels"
     },
     {
       id: 4,
-      name: "TREKKER NAME",
-      location: "Nepal",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, tempor ut sed mauris, tempor vehicula mauris ut. Sed eros, elit quis scelerisque ororem sit tristique.",
-      image: "/images/testimonials/trekker4.jpg"
-    },
-    {
-      id: 5,
-      name: "TREKKER NAME",
-      location: "Nepal",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, tempor ut sed mauris, tempor vehicula mauris ut. Sed eros, elit quis scelerisque ororem sit tristique.",
-      image: "/images/testimonials/trekker5.jpg"
+      text: "The professionalism and expertise of the team made our family vacation stress-free and enjoyable. They handled every detail perfectly, allowing us to focus on creating beautiful memories together.",
+      author: "David Thompson",
+      position: "Family Traveler",
+      company: "Adventure Families"
     }
   ];
 
-  // State to track current starting index for slider
+  // State to track current testimonial
   const [currentIndex, setCurrentIndex] = useState(0);
-  
-  // Number of cards to show at once
-  const cardsToShow = 3;
-  
-  // Calculate if we can go to next/previous
-  const canGoNext = currentIndex < testimonials.length - cardsToShow;
-  const canGoPrevious = currentIndex > 0;
 
-  // Function to go to previous set of testimonials
-  const goToPrevious = () => {
-    if (canGoPrevious) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
+  // Auto-slide functionality - changes every 8 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => 
+        prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // 5 seconds
 
-  // Function to go to next set of testimonials
+    // Clean up interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // Function to go to next testimonial
   const goToNext = () => {
-    if (canGoNext) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    setCurrentIndex((prevIndex) => 
+      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
-  // Get visible testimonials
-  const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + cardsToShow);
+  // Function to go to previous testimonial
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
+    );
+  };
+
+  // Function to go to specific testimonial
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  const currentTestimonial = testimonials[currentIndex];
+
+  // Animation variants for smooth sliding
+  const slideVariants = {
+    enter: {
+      x: "100%",
+    },
+    center: {
+      x: 0,
+    },
+    exit: {
+      x: "-100%",
+    },
+  };
 
   return (
-    <section className="px-6 py-10 md:py-16 md:px-20 bg-gray-100">
-      <div className="max-w-[1320px] mx-auto">
+    <section className="px-6 py-16 md:py-24 bg-gray-50">
+      <div className="max-w-6xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            What They Say About Us?
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            Testimonials
           </h2>
+          <p className="text-lg text-gray-600">
+            See what our customers are saying
+          </p>
         </div>
 
-        {/* Testimonial Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {visibleTestimonials.map((testimonial, index) => (
-            <div
-              key={testimonial.id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
+        {/* Main Testimonial Content */}
+        <div className="relative max-w-4xl mx-auto overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentTestimonial.id}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                duration: 0.8,
+                ease: "easeInOut"
+              }}
+              className="text-center px-8 md:px-16 py-8 w-full"
             >
-              {/* Main Content Layout - Image Left, Content Right */}
-              <div className="flex items-start gap-4">
-                {/* Trekker Image - Left Side */}
-                <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 bg-gray-400 rounded-md overflow-hidden">
-                    {/* Placeholder for trekker image */}
-                    <div className="w-full h-full bg-gray-400 flex items-center justify-center">
-                      <span className="text-white text-xs">IMG</span>
-                    </div>
-                  </div>
-                  {/* Green accent shape */}
-                  <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-teal-600 rounded-sm"></div>
-                </div>
-
-                {/* Content - Right Side */}
-                <div className="flex-1">
-                  {/* Customer Info */}
-                  <div className="mb-3">
-                    <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wide">
-                      {testimonial.name}
-                    </h4>
-                    <p className="text-gray-600 text-xs">
-                      {testimonial.location}
-                    </p>
-                  </div>
-                  
-                  {/* Testimonial Text */}
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {testimonial.text}
-                  </p>
-                </div>
+              <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-8 font-medium">
+                {currentTestimonial.text}
+              </p>
+              
+              {/* Author Attribution */}
+              <div className="text-gray-600">
+                <p className="font-semibold text-gray-800">
+                  {currentTestimonial.author}
+                </p>
+                <p className="text-sm">
+                  {currentTestimonial.position}, {currentTestimonial.company}
+                </p>
               </div>
-            </div>
-          ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Navigation Controls */}
-        <div className="flex items-center justify-center gap-4">
-          {/* Left Arrow */}
+        <div className="flex justify-center items-center gap-6 mt-12">
+          {/* Left Arrow Button */}
           <button
             onClick={goToPrevious}
-            disabled={!canGoPrevious}
-            className={`p-2 rounded border transition-colors duration-200 ${
-              canGoPrevious
-                ? "border-gray-300 text-gray-600 hover:bg-gray-50"
-                : "border-gray-200 text-gray-300 cursor-not-allowed"
-            }`}
-            aria-label="Previous testimonials"
+            className="p-2 bg-white border border-gray-300 rounded-full text-gray-600 hover:text-gray-800 hover:border-gray-400 transition-all duration-300 shadow-sm hover:shadow-md"
+            aria-label="Previous testimonial"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -150,35 +152,30 @@ export default function Testimonials() {
             </svg>
           </button>
 
-          {/* Dots Indicator */}
-          <div className="flex gap-2">
-            {Array.from({ length: Math.ceil(testimonials.length / cardsToShow) }).map((_, index) => (
+          {/* Navigation Dots */}
+          <div className="flex justify-center items-center gap-3">
+            {testimonials.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-                  Math.floor(currentIndex / cardsToShow) === index
-                    ? "bg-gray-800"
-                    : "bg-gray-300 hover:bg-gray-400"
+                onClick={() => goToSlide(index)}
+                className={`rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? "bg-sky-600 w-4 h-4"
+                    : "bg-gray-400 hover:bg-gray-600 w-3 h-3"
                 }`}
-                aria-label={`Go to testimonial set ${index + 1}`}
+                aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}
           </div>
 
-          {/* Right Arrow */}
+          {/* Right Arrow Button */}
           <button
             onClick={goToNext}
-            disabled={!canGoNext}
-            className={`p-2 rounded border transition-colors duration-200 ${
-              canGoNext
-                ? "border-gray-300 text-gray-600 hover:bg-gray-50"
-                : "border-gray-200 text-gray-300 cursor-not-allowed"
-            }`}
-            aria-label="Next testimonials"
+            className="p-2 bg-white border border-gray-300 rounded-full text-gray-600 hover:text-gray-800 hover:border-gray-400 transition-all duration-300 shadow-sm hover:shadow-md"
+            aria-label="Next testimonial"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

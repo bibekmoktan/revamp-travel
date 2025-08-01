@@ -39,31 +39,21 @@ export default function Hero() {
           <br />
           Globally
         </h2>
-      </div>
-
-      {/* Search bar */}
-      {/* <div className="absolute bottom-[65px] left-1/2 transform -translate-x-1/2 w-full max-w-4xl px-4 z-40">
+        <div className=" w-full max-w-[500px] px-4 z-40 mt-8">
         <div className="bg-white rounded-full shadow-md flex items-center gap-2 px-4 py-2 text-black w-full">
           <input
             type="text"
-            placeholder="Where"
+            placeholder="Search for a destination"
             className="flex-1 px-4 py-2 outline-none rounded-full"
           />
-          <input
-            type="text"
-            placeholder="When"
-            className="flex-1 px-4 py-2 outline-none rounded-full"
-          />
-          <input
-            type="text"
-            placeholder="Tour Type"
-            className="flex-1 px-4 py-2 outline-none rounded-full"
-          />
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full font-semibold whitespace-nowrap">
+          <button className="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-full font-semibold whitespace-nowrap">
             Search
           </button>
         </div>
-      </div> */}
+      </div>
+      </div>
+
+      {/* Search bar */}
     </div>
   );
 }
