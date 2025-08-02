@@ -6,45 +6,7 @@ import { useRef } from 'react';
 import { ChevronLeft, ChevronRight, Clock, Mountain } from 'lucide-react';
 import { motion } from "motion/react";
 import { treks } from '../../data/treks';
-
-// Travel package categories data
-const travelPackages = [
-    {
-        id: 1,
-        title: "Nepal Trekking",
-        packageCount: "91 Packages",
-        image: "/images/treks/bg-1.jpg", // Using string path instead of import
-        bgColor: "bg-blue-100"
-    },
-    {
-        id: 2,
-        title: "One Day Activities in Nepal",
-        packageCount: "17 Packages", 
-        image: "/images/treks/bg-2.jpg",
-        bgColor: "bg-purple-100"
-    },
-    {
-        id: 3,
-        title: "Nepal Tour Packages",
-        packageCount: "26 Packages",
-        image: "/images/treks/bg-2.jpg",
-        bgColor: "bg-orange-100"
-    },
-    {
-        id: 4,
-        title: "Peak Climbing in Nepal",
-        packageCount: "9 Packages",
-        image: "/images/treks/bg-2.jpg",
-        bgColor: "bg-blue-200"
-    },
-    {
-        id: 5,
-        title: "Helicopter Tour in Nepal",
-        packageCount: "12 Packages",
-        image: "/images/treks/bg-2.jpg",
-        bgColor: "bg-gray-100"
-    }
-];
+import { packageCategories } from '../../data/packages';
 
 export default function FeaturedTrips() {
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -75,25 +37,25 @@ export default function FeaturedTrips() {
             }}
         >
             <div className="max-w-[1320px] mx-auto">
-                {/* Travel Packages Section - Added before header */}
+                {/* Travel Packages Section - Updated to use new data */}
                 <div className="mb-12">
                     {/* Package cards container */}
                     <div className="relative">
                         <div
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
                         >
-                            {travelPackages.map((packageItem) => (
+                            {packageCategories.map((category) => (
                                 <Link 
-                                    key={packageItem.id}
-                                    href={`/packages/${packageItem.title.toLowerCase().replace(/\s+/g, '-')}`}
+                                    key={category.id}
+                                    href={`/packages/${category.slug}`}
                                     className="block flex-shrink-0"
                                 >
                                     <div className="w-full max-w-[250px] max-h-[200px] bg-white rounded-[0px] overflow-hidden shadow-md group">
                                         {/* Package Image */}
                                         <div className="relative min-h-[120px] w-full overflow-hidden ">
                                             <Image
-                                                src={packageItem.image}
-                                                alt={packageItem.title}
+                                                src={category.image}
+                                                alt={category.title}
                                                 fill
                                                 className="object-cover group-hover:scale-120 transition-all duration-600"
                                             />
@@ -102,10 +64,10 @@ export default function FeaturedTrips() {
                                         {/* Package Content */}
                                         <div className="p-6">
                                             <h3 className="text-[16px] font-[500] text-black mb-1 leading-tight">
-                                                {packageItem.title}
+                                                {category.title}
                                             </h3>
                                             <p className="text-sky-600 font-[500] text-[14px]">
-                                                {packageItem.packageCount}
+                                                {category.packageCount} Packages
                                             </p>
                                         </div>
                                     </div>
