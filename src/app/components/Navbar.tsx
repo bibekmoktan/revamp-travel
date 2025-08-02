@@ -87,7 +87,7 @@ export default function Navbar() {
                             className={`transition ${
                                 isHomePage 
                                     ? 'hover:text-gray-300' // Home page hover: lighter gray
-                                    : 'hover:text-gray-600' // Other pages hover: darker gray
+                                    : 'hover:text-white/80' // Other pages hover: white text
                             }`}
                         >
                             Packages
@@ -99,7 +99,7 @@ export default function Navbar() {
                         className={`transition ${
                             isHomePage 
                                 ? 'hover:text-gray-300' // Home page hover: lighter gray
-                                : 'hover:text-gray-600' // Other pages hover: darker gray
+                                : 'hover:text-white/80' // Other pages hover: white text
                         }`}
                     >
                         Trekking in Nepal
@@ -110,7 +110,7 @@ export default function Navbar() {
                         className={`transition ${
                             isHomePage 
                                 ? 'hover:text-gray-300' // Home page hover: lighter gray
-                                : 'hover:text-gray-600' // Other pages hover: darker gray
+                                : 'hover:text-white/80' // Other pages hover: white text
                         }`}
                     >
                         Blog
@@ -121,7 +121,7 @@ export default function Navbar() {
                         className={`transition ${
                             isHomePage 
                                 ? 'hover:text-gray-300' // Home page hover: lighter gray
-                                : 'hover:text-gray-600' // Other pages hover: darker gray
+                                : 'hover:text-white/80' // Other pages hover: white text
                         }`}
                     >
                         Shop
@@ -132,7 +132,7 @@ export default function Navbar() {
                         className={`transition ${
                             isHomePage 
                                 ? 'hover:text-gray-300' // Home page hover: lighter gray
-                                : 'hover:text-gray-600' // Other pages hover: darker gray
+                                : 'hover:text-white/80' // Other pages hover: white text
                         }`}
                     >
                         Our Team
@@ -146,7 +146,7 @@ export default function Navbar() {
                         className={`hidden md:inline transition ${
                             isHomePage 
                                 ? 'hover:text-gray-300' // Home page hover: lighter gray
-                                : 'hover:text-gray-600' // Other pages hover: darker gray
+                                : 'hover:text-white/80' // Other pages hover: white text
                         }`}
                     >
                         Sign up
