@@ -1,6 +1,5 @@
 'use client';
 
-import { tr } from 'framer-motion/client';
 import { useState } from 'react';
 
 // Main component for custom trekking package form
@@ -455,7 +454,7 @@ const CustomPackage = () => {
                       <span className="text-white text-xs font-bold">2</span>
                     </div>
                     <p className="text-blue-800 text-sm leading-relaxed">
-                      <strong>Custom Proposal:</strong> You'll receive a detailed itinerary and pricing within 24 hours
+                      <strong>Custom Proposal:</strong> You&apos;ll receive a detailed itinerary and pricing within 24 hours
                     </p>
                   </div>
                   
@@ -464,7 +463,7 @@ const CustomPackage = () => {
                       <span className="text-white text-xs font-bold">3</span>
                     </div>
                     <p className="text-blue-800 text-sm leading-relaxed">
-                      <strong>Personal Consultation:</strong> We'll schedule a call to discuss and refine your perfect adventure
+                      <strong>Personal Consultation:</strong> We&apos;ll schedule a call to discuss and refine your perfect adventure
                     </p>
                   </div>
                 </div>
