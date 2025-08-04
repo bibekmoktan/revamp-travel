@@ -13,6 +13,9 @@ export default function Navbar() {
     
     // State to track which mega menu is currently open
     const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
+    
+    // State to track mobile menu visibility
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Handle mouse enter on navigation items
     const handleMouseEnter = (menuName: string) => {
@@ -22,6 +25,16 @@ export default function Navbar() {
     // Handle mouse leave from navigation area
     const handleMouseLeave = () => {
         setActiveMegaMenu(null);
+    };
+
+    // Toggle mobile menu
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+    };
+
+    // Close mobile menu when clicking on a link
+    const closeMobileMenu = () => {
+        setIsMobileMenuOpen(false);
     };
 
     // Mega menu content for different navigation items
@@ -76,8 +89,8 @@ export default function Navbar() {
                     <span className="text-lg font-semibold">HI-TRAVEL</span>
                 </Link>
 
-                {/* Nav Links with Mega Menu */}
-                <div className="hidden md:flex items-center gap-[50px] text-sm lg:text-[16px] font-medium relative">
+                {/* Desktop Nav Links with Mega Menu - Hidden on mobile and tablet */}
+                <div className="hidden lg:flex items-center gap-[50px] text-sm lg:text-[16px] font-medium relative">
                     <div 
                         className="relative"
                         onMouseEnter={() => handleMouseEnter('packages')}
@@ -139,35 +152,118 @@ export default function Navbar() {
                     </Link>
                 </div>
 
-                {/* Right Side */}
+                {/* Right Side - Desktop Contact Button and Mobile Menu Button */}
                 <div className="flex items-center gap-4 text-sm font-medium">
-                    <Link 
-                        href="/signup" 
-                        className={`hidden md:inline transition ${
-                            isHomePage 
-                                ? 'hover:text-gray-300' // Home page hover: lighter gray
-                                : 'hover:text-white/80' // Other pages hover: white text
-                        }`}
-                    >
-                        Sign up
-                    </Link>
+                    {/* Plan Your Trip Button - Hidden on mobile, visible on tablet and desktop */}
                     <Link
-                        href="/login"
-                        className={`rounded-full px-6 h-10 flex items-center justify-center text-sm font-semibold transition ${
+                        href="/custom-package"
+                        className={`hidden md:flex rounded-[12px] px-6 h-[48px] items-center justify-center text-sm font-semibold transition ${
                             isHomePage 
-                                ? 'bg-black text-white hover:bg-black/90' // Home page: black button
-                                : 'bg-black text-white hover:bg-gray-800' // Other pages: black button
+                                ? 'bg-sky-700 text-white hover:bg-sky-800 border border-white/20' // Home page: transparent with border
+                                : 'bg-sky-700 text-white hover:bg-sky-800 border border-white/20' // Other pages: transparent with border
                         }`}
                     >
-                        Log in
+                        Plan Your Trip
                     </Link>
+
+                    {/* Contact Button - Hidden on mobile, visible on tablet and desktop */}
+                    <Link
+                        href="/contact-us"
+                        className={`hidden md:flex rounded-[12px] px-6 h-[48px] items-center justify-center text-sm font-semibold transition ${
+                            isHomePage 
+                                ? 'bg-sky-700 text-white hover:bg-sky-800' // Home page: black button
+                                : 'bg-sky-700 text-white hover:bg-sky-800' // Other pages: black button
+                        }`}
+                    >
+                        Quick Inquiry
+                    </Link>
+
+                    {/* Hamburger Menu Button - Visible only on mobile and tablet (up to 1024px) */}
+                    <button
+                        onClick={toggleMobileMenu}
+                        className="lg:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1 focus:outline-none"
+                        aria-label="Toggle mobile menu"
+                    >
+                        {/* Hamburger icon lines with animation */}
+                        <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
+                        <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+                        <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
+                    </button>
                 </div>
             </nav>
 
-            {/* Mega Menu Dropdown - Fixed positioning for all pages */}
+            {/* Mobile Menu Dropdown - Visible only when hamburger is clicked */}
+            {isMobileMenuOpen && (
+                <div className="lg:hidden fixed top-[80px] left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200 z-40 animate-slideDown">
+                    <div className="px-6 py-6 max-w-[1320px] mx-auto">
+                        {/* Mobile Navigation Links */}
+                        <div className="flex flex-col space-y-4">
+                            <Link 
+                                href="/packages" 
+                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
+                                onClick={closeMobileMenu}
+                            >
+                                Packages
+                            </Link>
+                            
+                            <Link 
+                                href="/trekking" 
+                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
+                                onClick={closeMobileMenu}
+                            >
+                                Trekking in Nepal
+                            </Link>
+                            
+                            <Link 
+                                href="/blog" 
+                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
+                                onClick={closeMobileMenu}
+                            >
+                                Blog
+                            </Link>
+                            
+                            <Link 
+                                href="/shop" 
+                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
+                                onClick={closeMobileMenu}
+                            >
+                                Shop
+                            </Link>
+                            
+                            <Link 
+                                href="/our-team" 
+                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
+                                onClick={closeMobileMenu}
+                            >
+                                Our Team
+                            </Link>
+
+                            {/* Mobile Plan Your Trip Button */}
+                            <Link
+                                href="/plan-trip"
+                                className="bg-white/10 text-gray-900 hover:bg-gray-100 border border-gray-300 rounded-[12px] px-6 py-3 text-center font-semibold transition mt-4"
+                                onClick={closeMobileMenu}
+                            >
+                                Plan Your Trip
+                            </Link>
+
+                            {/* Mobile Contact Button */}
+                            <Link
+                                href="/contact-us"
+                                className="bg-sky-700 text-white hover:bg-sky-800 rounded-[12px] px-6 py-3 text-center font-semibold transition mt-4"
+                                onClick={closeMobileMenu}
+                            >
+                                Quick Inquiry
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Desktop Mega Menu Dropdown - Only visible on desktop screens */}
             {activeMegaMenu && megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent] && (
                 <div 
-                    className={`fixed w-full z-40 ${
+                    className={`hidden lg:block fixed w-full z-40 ${
                         isHomePage 
                             ? 'top-[80px]' // Home page: position right below navbar
                             : 'top-[112px]' // Other pages: account for mt-8 + navbar height
@@ -217,7 +313,7 @@ export default function Navbar() {
                 </div>
             )}
 
-            {/* Custom CSS for fade-in animation */}
+            {/* Custom CSS for animations */}
             <style jsx>{`
                 @keyframes fadeIn {
                     from {
@@ -229,8 +325,24 @@ export default function Navbar() {
                         transform: translateY(0);
                     }
                 }
+                
+                @keyframes slideDown {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
                 .animate-fadeIn {
                     animation: fadeIn 0.2s ease-out;
+                }
+                
+                .animate-slideDown {
+                    animation: slideDown 0.3s ease-out;
                 }
             `}</style>
         </header>
