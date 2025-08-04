@@ -159,8 +159,8 @@ export default function Navbar() {
                         href="/custom-package"
                         className={`hidden md:flex rounded-[12px] px-6 h-[48px] items-center justify-center text-sm font-semibold transition ${
                             isHomePage 
-                                ? 'bg-sky-700 text-white hover:bg-sky-800 border border-white/20' // Home page: transparent with border
-                                : 'bg-sky-700 text-white hover:bg-sky-800 border border-white/20' // Other pages: transparent with border
+                                ? 'bg-sky-700 text-white hover:bg-sky-800 border' // Home page: transparent with border
+                                : 'bg-sky-700 text-white hover:bg-sky-800 border' // Other pages: transparent with border
                         }`}
                     >
                         Plan Your Trip
