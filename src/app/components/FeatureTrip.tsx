@@ -67,7 +67,7 @@ export default function FeaturedTrips() {
                                                 {category.title}
                                             </h3>
                                             <p className="text-sky-600 font-[500] text-[14px]">
-                                                {category.packageCount} Packages
+                                                {category.packageCount} Packages In the
                                             </p>
                                         </div>
                                     </div>
