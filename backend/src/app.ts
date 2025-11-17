@@ -1,18 +1,20 @@
-import express, { Request, Response } from "express";
-require('dotenv').config();
+import express from 'express'
+import cookieParser from "cookie-parser"
+import cors from 'cors'
 
-const mongoose = require('mongoose');4
+const app = express()
 
-const PORT = process.env.PORT || 3002;
-const uri = process.env.MONGO_URL;
+app.use(cors({
+    origin : process.env.CORS_ORIGIN,
+    credentials : true
+}))
+app.use(express.json())
+app.use(express.urlencoded({extended : true}))
+app.use(express.static('public'))
+app.use(cookieParser())
 
-const app = express();
+// importing from route folder
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hi, I am home");
-});
+import {userRouter} from "./routes/user.route.js"
 
-app.listen(PORT, () => {
-  mongoose.connect(uri)
-  console.log("Server started at http://localhost:8080");
-});
+app.use("/api/auth/user", userRouter)
