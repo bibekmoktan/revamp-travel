@@ -1,16 +1,15 @@
 import mongoose from "mongoose";
-import { env } from "./env";
 
-export const connectDB = async () => {
-  try {
-    await mongoose.connect(env.mongoUrl, {
-      autoIndex: false, // disable in production
-    });
+// Can be kept in another file as a constant 
+const DB_NAME = ""
 
-    console.log("✅ MongoDB Connected");
+const connectDB = async()=>{
+    try {
+        const connectionInstance = await mongoose.connect(`${process.env.MONGO_URI}/${DB_NAME}`)
+        console.log('MongoDB connected successfully. DB Host : ', connectionInstance.connection.host)
+    } catch (error) {
+        console.log("MongoDB connection Error : ", error)
+    }
+}
 
-  } catch (error) {
-    console.error("❌ MongoDB Connection Failed:", error);
-    process.exit(1); // Stop app if DB fails
-  }
-};
+export {connectDB}
