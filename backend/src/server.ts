@@ -1,17 +1,4 @@
-import 'dotenv/config';
-import app from "./app";
-import { connectDB } from "./config/db";
-import { env } from "./config/env";
+import dotenv from "dotenv"
+dotenv.config()
 
-const startServer = async () => {
-  await connectDB();
-  app.get("/", (req, res) => {
-  res.send("Travel API is running 🚀");
-});
-
-  app.listen(env.port, () => {
-    console.log(`🚀 Server running on port ${env.port}`);
-  });
-};
-
-startServer();
+import {app} from "./app.js"
