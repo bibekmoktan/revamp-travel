@@ -1,6 +1,7 @@
 import { Schema, model, HydratedDocument } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { TUser, UserModel } from './user.interface';
+import { env } from '../../config/env';
 
 // 1️⃣ Define Schema
 const userSchema = new Schema<TUser, UserModel>(
@@ -28,7 +29,7 @@ userSchema.pre('save', async function (
   if (!this.isModified('password')) return next();
 
   if (this.password) {
-    this.password = await bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, env.bcryptRounds);
   }
 
   next();

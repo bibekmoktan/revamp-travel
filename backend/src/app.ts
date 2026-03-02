@@ -1,20 +1,55 @@
-import express from 'express'
-import cookieParser from "cookie-parser"
-import cors from 'cors'
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import { corsOptions } from './config/cors';
+import { rateLimiter } from './config/rateLimit';
+import { securityHeaders, requestLogger } from './middlewares/security.middleware';
+import { globalErrorHandler } from './middlewares/error.middleware';
+import { env } from './config/env';
+import routes from './routes';
 
-const app = express()
+const app = express();
 
-app.use(cors({
-    origin : process.env.CORS_ORIGIN,
-    credentials : true
-}))
-app.use(express.json())
-app.use(express.urlencoded({extended : true}))
-app.use(express.static('public'))
-app.use(cookieParser())
+// Security middleware
+app.use(securityHeaders);
+app.use(requestLogger);
 
-// importing from route folder
+// CORS configuration
+app.use(corsOptions);
 
-import {userRouter} from "./routes/user.route.js"
+// Rate limiting
+app.use(rateLimiter);
 
-app.use("/api/auth/user", userRouter)
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
+
+// Static files
+app.use(express.static('public'));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is healthy',
+    timestamp: new Date().toISOString(),
+    requestId: req.headers['x-request-id']
+  });
+});
+
+// API routes
+app.use('/api/v1', routes);
+
+// Global error handler
+app.use(globalErrorHandler);
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+    requestId: req.headers['x-request-id']
+  });
+});
+
+export default app;
