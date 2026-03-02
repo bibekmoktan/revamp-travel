@@ -13,6 +13,10 @@ export interface LogEntry {
   message: string;
   requestId?: string;
   userId?: string;
+  user?: string;
+  bookingId?: string;
+  reviewId?: string;
+  groupId?: string;
   email?: string;
   role?: string;
   tokenType?: string;
@@ -20,9 +24,12 @@ export interface LogEntry {
   total?: number;
   page?: number;
   limit?: number;
+  port?: number;
+  nodeEnv?: string;
   filters?: any;
   updatedFields?: string[];
   packageId?: string;
+  package?: string;
   slug?: string;
   title?: string;
   category?: string;
@@ -42,6 +49,11 @@ export interface LogEntry {
   duration?: number;
   error?: any;
   stack?: string;
+  reviewOwner?: string;
+  userRole?: string;
+  adminId?: string;
+  isVerified?: boolean;
+  rating?: number;
 }
 
 class Logger {
