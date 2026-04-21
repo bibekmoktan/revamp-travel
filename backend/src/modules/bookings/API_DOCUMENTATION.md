@@ -1,34 +1,35 @@
-# Booking Module API Documentation
+# Booking Module — API Documentation
 
 ## Overview
-The booking module provides comprehensive booking management functionality including creation, confirmation, cancellation, and retrieval of travel bookings with proper inventory management and payment tracking.
+Manages travel booking creation, confirmation, cancellation, and retrieval with automatic inventory management and 15-minute reservation expiry.
 
 ## Base URL
 ```
-/api/bookings
+http://localhost:3002/api/v1/bookings
 ```
 
 ## Authentication
-All endpoints require authentication using JWT tokens. Include the token in the Authorization header:
+All endpoints require a valid JWT access token:
 ```
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <access_token>
 ```
+Obtain a token from `POST /api/v1/auth/login` or `POST /api/v1/auth/register`.
+
+---
 
 ## Endpoints
 
-### 1. Create Booking
-Creates a new booking with automatic inventory management.
+### POST /
+Create a new booking and reserve seats in inventory.
 
-**Endpoint:** `POST /api/bookings`
+**Auth:** User (required)
 
-**Authentication:** Required (User)
-
-**Request Body:**
+**Request Body**
 ```json
 {
-  "packageId": "string",
-  "trekDate": "2024-03-15T10:00:00.000Z",
-  "idempotencyKey": "optional-unique-key-123",
+  "packageId": "507f1f77bcf86cd799439012",
+  "trekDate": "2025-04-15T00:00:00.000Z",
+  "idempotencyKey": "checkout-session-abc123",
   "travelers": [
     {
       "fullName": "John Doe",
@@ -46,7 +47,18 @@ Creates a new booking with automatic inventory management.
 }
 ```
 
-**Response:**
+| Field | Type | Required | Rules |
+|---|---|---|---|
+| `packageId` | string | Yes | Valid package ObjectId |
+| `trekDate` | string | Yes | ISO 8601 datetime — inventory must exist for this date |
+| `idempotencyKey` | string | No | 8–200 chars — retrying with the same key returns the original booking |
+| `travelers` | array | Yes | 1–20 items |
+| `travelers[].fullName` | string | Yes | 2–200 chars |
+| `travelers[].age` | number | No | Integer 0–120 |
+| `travelers[].gender` | string | No | Max 20 chars |
+| `travelers[].idProof` | string | No | Max 200 chars |
+
+**Response `201`**
 ```json
 {
   "success": true,
@@ -56,14 +68,14 @@ Creates a new booking with automatic inventory management.
       "_id": "507f1f77bcf86cd799439011",
       "user": "507f1f77bcf86cd799439010",
       "package": "507f1f77bcf86cd799439012",
-      "trekDate": "2024-03-15T10:00:00.000Z",
+      "trekDate": "2025-04-15T00:00:00.000Z",
       "numberOfPeople": 2,
       "totalAmount": 50000,
       "paymentStatus": "pending",
       "bookingStatus": "reserved",
-      "expiresAt": "2024-03-15T10:15:00.000Z",
-      "createdAt": "2024-03-15T10:00:00.000Z",
-      "updatedAt": "2024-03-15T10:00:00.000Z"
+      "expiresAt": "2025-04-15T00:15:00.000Z",
+      "createdAt": "2025-04-15T00:00:00.000Z",
+      "updatedAt": "2025-04-15T00:00:00.000Z"
     },
     "travelers": [
       {
@@ -74,54 +86,49 @@ Creates a new booking with automatic inventory management.
         "gender": "male",
         "idProof": "PASS123456",
         "status": "active",
-        "createdAt": "2024-03-15T10:00:00.000Z",
-        "updatedAt": "2024-03-15T10:00:00.000Z"
+        "createdAt": "2025-04-15T00:00:00.000Z"
       }
     ]
   }
 }
 ```
 
-**Validation Rules:**
-- `packageId`: Required, valid package ID
-- `trekDate`: Required, ISO datetime string
-- `idempotencyKey`: Optional, 8-200 characters, prevents duplicate bookings
-- `travelers`: Required, 1-20 travelers
-- `traveler.fullName`: Required, 2-200 characters
-- `traveler.age`: Optional, 0-120
-- `traveler.gender`: Optional, max 20 characters
-- `traveler.idProof`: Optional, max 200 characters
+**Business rules**
+- Seats are reserved atomically via a Mongoose transaction (10s timeout).
+- `totalAmount` = package `price` × number of travelers.
+- Booking expires in **15 minutes**. The cleanup job cancels expired `reserved` bookings and restores inventory every 5 minutes.
+- Duplicate idempotency keys return the existing booking without touching inventory.
 
-**Business Logic:**
-- Automatically reserves seats in inventory
-- Calculates total amount based on package price
-- Sets 15-minute expiration for payment
-- Idempotent operations prevent duplicates
+**Errors**
+| Code | Reason |
+|---|---|
+| `400` | Validation failed, package inactive, or no inventory for the date |
+| `401` | Missing or invalid token |
+| `404` | Package not found |
+| `409` | Duplicate idempotency key with conflicting data |
 
 ---
 
-### 2. Get My Bookings
-Retrieves paginated list of user's bookings with optional filtering.
+### GET /my
+Retrieve the authenticated user's bookings (paginated).
 
-**Endpoint:** `GET /api/bookings/my`
+**Auth:** User (required)
 
-**Authentication:** Required (User)
+**Query Parameters**
+| Param | Type | Default | Options |
+|---|---|---|---|
+| `page` | number | `1` | ≥ 1 |
+| `limit` | number | `10` | 1–100 |
+| `status` | string | — | `reserved` \| `confirmed` \| `cancelled` |
+| `sortBy` | string | `createdAt` | `createdAt` \| `trekDate` \| `bookingStatus` |
+| `sortOrder` | string | `desc` | `asc` \| `desc` |
 
-**Query Parameters:**
+**Example**
 ```
-page: number (default: 1, min: 1)
-limit: number (default: 10, min: 1, max: 100)
-status: string (optional, values: reserved|confirmed|cancelled)
-sortBy: string (default: createdAt, values: createdAt|trekDate|bookingStatus|totalAmount)
-sortOrder: string (default: desc, values: asc|desc)
-```
-
-**Example Request:**
-```
-GET /api/bookings/my?page=1&limit=10&status=reserved&sortBy=createdAt&sortOrder=desc
+GET /api/v1/bookings/my?page=1&limit=10&status=reserved&sortBy=trekDate&sortOrder=asc
 ```
 
-**Response:**
+**Response `200`**
 ```json
 {
   "success": true,
@@ -135,13 +142,13 @@ GET /api/bookings/my?page=1&limit=10&status=reserved&sortBy=createdAt&sortOrder=
         "title": "Everest Base Camp Trek",
         "price": 25000
       },
-      "trekDate": "2024-03-15T10:00:00.000Z",
+      "trekDate": "2025-04-15T00:00:00.000Z",
       "numberOfPeople": 2,
       "totalAmount": 50000,
       "paymentStatus": "pending",
       "bookingStatus": "reserved",
-      "expiresAt": "2024-03-15T10:15:00.000Z",
-      "createdAt": "2024-03-15T10:00:00.000Z"
+      "expiresAt": "2025-04-15T00:15:00.000Z",
+      "createdAt": "2025-04-15T00:00:00.000Z"
     }
   ],
   "meta": {
@@ -155,17 +162,17 @@ GET /api/bookings/my?page=1&limit=10&status=reserved&sortBy=createdAt&sortOrder=
 
 ---
 
-### 3. Get Booking Details
-Retrieves detailed information about a specific booking.
+### GET /:bookingId
+Retrieve a single booking with its travelers.
 
-**Endpoint:** `GET /api/bookings/:bookingId`
+**Auth:** User (own booking) or Admin (any booking)
 
-**Authentication:** Required (User/Admin)
+**Path Params**
+| Param | Type | Required |
+|---|---|---|
+| `bookingId` | string | Yes |
 
-**Path Parameters:**
-- `bookingId`: Required, valid booking ID
-
-**Response:**
+**Response `200`**
 ```json
 {
   "success": true,
@@ -179,54 +186,50 @@ Retrieves detailed information about a specific booking.
         "title": "Everest Base Camp Trek",
         "price": 25000
       },
-      "trekDate": "2024-03-15T10:00:00.000Z",
+      "trekDate": "2025-04-15T00:00:00.000Z",
       "numberOfPeople": 2,
       "totalAmount": 50000,
       "paymentStatus": "pending",
       "bookingStatus": "reserved",
-      "expiresAt": "2024-03-15T10:15:00.000Z",
-      "createdAt": "2024-03-15T10:00:00.000Z"
+      "expiresAt": "2025-04-15T00:15:00.000Z",
+      "createdAt": "2025-04-15T00:00:00.000Z"
     },
     "travelers": [
       {
         "_id": "507f1f77bcf86cd799439013",
-        "booking": "507f1f77bcf86cd799439011",
         "fullName": "John Doe",
         "age": 30,
         "gender": "male",
         "idProof": "PASS123456",
         "status": "active",
-        "createdAt": "2024-03-15T10:00:00.000Z"
+        "createdAt": "2025-04-15T00:00:00.000Z"
       }
     ]
   }
 }
 ```
 
-**Authorization Rules:**
-- Users can only view their own bookings
-- Admins can view any booking
+**Errors**
+| Code | Reason |
+|---|---|
+| `400` | Attempting to view another user's booking (non-admin) |
+| `404` | Booking not found |
 
 ---
 
-### 4. Cancel Booking
-Cancels a booking and releases inventory back to the pool.
+### PATCH /:bookingId/cancel
+Cancel a booking and release all reserved seats back to inventory.
 
-**Endpoint:** `PATCH /api/bookings/:bookingId/cancel`
+**Auth:** User (own booking) or Admin (any booking)
 
-**Authentication:** Required (User/Admin)
+**Path Params**
+| Param | Type | Required |
+|---|---|---|
+| `bookingId` | string | Yes |
 
-**Path Parameters:**
-- `bookingId`: Required, valid booking ID
+> Request body is not required. The cancellation reason is not currently persisted.
 
-**Request Body (Optional):**
-```json
-{
-  "reason": "Change of plans"
-}
-```
-
-**Response:**
+**Response `200`**
 ```json
 {
   "success": true,
@@ -234,57 +237,49 @@ Cancels a booking and releases inventory back to the pool.
   "data": {
     "booking": {
       "_id": "507f1f77bcf86cd799439011",
-      "user": "507f1f77bcf86cd799439010",
-      "package": "507f1f77bcf86cd799439012",
-      "trekDate": "2024-03-15T10:00:00.000Z",
+      "bookingStatus": "cancelled",
+      "paymentStatus": "pending",
       "numberOfPeople": 2,
       "totalAmount": 50000,
-      "paymentStatus": "pending",
-      "bookingStatus": "cancelled",
-      "expiresAt": "2024-03-15T10:15:00.000Z",
-      "createdAt": "2024-03-15T10:00:00.000Z",
-      "updatedAt": "2024-03-15T10:30:00.000Z"
+      "trekDate": "2025-04-15T00:00:00.000Z",
+      "updatedAt": "2025-04-15T00:30:00.000Z"
     },
     "travelers": [
       {
         "_id": "507f1f77bcf86cd799439013",
-        "booking": "507f1f77bcf86cd799439011",
         "fullName": "John Doe",
-        "age": 30,
-        "gender": "male",
-        "idProof": "PASS123456",
-        "status": "cancelled",
-        "createdAt": "2024-03-15T10:00:00.000Z",
-        "updatedAt": "2024-03-15T10:30:00.000Z"
+        "status": "cancelled"
       }
     ]
   }
 }
 ```
 
-**Business Logic:**
-- Releases inventory seats back to available pool
-- Cancels all associated travelers
-- Updates booking status to 'cancelled'
-- Logs cancellation for audit trail
+**Business rules**
+- Cancelling an already-`cancelled` booking is a no-op (returns current state, does not error).
+- Active traveler count is used to calculate how many seats to release.
+- All active travelers are set to `cancelled` in the same transaction.
+- Runs inside a 10s transaction timeout.
 
-**Authorization Rules:**
-- Users can only cancel their own bookings
-- Admins can cancel any booking
+**Errors**
+| Code | Reason |
+|---|---|
+| `400` | Attempting to cancel another user's booking (non-admin) |
+| `404` | Booking not found |
 
 ---
 
-### 5. Confirm Booking
-Confirms a booking (Admin only).
+### PATCH /:bookingId/confirm
+Confirm a reserved booking.
 
-**Endpoint:** `PATCH /api/bookings/:bookingId/confirm`
+**Auth:** Admin only
 
-**Authentication:** Required (Admin only)
+**Path Params**
+| Param | Type | Required |
+|---|---|---|
+| `bookingId` | string | Yes |
 
-**Path Parameters:**
-- `bookingId`: Required, valid booking ID
-
-**Response:**
+**Response `200`**
 ```json
 {
   "success": true,
@@ -292,225 +287,177 @@ Confirms a booking (Admin only).
   "data": {
     "booking": {
       "_id": "507f1f77bcf86cd799439011",
-      "user": "507f1f77bcf86cd799439010",
-      "package": "507f1f77bcf86cd799439012",
-      "trekDate": "2024-03-15T10:00:00.000Z",
+      "bookingStatus": "confirmed",
+      "paymentStatus": "pending",
       "numberOfPeople": 2,
       "totalAmount": 50000,
-      "paymentStatus": "pending",
-      "bookingStatus": "confirmed",
-      "expiresAt": "2024-03-15T10:15:00.000Z",
-      "createdAt": "2024-03-15T10:00:00.000Z",
-      "updatedAt": "2024-03-15T10:45:00.000Z"
+      "trekDate": "2025-04-15T00:00:00.000Z",
+      "updatedAt": "2025-04-15T00:45:00.000Z"
     },
     "travelers": [
       {
         "_id": "507f1f77bcf86cd799439013",
-        "booking": "507f1f77bcf86cd799439011",
         "fullName": "John Doe",
-        "age": 30,
-        "gender": "male",
-        "idProof": "PASS123456",
-        "status": "active",
-        "createdAt": "2024-03-15T10:00:00.000Z"
+        "status": "active"
       }
     ]
   }
 }
 ```
 
-**Business Logic:**
-- Updates booking status to 'confirmed'
-- Cannot confirm already cancelled bookings
-- Logs confirmation for audit trail
+**Business rules**
+- Confirming an already-`cancelled` booking is a no-op — the status will not change.
+- Does not affect inventory (seats stay reserved).
 
-**Authorization Rules:**
-- Only admins can confirm bookings
+**Errors**
+| Code | Reason |
+|---|---|
+| `401` | Not authenticated |
+| `403` | Authenticated but not admin |
+| `404` | Booking not found |
 
 ---
 
 ## Data Models
 
-### Booking Status Values
-- `reserved`: Initial state after booking creation
-- `confirmed`: Booking confirmed by admin
-- `cancelled`: Booking cancelled by user/admin or expired
+### Booking Status
+| Value | Description |
+|---|---|
+| `reserved` | Created, awaiting confirmation. Expires in 15 minutes. |
+| `confirmed` | Confirmed by admin. |
+| `cancelled` | Cancelled by user/admin, or expired by cleanup job. |
 
-### Payment Status Values
-- `pending`: Awaiting payment
-- `paid`: Payment completed
-- `failed`: Payment failed
+### Payment Status
+| Value | Description |
+|---|---|
+| `pending` | Awaiting payment |
+| `paid` | Payment received |
+| `failed` | Payment failed |
 
-### Traveler Status Values
-- `active`: Active traveler in booking
-- `cancelled`: Traveler removed from booking
+### Traveler Status
+| Value | Description |
+|---|---|
+| `active` | Traveler is part of an active booking |
+| `cancelled` | Booking was cancelled or expired |
 
-## Error Responses
+---
 
-### Validation Error (400)
-```json
-{
-  "success": false,
-  "message": "Validation failed",
-  "errors": [
-    {
-      "field": "packageId",
-      "message": "packageId is required"
-    },
-    {
-      "field": "travelers",
-      "message": "At least one traveler is required"
-    }
-  ]
-}
+## Booking Lifecycle
+
+```
+POST /
+  └─► bookingStatus: "reserved"  (inventory reserved, 15-min expiry clock starts)
+        │
+        ├─► PATCH /:id/cancel ──► bookingStatus: "cancelled"  (inventory released)
+        │
+        ├─► PATCH /:id/confirm ──► bookingStatus: "confirmed"
+        │
+        └─► [cleanup job, every 5 min] ──► bookingStatus: "cancelled"  (if expiresAt < now)
 ```
 
-### Not Found Error (404)
-```json
-{
-  "success": false,
-  "message": "Booking not found"
-}
-```
-
-### Conflict Error (409)
-```json
-{
-  "success": false,
-  "message": "Duplicate booking request"
-}
-```
-
-### Authorization Error (403)
-```json
-{
-  "success": false,
-  "message": "You can only view your own bookings"
-}
-```
-
-### Server Error (500)
-```json
-{
-  "success": false,
-  "message": "Internal server error"
-}
-```
+---
 
 ## Rate Limiting
-- Booking creation: 5 requests per minute per user
-- Other endpoints: 100 requests per minute per user
 
-## Pagination
-All list endpoints support pagination with the following parameters:
-- `page`: Page number (default: 1)
-- `limit`: Items per page (default: 10, max: 100)
-- Response includes `meta` object with pagination info
+| Scope | Window | Limit |
+|---|---|---|
+| Global (all routes) | 15 minutes | 100 req/IP (prod) / 1000 (dev) |
+| Auth routes only | 15 minutes | 5 req/IP |
+
+Rate limit headers are returned in every response:
+```
+RateLimit-Limit: 100
+RateLimit-Remaining: 99
+RateLimit-Reset: 1713225600
+```
+
+---
 
 ## Idempotency
-Booking creation supports idempotency to prevent duplicate bookings:
-- Include `idempotencyKey` in request body
-- Same key with same payload returns existing booking
-- Keys expire after 24 hours
 
-## Webhooks (Future Enhancement)
-Planned webhook events:
-- `booking.created`: New booking created
-- `booking.confirmed`: Booking confirmed
-- `booking.cancelled`: Booking cancelled
-- `booking.expired`: Booking expired
+Include `idempotencyKey` in the request body to safely retry a booking without creating duplicates.
+
+- The key is scoped per user — the same key used by a different user creates a new booking.
+- If the key already exists for that user, the original booking and its travelers are returned with no inventory change.
+- The key has no automatic expiry; it persists as long as the booking document exists.
+
+```json
+{
+  "packageId": "...",
+  "trekDate": "2025-04-15T00:00:00.000Z",
+  "idempotencyKey": "checkout-session-abc123",
+  "travelers": [{ "fullName": "John Doe" }]
+}
+```
+
+---
+
+## Standard Error Shape
+
+All errors follow this structure:
+
+```json
+{
+  "success": false,
+  "message": "Human-readable reason"
+}
+```
+
+| HTTP Code | Meaning |
+|---|---|
+| `400` | Validation failed or business rule violation |
+| `401` | Missing, expired, or malformed Bearer token |
+| `403` | Authenticated but insufficient role |
+| `404` | Resource not found |
+| `409` | Conflict (duplicate idempotency key) |
+| `429` | Rate limit exceeded |
+| `500` | Unexpected server error |
+
+---
 
 ## SDK Examples
 
-### JavaScript/Node.js
-```javascript
-// Create booking
-const response = await fetch('/api/bookings', {
+### JavaScript / TypeScript
+```typescript
+const BASE = 'http://localhost:3002/api/v1';
+
+// Create a booking
+const res = await fetch(`${BASE}/bookings`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + token
+    'Authorization': `Bearer ${accessToken}`,
   },
   body: JSON.stringify({
     packageId: '507f1f77bcf86cd799439012',
-    trekDate: '2024-03-15T10:00:00.000Z',
-    travelers: [{
-      fullName: 'John Doe',
-      age: 30,
-      gender: 'male'
-    }]
-  })
+    trekDate: '2025-04-15T00:00:00.000Z',
+    travelers: [{ fullName: 'John Doe', age: 30, gender: 'male' }],
+  }),
 });
+const { data } = await res.json();
 
-const booking = await response.json();
+// Get my bookings
+const list = await fetch(`${BASE}/bookings/my?page=1&limit=10`, {
+  headers: { 'Authorization': `Bearer ${accessToken}` },
+});
+const { data: bookings, meta } = await list.json();
 ```
 
 ### Python
 ```python
 import requests
 
-# Get user bookings
-headers = {
-    'Authorization': 'Bearer ' + token,
-    'Content-Type': 'application/json'
-}
+BASE = 'http://localhost:3002/api/v1'
+headers = {'Authorization': f'Bearer {access_token}', 'Content-Type': 'application/json'}
 
-response = requests.get(
-    '/api/bookings/my?page=1&limit=10',
-    headers=headers
-)
+# Create a booking
+res = requests.post(f'{BASE}/bookings', json={
+    'packageId': '507f1f77bcf86cd799439012',
+    'trekDate': '2025-04-15T00:00:00.000Z',
+    'travelers': [{'fullName': 'John Doe', 'age': 30}],
+}, headers=headers)
+booking = res.json()['data']['booking']
 
-bookings = response.json()
+# Cancel a booking
+requests.patch(f'{BASE}/bookings/{booking["_id"]}/cancel', headers=headers)
 ```
-
-## Testing
-
-### Test Environment
-- Use test API endpoint: `/api/test/bookings`
-- Test database with sample data
-- Mock payment gateway for testing
-
-### Test Cases
-- Booking creation with valid/invalid data
-- Idempotency key handling
-- Permission-based access control
-- Inventory management
-- Pagination and sorting
-- Error handling
-
-## Monitoring & Analytics
-
-### Available Metrics
-- Booking creation rate
-- Confirmation rate
-- Cancellation rate
-- Revenue per period
-- Popular packages
-- User demographics
-
-### Analytics Endpoints
-- `GET /api/analytics/bookings/stats` - Booking statistics
-- `GET /api/analytics/bookings/revenue` - Revenue analytics
-- `GET /api/analytics/bookings/popular` - Popular packages
-- `GET /api/analytics/bookings/demographics` - User demographics
-
-## Support
-For API support and questions:
-- Documentation: [Link to docs]
-- Support email: support@example.com
-- Status page: [Link to status page]
-
-## Changelog
-
-### v2.0.0 (Current)
-- Added comprehensive analytics
-- Improved performance with database indexes
-- Enhanced error handling
-- Added automated cleanup service
-- Improved type safety
-
-### v1.0.0
-- Initial booking functionality
-- Basic CRUD operations
-- Inventory management
-- User authentication

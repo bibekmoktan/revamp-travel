@@ -4,12 +4,15 @@ import { TravelerModel } from './traveler.model';
 import { PackageDateInventoryModel } from '../package/packageDateInventory.model';
 import { BOOKING_STATUS, TRAVELER_STATUS } from './booking.constants';
 import { logger } from '../../utils/logger';
+import { withTimeout } from '../../utils/catchAsync';
+
+const TRANSACTION_TIMEOUT_MS = 10_000;
 
 export class BookingCleanupService {
   static async expireBookings(): Promise<void> {
     const session = await mongoose.startSession();
     try {
-      await session.withTransaction(async () => {
+      await withTimeout(session.withTransaction(async () => {
         const expiredBookings = await BookingSummaryModel.find({
           bookingStatus: BOOKING_STATUS.RESERVED,
           expiresAt: { $lt: new Date() },
@@ -53,7 +56,7 @@ export class BookingCleanupService {
         }
 
         logger.info(`Successfully expired ${expiredBookings.length} bookings`);
-      });
+      }), TRANSACTION_TIMEOUT_MS, 'Cleanup transaction timed out');
     } catch (error) {
       logger.error('Failed to expire bookings', {
         error: error instanceof Error ? error.message : 'Unknown error',

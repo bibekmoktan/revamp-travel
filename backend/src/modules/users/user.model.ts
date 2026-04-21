@@ -15,6 +15,8 @@ const userSchema = new Schema<TUser, UserModel>(
       default: 'user',
     },
     isBlocked: { type: Boolean, default: false },
+    passwordResetToken: { type: String, select: false },
+    passwordResetExpires: { type: Date, select: false },
   },
   {
     timestamps: true,

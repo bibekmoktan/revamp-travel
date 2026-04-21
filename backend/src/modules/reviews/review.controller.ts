@@ -11,7 +11,7 @@ const createReview = [
   protect,
   validateBody(createReviewSchema),
   catchAsync(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id;
+    const userId = req.user!._id;
     const reviewData = { ...req.body, user: userId };
     
     const result = await ReviewService.createReview(reviewData);
@@ -55,7 +55,7 @@ const updateReview = [
   protect,
   validateBody(updateReviewSchema),
   catchAsync(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id;
+    const userId = req.user!._id.toString();
     const result = await ReviewService.updateReview(req.params.id, req.body, userId);
 
     res.status(200).json({
@@ -70,8 +70,8 @@ const updateReview = [
 const deleteReview = [
   protect,
   catchAsync(async (req: Request, res: Response) => {
-    const user = (req as any).user;
-    const result = await ReviewService.deleteReview(req.params.id, user._id, user.role);
+    const user = req.user!;
+    const result = await ReviewService.deleteReview(req.params.id, user._id.toString(), user.role);
 
     res.status(200).json({
       success: true,
@@ -87,9 +87,9 @@ const respondToReview = [
   authorize('admin'),
   validateBody(respondToReviewSchema),
   catchAsync(async (req: Request, res: Response) => {
-    const adminId = (req as any).user._id;
+    const adminId = req.user!._id.toString();
     const { text } = req.body;
-    
+
     const result = await ReviewService.respondToReview(req.params.id, text, adminId);
 
     res.status(200).json({

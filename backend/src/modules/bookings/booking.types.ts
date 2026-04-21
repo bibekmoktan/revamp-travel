@@ -37,7 +37,7 @@ export interface PaginatedBookings {
   };
 }
 
-export interface PopulatedBooking extends IBookingSummary {
+export interface PopulatedBooking extends Omit<IBookingSummary, 'package'> {
   package?: {
     _id: Types.ObjectId;
     title: string;
