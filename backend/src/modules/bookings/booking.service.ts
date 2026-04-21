@@ -8,6 +8,9 @@ import { logger } from '../../utils/logger';
 import { BOOKING_CONSTANTS, BOOKING_STATUS, PAYMENT_STATUS, TRAVELER_STATUS } from './booking.constants';
 import { CreateBookingPayload, BookingQueryParams, BookingResult, PaginatedBookings, PopulatedBooking } from './booking.types';
 import { InventoryManager } from './inventory.utils';
+import { withTimeout } from '../../utils/catchAsync';
+
+const TRANSACTION_TIMEOUT_MS = 10_000;
 
 export const BookingService = {
   async createBooking(
@@ -46,7 +49,7 @@ export const BookingService = {
       let createdBooking: IBookingSummary | null = null;
       let createdTravelers: ITraveler[] = [];
 
-      await session.withTransaction(async () => {
+      await withTimeout(session.withTransaction(async () => {
         const inventoryResult = await InventoryManager.reserveSeats(
           payload.packageId,
           payload.trekDate,
@@ -88,18 +91,18 @@ export const BookingService = {
 
         const insertedTravelers = await TravelerModel.insertMany(travelerDocs, { session });
         createdTravelers = insertedTravelers.map((t) => t.toObject());
-      });
-
-      logger.info('Booking reserved', {
-        userId,
-        packageId: payload.packageId,
-        bookingId: createdBooking?._id?.toString(),
-        count: pax,
-      });
+      }), TRANSACTION_TIMEOUT_MS, 'Booking transaction timed out');
 
       if (!createdBooking) {
         throw new Error('Failed to create booking');
       }
+
+      logger.info('Booking reserved', {
+        userId,
+        packageId: payload.packageId,
+        bookingId: (createdBooking as IBookingSummary & { _id: any })._id?.toString(),
+        count: pax,
+      });
 
       return { booking: createdBooking, travelers: createdTravelers };
     } catch (error: any) {
@@ -227,7 +230,7 @@ export const BookingService = {
     try {
       let updatedBooking: IBookingSummary | null = null;
 
-      await session.withTransaction(async () => {
+      await withTimeout(session.withTransaction(async () => {
         // Optimized booking lookup with field selection
         const booking = await BookingSummaryModel.findById(bookingId)
           .select('user package trekDate bookingStatus')
@@ -280,7 +283,7 @@ export const BookingService = {
           .select('user package trekDate numberOfPeople totalAmount bookingStatus paymentStatus expiresAt createdAt')
           .session(session)
           .lean() as IBookingSummary;
-      });
+      }), TRANSACTION_TIMEOUT_MS, 'Cancel booking transaction timed out');
 
       logger.info('Booking cancelled', {
         userId,

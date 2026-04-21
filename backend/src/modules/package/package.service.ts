@@ -51,10 +51,11 @@ export const PackageService = {
 
       // Build filter
       if (searchTerm) {
+        const escapedTerm = String(searchTerm).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         filter.$or = [
-          { title: { $regex: searchTerm, $options: "i" } },
-          { location: { $regex: searchTerm, $options: "i" } },
-          { description: { $regex: searchTerm, $options: "i" } }
+          { title: { $regex: escapedTerm, $options: "i" } },
+          { location: { $regex: escapedTerm, $options: "i" } },
+          { description: { $regex: escapedTerm, $options: "i" } }
         ];
       }
       if (category) filter.category = category;
@@ -69,13 +70,14 @@ export const PackageService = {
       const sort: any = {};
       sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
 
-      const skip = (Number(page) - 1) * Number(limit);
-      
+      const clampedLimit = Math.min(Number(limit), 100);
+      const skip = (Number(page) - 1) * clampedLimit;
+
       const [data, total] = await Promise.all([
         PackageModel.find(filter)
           .sort(sort)
           .skip(skip)
-          .limit(Number(limit))
+          .limit(clampedLimit)
           .lean(),
         PackageModel.countDocuments(filter)
       ]);
@@ -88,14 +90,14 @@ export const PackageService = {
         filters: { searchTerm, category, minPrice, maxPrice, status }
       });
 
-      return { 
-        data, 
-        meta: { 
-          total, 
-          page: Number(page), 
-          limit: Number(limit),
-          pages: Math.ceil(total / Number(limit))
-        } 
+      return {
+        data,
+        meta: {
+          total,
+          page: Number(page),
+          limit: clampedLimit,
+          pages: Math.ceil(total / clampedLimit),
+        },
       };
     } catch (error: any) {
       logger.error('Failed to get packages', {

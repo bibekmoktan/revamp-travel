@@ -5,7 +5,6 @@ import { protect } from '../../middlewares/protect';
 import { authorize } from '../../middlewares/authorize';
 import { BookingService } from './booking.service';
 import { createBookingSchema, bookingQuerySchema } from './booking.validation';
-import { BookingCleanupService } from './bookingCleanup.service';
 import { z } from 'zod';
 
 const listMyBookingsSchema = z.object({
@@ -22,7 +21,7 @@ const createBooking = [
   protect,
   validateBody(createBookingSchema),
   catchAsync(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id.toString();
+    const userId = req.user!._id.toString();
 
     const result = await BookingService.createBooking(userId, req.body);
 
@@ -38,7 +37,7 @@ const getMyBookings = [
   protect,
   validate(listMyBookingsSchema),
   catchAsync(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id.toString();
+    const userId = req.user!._id.toString();
     const result = await BookingService.getMyBookings(userId, req.query as any);
 
     res.status(200).json({
@@ -54,7 +53,7 @@ const getBooking = [
   protect,
   validate(bookingIdParamsSchema),
   catchAsync(async (req: Request, res: Response) => {
-    const user = (req as any).user;
+    const user = req.user!;
     const result = await BookingService.getBooking(req.params.bookingId, user._id.toString(), user.role);
 
     res.status(200).json({
@@ -69,7 +68,7 @@ const cancelBooking = [
   protect,
   validate(bookingIdParamsSchema),
   catchAsync(async (req: Request, res: Response) => {
-    const user = (req as any).user;
+    const user = req.user!;
     const result = await BookingService.cancelBooking(req.params.bookingId, user._id.toString(), user.role);
 
     res.status(200).json({

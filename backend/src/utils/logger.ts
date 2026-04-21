@@ -65,21 +65,25 @@ class Logger {
       ...meta,
     };
 
-    // In production, you might want to use a proper logging service
     if (process.env.NODE_ENV === 'production') {
-      console.error(JSON.stringify(logEntry));
+      const output = JSON.stringify(logEntry);
+      if (level === LogLevel.ERROR || level === LogLevel.WARN) {
+        process.stderr.write(output + '\n');
+      } else {
+        process.stdout.write(output + '\n');
+      }
     } else {
       const colorMap = {
-        [LogLevel.ERROR]: '\x1b[31m', // red
-        [LogLevel.WARN]: '\x1b[33m',  // yellow
-        [LogLevel.INFO]: '\x1b[36m',  // cyan
-        [LogLevel.DEBUG]: '\x1b[37m', // white
+        [LogLevel.ERROR]: '\x1b[31m',
+        [LogLevel.WARN]: '\x1b[33m',
+        [LogLevel.INFO]: '\x1b[36m',
+        [LogLevel.DEBUG]: '\x1b[37m',
       };
-      
       const reset = '\x1b[0m';
-      console.log(`${colorMap[level]}[${level}]${reset} ${logEntry.timestamp} - ${message}`, 
-        meta.requestId ? `[${meta.requestId}]` : '',
-        meta.error ? '\n' + meta.error : ''
+      const requestTag = meta.requestId ? ` [${meta.requestId}]` : '';
+      const errorLine = meta.error ? `\n  ${meta.error}` : '';
+      console.log(
+        `${colorMap[level]}[${level}]${reset} ${logEntry.timestamp} - ${message}${requestTag}${errorLine}`
       );
     }
   }
@@ -108,7 +112,7 @@ class Logger {
       statusCode,
       duration,
       requestId: req.headers['x-request-id'] as string,
-      userId: (req as any).user?.id,
+      userId: req.user?.id,
     });
   }
 }

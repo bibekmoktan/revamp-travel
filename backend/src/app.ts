@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 import { corsOptions } from './config/cors';
 import { rateLimiter } from './config/rateLimit';
 import { securityHeaders, requestLogger } from './middlewares/security.middleware';
@@ -28,12 +29,18 @@ app.use(cookieParser());
 app.use(express.static('public'));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Server is healthy',
+app.get('/health', async (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  // 0=disconnected, 1=connected, 2=connecting, 3=disconnecting
+  const dbHealthy = dbState === 1;
+
+  const status = dbHealthy ? 200 : 503;
+  res.status(status).json({
+    success: dbHealthy,
+    status: dbHealthy ? 'healthy' : 'degraded',
+    db: dbHealthy ? 'connected' : 'disconnected',
     timestamp: new Date().toISOString(),
-    requestId: req.headers['x-request-id']
+    requestId: req.headers['x-request-id'],
   });
 });
 

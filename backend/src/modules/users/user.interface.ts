@@ -3,9 +3,11 @@ import { Model } from 'mongoose';
 export type TUser = {
   name: string;
   email: string;
-  password?: string; // hidden when returning user
+  password?: string;
   role: 'user' | 'admin';
   isBlocked: boolean;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 };

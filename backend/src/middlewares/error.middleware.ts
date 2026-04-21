@@ -6,7 +6,7 @@ export const globalErrorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   let error = { ...err };
   error.message = err.message;
@@ -18,7 +18,7 @@ export const globalErrorHandler = (
     requestId: req.headers['x-request-id'] as string,
     method: req.method,
     url: req.url,
-    userId: (req as any).user?.id,
+    userId: req.user?.id,
     error: err,
   });
 

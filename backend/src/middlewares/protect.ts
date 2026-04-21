@@ -1,20 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../modules/users/user.model';
+import { env } from '../config/env';
 
 export const protect = async (
-  req: Request & { user?: any },
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  let token;
-
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
-  }
+  const authHeader = req.headers.authorization;
+  const parts = authHeader?.split(' ');
+  const token = parts?.length === 2 && parts[0] === 'Bearer' ? parts[1] : undefined;
 
   if (!token) {
     return res.status(401).json({
@@ -24,17 +20,14 @@ export const protect = async (
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as { userId: string; role: string };
+    const decoded = jwt.verify(token, env.jwtSecret) as { userId: string; role: string };
 
     const user = await User.findById(decoded.userId);
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'User not found',
+        message: 'Not authorized',
       });
     }
 
@@ -44,7 +37,7 @@ export const protect = async (
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Token invalid',
+      message: 'Not authorized',
     });
   }
 };

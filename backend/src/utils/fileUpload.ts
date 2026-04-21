@@ -2,42 +2,49 @@ import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { env } from '../config/env';
+import { logger } from './logger';
 
-// Configure Cloudinary
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_NAME, 
-  api_key: process.env.CLOUDINARY_API_KEY, 
-  api_secret: process.env.CLOUDINARY_API_SECRET 
+cloudinary.config({
+  cloud_name: env.cloudinary.cloudName,
+  api_key: env.cloudinary.apiKey,
+  api_secret: env.cloudinary.apiSecret,
 });
 
-// Multer storage: Saves to a temp 'uploads' folder before cloud transfer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join(process.cwd(), 'uploads');
-    if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath);
+    if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
+  },
 });
 
-export const upload = multer({ storage: storage });
+export const upload = multer({ storage });
+
+const removeTempFile = (filePath: string) => {
+  try {
+    fs.unlinkSync(filePath);
+  } catch (err: any) {
+    logger.warn(`Failed to remove temp file: ${filePath}`, { error: err.message });
+  }
+};
 
 export const sendToCloudinary = async (filePath: string, folder: string) => {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
-      folder: `travel-nepal/${folder}`, // Organized cloud folders
-      resource_type: 'auto', // Handles both images and videos
-      fetch_format: 'auto', // delivers f_auto in the URL
-      quality: 'auto',      // delivers q_auto in the URL
+      folder: `travel-nepal/${folder}`,
+      resource_type: 'auto',
+      fetch_format: 'auto',
+      quality: 'auto',
     });
-    // Remove file from local server after upload
-    fs.unlinkSync(filePath);
+    removeTempFile(filePath);
     return result;
-  } catch (error) {
-    fs.unlinkSync(filePath);
+  } catch (error: any) {
+    removeTempFile(filePath);
     throw new Error('Cloudinary upload failed');
   }
 };
