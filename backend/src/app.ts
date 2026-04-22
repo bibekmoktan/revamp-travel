@@ -5,7 +5,6 @@ import { corsOptions } from './config/cors';
 import { rateLimiter } from './config/rateLimit';
 import { securityHeaders, requestLogger } from './middlewares/security.middleware';
 import { globalErrorHandler } from './middlewares/error.middleware';
-import { env } from './config/env';
 import routes from './routes';
 
 const app = express();
@@ -51,7 +50,7 @@ app.use('/api/v1', routes);
 app.use(globalErrorHandler);
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use('*splat', (req, res) => {
   res.status(404).json({
     success: false,
     message: 'Route not found',

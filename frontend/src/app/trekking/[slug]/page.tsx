@@ -1,63 +1,35 @@
 import { notFound } from 'next/navigation';
-import TrekDetails from '../../components/TrekDetails/TrekDetails';
-import { getTrekBySlug, getAllTrekSlugs } from '../../../data/treks';
+import { getPackageBySlug } from '@/lib/api';
+import TrekDetailPage from './components/TrekDetailPage';
 
-// Define the props interface for the page component
-interface TrekPageProps {
-  params: Promise<{
-    slug: string;
-  }>;
+interface Props {
+  params: Promise<{ slug: string }>;
 }
 
-/**
- * Individual Trek Details Page
- * Displays detailed information about a specific trek
- * This page is accessible via /trekking/[slug] route
- */
-export default async function TrekPage({ params }: TrekPageProps) {
-  // Await the params since they're now a Promise in Next.js 15+
+export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  
-  // Fetch trek data by slug
-  const trek = getTrekBySlug(slug);
-  
-  // If trek not found, show 404 page
-  if (!trek) {
+  try {
+    const { data: pkg } = await getPackageBySlug(slug);
+    return {
+      title: `${pkg.title} | Travel Nepal`,
+      description: pkg.description.slice(0, 160),
+      keywords: `trek, trekking, ${pkg.location}, ${pkg.difficulty}, Nepal, Himalayas`,
+    };
+  } catch {
+    return { title: 'Trek Not Found | Travel Nepal' };
+  }
+}
+
+export default async function Page({ params }: Props) {
+  const { slug } = await params;
+
+  let pkg;
+  try {
+    const result = await getPackageBySlug(slug);
+    pkg = result.data;
+  } catch {
     notFound();
   }
 
-  return (
-    <div>
-      <TrekDetails trek={trek} />
-    </div>
-  );
+  return <TrekDetailPage pkg={pkg} />;
 }
-
-// Generate metadata for the page
-export async function generateMetadata({ params }: TrekPageProps) {
-  // Await the params since they're now a Promise in Next.js 15+
-  const { slug } = await params;
-  const trek = getTrekBySlug(slug);
-  
-  if (!trek) {
-    return {
-      title: 'Trek Not Found',
-      description: 'The requested trek could not be found.',
-    };
-  }
-
-  return {
-    title: `${trek.name} - Viatours Trekking`,
-    description: trek.description,
-    keywords: `trek, trekking, adventure, ${trek.location}, ${trek.difficulty}, himalayas`,
-  };
-}
-
-// Generate static params for all treks (for static generation)
-export async function generateStaticParams() {
-  const slugs = getAllTrekSlugs();
-  
-  return slugs.map((slug) => ({
-    slug: slug,
-  }));
-} 
