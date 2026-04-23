@@ -30,6 +30,10 @@ export default async function Page({ searchParams }: PageProps) {
     page:       getString('page') ? Number(getString('page')) : 1,
     limit:      12,
     status:     'active',
+    difficulty: getString('difficulty'),
+    duration:   getString('duration'),
+    season:     getString('season'),
+    trekType:   getString('trekType'),
   };
 
   const view = getString('view') === 'list' ? 'list' : 'card';

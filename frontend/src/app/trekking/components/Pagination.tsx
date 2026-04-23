@@ -9,8 +9,8 @@ interface PaginationProps {
 }
 
 export default function Pagination({ currentPage, totalPages }: PaginationProps) {
-  const router      = useRouter();
-  const pathname    = usePathname();
+  const router       = useRouter();
+  const pathname     = usePathname();
   const searchParams = useSearchParams();
 
   if (totalPages <= 1) return null;
@@ -21,7 +21,6 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  // Build visible page numbers (at most 5, centred around current)
   const pages: (number | '...')[] = [];
   if (totalPages <= 7) {
     for (let i = 1; i <= totalPages; i++) pages.push(i);
@@ -44,7 +43,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       <button
         onClick={() => goTo(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-xl border border-[#E3F2FD] bg-white text-[#607D8B] hover:bg-[#E3F2FD] hover:text-[#0F4C81] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         aria-label="Previous page"
       >
         <ChevronLeft className="w-4 h-4" />
@@ -52,7 +51,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
 
       {pages.map((p, i) =>
         p === '...' ? (
-          <span key={`ellipsis-${i}`} className="px-3 py-2 text-gray-400 text-sm">
+          <span key={`ellipsis-${i}`} className="px-3 py-2 text-[#607D8B] text-sm">
             …
           </span>
         ) : (
@@ -60,10 +59,10 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
             key={p}
             onClick={() => goTo(p)}
             aria-current={p === currentPage ? 'page' : undefined}
-            className={`min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`min-w-[36px] h-9 px-3 rounded-xl text-sm font-medium transition-colors ${
               p === currentPage
-                ? 'bg-sky-600 text-white'
-                : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                ? 'bg-[#1E88E5] text-white shadow-sm shadow-[#1E88E5]/30'
+                : 'border border-[#E3F2FD] bg-white text-[#37474F] hover:bg-[#E3F2FD] hover:text-[#0F4C81]'
             }`}
           >
             {p}
@@ -74,7 +73,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       <button
         onClick={() => goTo(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-xl border border-[#E3F2FD] bg-white text-[#607D8B] hover:bg-[#E3F2FD] hover:text-[#0F4C81] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         aria-label="Next page"
       >
         <ChevronRight className="w-4 h-4" />

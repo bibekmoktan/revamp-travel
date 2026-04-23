@@ -13,7 +13,7 @@ export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
   const diffClass = difficultyColor[pkg.difficulty ?? ''] ?? 'bg-gray-500';
 
   return (
-    <div className="relative w-full h-[70vh] min-h-[480px] overflow-hidden">
+    <div className="relative w-full min-h-[480px] overflow-hidden">
       <Image
         src={pkg.featureImage.url}
         alt={pkg.featureImage.alt ?? pkg.title}
@@ -34,9 +34,9 @@ export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
       </div>
 
       {/* Bottom content */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-10 max-w-5xl mx-auto w-full">
+      <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-10 max-w-[1366px] mx-auto w-full">
         <p className="text-sm text-gray-300 uppercase tracking-widest mb-2">{pkg.location}</p>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
+        <h1 className="text-[24px] md:text-[42px] font-bold text-white mb-4 leading-tight drop-shadow-lg">
           {pkg.title}
         </h1>
         <div className="flex flex-wrap items-center gap-3">

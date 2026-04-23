@@ -70,4 +70,8 @@ export interface PackageFilters {
   page?: number;
   limit?: number;
   status?: 'active' | 'inactive';
+  difficulty?: string;
+  duration?: string;
+  season?: string;
+  trekType?: string;
 }
