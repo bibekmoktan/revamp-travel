@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useCallback, useTransition } from 'react';
+import { useCallback, useTransition, useState, useRef, useEffect } from 'react';
 import { Grid, List, ChevronDown } from 'lucide-react';
 
 const SORT_OPTIONS = [
@@ -20,27 +20,41 @@ export default function TrekSortBar({ total }: TrekSortBarProps) {
   const pathname     = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const currentSort = `${searchParams.get('sortBy') ?? 'createdAt'}:${searchParams.get('sortOrder') ?? 'desc'}`;
+  const currentSort = `${searchParams.get('sortBy') ?? 'rating'}:${searchParams.get('sortOrder') ?? 'desc'}`;
   const currentView = searchParams.get('view') ?? 'card';
+  const currentLabel = SORT_OPTIONS.find(o => o.value === currentSort)?.label ?? 'Top Rated';
 
   const setParam = useCallback(
     (updates: Record<string, string>) => {
       const params = new URLSearchParams(searchParams.toString());
       Object.entries(updates).forEach(([key, val]) => params.set(key, val));
-      startTransition(() => router.push(`${pathname}?${params.toString()}`));
+      startTransition(() => router.replace(`${pathname}?${params.toString()}`, { scroll: false }));
     },
     [router, pathname, searchParams],
   );
 
-  const handleSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const [sortBy, sortOrder] = e.target.value.split(':');
+  const handleSort = (value: string) => {
+    const [sortBy, sortOrder] = value.split(':');
     setParam({ sortBy, sortOrder });
+    setIsOpen(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div
-      className={`flex items-center justify-between gap-4 bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3 transition-opacity duration-200 ${
+      className={`flex items-center justify-between gap-4 bg-white px-4 py-3 transition-opacity duration-200 ${
         isPending ? 'opacity-60 pointer-events-none' : ''
       }`}
     >
@@ -51,17 +65,35 @@ export default function TrekSortBar({ total }: TrekSortBarProps) {
 
       <div className="flex items-center gap-3">
         {/* Sort */}
-        <div className="relative">
-          <select
-            value={currentSort}
-            onChange={handleSort}
-            className="appearance-none pl-3 pr-8 py-2 border border-gray-200 rounded-lg bg-[#F8FAFB] text-sm text-[#37474F] focus:outline-none focus:ring-2 focus:ring-[#1E88E5]/20 focus:border-[#1E88E5] cursor-pointer"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#607D8B] pointer-events-none" />
+        <div className="flex items-center gap-2" ref={dropdownRef}>
+          <span className="text-sm text-[#607D8B] whitespace-nowrap">Sort by:</span>
+          <div className="relative">
+            <div
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex items-center gap-1 text-sm text-[#607D8B] cursor-pointer hover:text-[#607D8B]/80 select-none"
+            >
+              <span>{currentLabel}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </div>
+
+            {isOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-white border border-gray-100 rounded-lg shadow-md z-50 min-w-[130px] py-1">
+                {SORT_OPTIONS.map((o) => (
+                  <div
+                    key={o.value}
+                    onClick={() => handleSort(o.value)}
+                    className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
+                      currentSort === o.value
+                        ? 'text-[#607D8B] font-medium bg-[#607D8B]/5'
+                        : 'text-gray-600 hover:text-[#607D8B] hover:bg-[#607D8B]/5'
+                    }`}
+                  >
+                    {o.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* View toggle */}
