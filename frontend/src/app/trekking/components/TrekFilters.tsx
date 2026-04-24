@@ -67,14 +67,17 @@ function PriceRangeSlider({
 
   const pct = (v: number) => ((v - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
 
+  const commit = (min: number, max: number) =>
+    onApply(
+      min > PRICE_MIN ? String(min) : '',
+      max < PRICE_MAX ? String(max) : '',
+    );
+
   return (
     <div>
       {/* Slider */}
       <div className="relative flex items-center h-5 mb-3">
-        {/* Gray track */}
         <div className="absolute left-0 right-0 h-[3px] rounded-full bg-gray-200" />
-
-        {/* Blue fill */}
         <div
           className="absolute h-[3px] rounded-full bg-[#1E88E5]"
           style={{ left: `${pct(minVal)}%`, right: `${100 - pct(maxVal)}%` }}
@@ -88,6 +91,8 @@ function PriceRangeSlider({
           step={PRICE_STEP}
           value={minVal}
           onChange={(e) => setMinVal(Math.min(Number(e.target.value), maxVal - PRICE_STEP))}
+          onMouseUp={() => commit(minVal, maxVal)}
+          onTouchEnd={() => commit(minVal, maxVal)}
           className="price-range-input"
           style={{ zIndex: minVal >= PRICE_MAX - PRICE_STEP ? 5 : 3 }}
         />
@@ -100,30 +105,18 @@ function PriceRangeSlider({
           step={PRICE_STEP}
           value={maxVal}
           onChange={(e) => setMaxVal(Math.max(Number(e.target.value), minVal + PRICE_STEP))}
+          onMouseUp={() => commit(minVal, maxVal)}
+          onTouchEnd={() => commit(minVal, maxVal)}
           className="price-range-input"
           style={{ zIndex: 4 }}
         />
       </div>
 
       {/* Price label */}
-      <p className="text-xs text-[#607D8B] mb-2">
+      <p className="text-xs text-[#607D8B]">
         ${minVal.toLocaleString()} &ndash;{' '}
         {maxVal >= PRICE_MAX ? `$${PRICE_MAX.toLocaleString()}+` : `$${maxVal.toLocaleString()}`}
       </p>
-
-      {/* Apply */}
-      <button
-        type="button"
-        onClick={() =>
-          onApply(
-            minVal > PRICE_MIN ? String(minVal) : '',
-            maxVal < PRICE_MAX ? String(maxVal) : '',
-          )
-        }
-        className="w-full py-2 bg-[#1E88E5] hover:bg-[#1565C0] text-white text-xs font-semibold rounded-lg transition-colors"
-      >
-        Apply
-      </button>
     </div>
   );
 }
@@ -211,7 +204,7 @@ export default function TrekFilters() {
         else params.set(key, val);
       });
       if (!('page' in updates) && !('view' in updates)) params.delete('page');
-      startTransition(() => router.push(`${pathname}?${params.toString()}`));
+      startTransition(() => router.replace(`${pathname}?${params.toString()}`, { scroll: false }));
     },
     [router, pathname, searchParams],
   );
@@ -245,7 +238,7 @@ export default function TrekFilters() {
 
   return (
     <div
-      className={`bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-opacity duration-200 ${
+      className={`bg-white overflow-hidden transition-opacity duration-200 ${
         isPending ? 'opacity-60 pointer-events-none' : ''
       }`}
     >

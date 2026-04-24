@@ -39,7 +39,7 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
     <div className="min-h-screen bg-[#F8FAFB]">
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <div className="relative w-full h-[600px] overflow-hidden">
+      <div className="relative w-full h-[800px] overflow-hidden">
         <Image
           src={HeroImage}
           alt="Trekking adventure in the mountains"
@@ -47,24 +47,18 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0F4C81]/70 via-[#0F4C81]/50 to-black/60" />
-        <div className="relative z-10 flex items-center justify-center h-full px-4">
-          <div className="text-center text-white max-w-4xl">
-            <span className="inline-block bg-[#1E88E5]/30 border border-[#64B5F6]/40 text-[#64B5F6] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              Nepal Himalaya Treks
-            </span>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg leading-tight">
-              Adventure Awaits
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F4C81]/60 via-[#0F4C81]/30 to-black/50" />
+        <div className="relative z-10 flex items-center justify-center h-full px-4 md:pt-[150px]">
+          <div className="text-center text-white max-w-[700px]">
+            <h1 className="text-[24px] md:text-[42px] font-bold mb-12 drop-shadow-lg leading-tight">
+             Step beyond the ordinary into the heart of the Himalayas.
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-blue-100">
-              Discover breathtaking mountain adventures across the Himalayas
-            </p>
             <HeroSearch />
           </div>
         </div>
 
         {/* Stats bar */}
-        <div className="absolute bottom-0 left-0 right-0 bg-[#0F4C81]/80 backdrop-blur-sm border-t border-white/10">
+        {/* <div className="absolute bottom-0 left-0 right-0 bg-[#0F4C81]/80 backdrop-blur-sm border-t border-white/10">
           <div className="max-w-[1366px] mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-white/20 text-center text-white">
             <div>
               <p className="text-2xl font-bold">{meta.total}+</p>
@@ -79,7 +73,7 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
               <p className="text-xs text-blue-200 uppercase tracking-wide">Happy Trekkers</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* ── Main content ─────────────────────────────────────────────────── */}
@@ -87,10 +81,7 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
 
         {/* Section heading */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-[#0F4C81] mb-1">All Treks</h2>
-          <p className="text-[#607D8B] text-sm">
-            {meta.total} curated adventures in the Himalayas
-          </p>
+          {/* <h2 className="text-2xl font-bold text-[#0F4C81] mb-1">All Treks</h2> */}
         </div>
 
         {/* ── Two-column layout ── */}
@@ -98,7 +89,7 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
 
           {/* ── Left sidebar ── */}
           <aside className="hidden lg:block w-72 shrink-0 sticky top-4">
-            <Suspense fallback={<div className="h-96 bg-white rounded-2xl animate-pulse" />}>
+            <Suspense fallback={<div className="h-96 bg-white  animate-pulse" />}>
               <TrekFilters />
             </Suspense>
           </aside>
@@ -108,14 +99,14 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
 
             {/* Sort bar */}
             <div className="mb-5">
-              <Suspense fallback={<div className="h-12 bg-white rounded-xl animate-pulse" />}>
+              <Suspense fallback={<div className="h-12 animate-pulse" />}>
                 <TrekSortBar total={meta.total} />
               </Suspense>
             </div>
 
             {/* Package listing */}
             {packages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-gray-100">
+              <div className="flex flex-col items-center justify-center py-24 text-center bg-white ">
                 <div className="w-20 h-20 bg-[#E3F2FD] rounded-full flex items-center justify-center mb-6">
                   <span className="text-4xl">🏔️</span>
                 </div>
