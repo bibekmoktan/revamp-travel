@@ -17,7 +17,7 @@ export default function HeroSearch() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-2xl mx-auto flex items-center bg-white rounded-2xl shadow-2xl overflow-hidden"
+      className="w-full max-w-2xl mx-auto flex items-center bg-white rounded-full shadow-2xl overflow-hidden"
     >
       <Search className="w-5 h-5 text-[#607D8B] ml-5 shrink-0" />
       <input
@@ -28,7 +28,7 @@ export default function HeroSearch() {
       />
       <button
         type="submit"
-        className="m-1.5 px-7 py-3 bg-[#1E88E5] hover:bg-[#1565C0] text-white font-semibold rounded-xl transition-colors duration-200 shrink-0"
+        className="m-1.5 px-7 py-3 bg-[#1E88E5] hover:bg-[#1565C0] text-white font-semibold rounded-full transition-colors duration-200 shrink-0"
       >
         Search
       </button>

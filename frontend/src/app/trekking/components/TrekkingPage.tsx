@@ -6,7 +6,6 @@ import TrekCard from './TrekCard';
 import TrekListItem from './TrekListItem';
 import TrekFilters from './TrekFilters';
 import TrekSortBar from './TrekSortBar';
-import HeroSearch from './HeroSearch';
 import Pagination from './Pagination';
 import type { ApiPackage, PaginationMeta } from '@/types/api';
 
@@ -48,17 +47,25 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0F4C81]/60 via-[#0F4C81]/30 to-black/50" />
-        <div className="relative z-10 flex items-center justify-center h-full px-4 md:pt-[150px]">
+        <div className="relative z-10 flex items-center justify-center h-full px-4 md:pt-[200px]">
           <div className="text-center text-white max-w-[700px]">
-            <h1 className="text-[24px] md:text-[42px] font-bold mb-12 drop-shadow-lg leading-tight">
+            <h1 className="text-[24px] md:text-[42px] font-bold mb-4 drop-shadow-lg leading-[1.2]">
              Step beyond the ordinary into the heart of the Himalayas.
             </h1>
-            <HeroSearch />
+            <p className="text-sm md:text-base text-white/80 leading-[1.2] mb-8">
+              Explore world-class trekking routes through ancient valleys, high-altitude passes, and remote villages. Whether you're a first-time hiker or a seasoned mountaineer, Nepal has a trail that will leave you breathless.
+            </p>
+            <Link
+              href="/custom-package"
+              className="inline-flex mt-6 items-center gap-2 px-8 py-3 bg-[#0F4C81] hover:bg-sky-800 text-white font-semibold transition-colors shadow-lg"
+            >
+              Customise Your Trip
+            </Link>
           </div>
         </div>
 
         {/* Stats bar */}
-        {/* <div className="absolute bottom-0 left-0 right-0 bg-[#0F4C81]/80 backdrop-blur-sm border-t border-white/10">
+        {/* <div className="absolute bottom-0 left-0 right-0 bg-[#0F4C81]/80 h-[200px] backdrop-blur-sm border-t border-white/10">
           <div className="max-w-[1366px] mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-white/20 text-center text-white">
             <div>
               <p className="text-2xl font-bold">{meta.total}+</p>
