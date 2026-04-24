@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useTransition, useState, useRef, useEffect } from 'react';
-import { Grid, List, ChevronDown } from 'lucide-react';
+import { Grid, List, ChevronDown, Search } from 'lucide-react';
 
 const SORT_OPTIONS = [
   { label: 'Newest',       value: 'createdAt:desc' },
@@ -21,7 +21,39 @@ export default function TrekSortBar({ total }: TrekSortBarProps) {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState(searchParams.get('searchTerm') ?? '');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const activityRef = useRef<HTMLDivElement>(null);
+
+  const ACTIVITIES = [
+    { label: 'Adventures',    value: 'adventures'    },
+    { label: 'Hiking',        value: 'hiking'        },
+    { label: 'Peak Climbing', value: 'peak-climbing' },
+    { label: 'Rafting',       value: 'rafting'       },
+    { label: 'Trekking',      value: 'trekking'      },
+  ];
+
+  const currentActivity = searchParams.get('activity') ?? '';
+  const activityLabel = ACTIVITIES.find(a => a.value === currentActivity)?.label ?? 'Activities';
+
+  const handleActivity = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (currentActivity === value) params.delete('activity');
+    else params.set('activity', value);
+    params.delete('page');
+    startTransition(() => router.replace(`${pathname}?${params.toString()}`, { scroll: false }));
+    setActivityOpen(false);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchVal.trim()) params.set('searchTerm', searchVal.trim());
+    else params.delete('searchTerm');
+    params.delete('page');
+    startTransition(() => router.replace(`${pathname}?${params.toString()}`, { scroll: false }));
+  };
 
   const currentSort = `${searchParams.get('sortBy') ?? 'rating'}:${searchParams.get('sortOrder') ?? 'desc'}`;
   const currentView = searchParams.get('view') ?? 'card';
@@ -44,9 +76,8 @@ export default function TrekSortBar({ total }: TrekSortBarProps) {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setIsOpen(false);
+      if (activityRef.current && !activityRef.current.contains(e.target as Node)) setActivityOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -58,12 +89,23 @@ export default function TrekSortBar({ total }: TrekSortBarProps) {
         isPending ? 'opacity-60 pointer-events-none' : ''
       }`}
     >
-      <p className="text-sm text-[#607D8B]">
-        <span className="font-bold text-[#0F4C81]">{total}</span>{' '}
-        {total === 1 ? 'trek' : 'treks'} found
-      </p>
 
-      <div className="flex items-center gap-3">
+      {/* Search */}
+      <form onSubmit={handleSearch} className="flex-1 max-w-sm flex items-center gap-1 border-b border-gray-200 px-1">
+        <Search className="w-4 h-4 text-[#607D8B] shrink-0" />
+        <input
+          type="text"
+          value={searchVal}
+          onChange={(e) => setSearchVal(e.target.value)}
+          placeholder="Search treks…"
+          className="flex-1 py-1 px-2 text-sm text-[#37474F] placeholder:text-[#607D8B]/60 bg-transparent outline-none"
+        />
+        {searchVal && (
+          <button type="button" onClick={() => { setSearchVal(''); handleSearch({ preventDefault: () => {} } as React.FormEvent); }} className="text-[#607D8B]/60 hover:text-[#607D8B] text-xs">✕</button>
+        )}
+      </form>
+
+      <div className="flex items-center gap-6">
         {/* Sort */}
         <div className="flex items-center gap-2" ref={dropdownRef}>
           <span className="text-sm text-[#607D8B] whitespace-nowrap">Sort by:</span>
@@ -94,6 +136,35 @@ export default function TrekSortBar({ total }: TrekSortBarProps) {
               </div>
             )}
           </div>
+        </div>
+         {/* Activities */}
+        <div className="relative" ref={activityRef}>
+          <div
+            onClick={() => setActivityOpen(!activityOpen)}
+            className={`flex items-center gap-1 text-sm cursor-pointer select-none whitespace-nowrap transition-colors ${
+              currentActivity ? 'text-[#1E88E5] font-medium' : 'text-[#607D8B] hover:text-[#607D8B]/80'
+            }`}
+          >
+            <span>{activityLabel}</span>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activityOpen ? 'rotate-180' : ''}`} />
+          </div>
+          {activityOpen && (
+            <div className="absolute left-0 top-full mt-1 bg-white border border-gray-100 rounded-lg shadow-md z-50 min-w-[150px] py-1">
+              {ACTIVITIES.map((a) => (
+                <div
+                  key={a.value}
+                  onClick={() => handleActivity(a.value)}
+                  className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
+                    currentActivity === a.value
+                      ? 'text-[#1E88E5] font-medium bg-[#1E88E5]/5'
+                      : 'text-gray-600 hover:text-[#607D8B] hover:bg-[#607D8B]/5'
+                  }`}
+                >
+                  {a.label}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* View toggle */}
