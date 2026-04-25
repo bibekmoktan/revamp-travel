@@ -87,6 +87,9 @@ const packages = [
     gallery: [
       IMG('1519904981063-b0cf448d6d11', 'Khumbu Icefall'),
       IMG('1506905489716-d5f7c687ab6d', 'Namche Bazaar'),
+      IMG('1475924369316-14474a1aaa8e', 'Trail to Base Camp'),
+      IMG('1469474968028-56623f02e42e', 'Tengboche Monastery'),
+      IMG('1547489636-d2bf4f4cb01e', 'Khumbu Glacier'),
     ],
     description:
       'Trek to the foot of the world\'s highest mountain through Sherpa villages, ancient monasteries, and stunning Himalayan scenery. Stand at 5,364 m and gaze up at Everest, Lhotse, and Nuptse.',
@@ -139,7 +142,13 @@ const packages = [
     duration: '16 Days',
     price: 1299,
     featureImage: IMG('1486911278844-86f6b7c0cbf1', 'Annapurna Circuit mountain view'),
-    gallery: [IMG('1475924369316-14474a1aaa8e', 'Thorong La Pass')],
+    gallery: [
+      IMG('1475924369316-14474a1aaa8e', 'Thorong La Pass'),
+      IMG('1486911278844-86f6b7c0cbf1', 'Annapurna panorama'),
+      IMG('1551632436-cbf8dd35adde', 'Muktinath Temple'),
+      IMG('1526772662643-615ee21e0e47', 'Poon Hill sunrise'),
+      IMG('1470770903914-1b1e7e4e5e2e', 'Rhododendron forest'),
+    ],
     description:
       'One of the world\'s greatest treks — circumnavigate the Annapurna massif crossing the legendary Thorong La Pass (5,416 m). Experience diverse landscapes from subtropical jungle to arid Tibetan plateau.',
     highlights: [
@@ -192,7 +201,13 @@ const packages = [
     duration: '11 Days',
     price: 899,
     featureImage: IMG('1507003211169-0a1dd7228f2d', 'Annapurna Base Camp sanctuary'),
-    gallery: [IMG('1454496522416-2fa93add35d3', 'Annapurna massif')],
+    gallery: [
+      IMG('1454496522416-2fa93add35d3', 'Annapurna massif'),
+      IMG('1507003211169-0a1dd7228f2d', 'Sanctuary amphitheatre'),
+      IMG('1532274402-852f246dafad', 'Machhapuchhre peak'),
+      IMG('1522165978-8aa4c4b2c44a', 'Glacial basin'),
+      IMG('1483728642387-6c3bdd6c29e5', 'Rhododendron trail'),
+    ],
     description:
       'Trek deep into the Annapurna Sanctuary — a glacial amphitheatre ringed by 7,000+ m peaks. One of Nepal\'s most scenic and accessible high-altitude base camps.',
     highlights: [
@@ -234,7 +249,13 @@ const packages = [
     duration: '9 Days',
     price: 749,
     featureImage: IMG('1483728642387-6c3bdd6c29e5', 'Langtang valley yaks'),
-    gallery: [IMG('1551632436-cbf8dd35adde', 'Kyanjin Gompa monastery')],
+    gallery: [
+      IMG('1551632436-cbf8dd35adde', 'Kyanjin Gompa monastery'),
+      IMG('1483728642387-6c3bdd6c29e5', 'Langtang valley yaks'),
+      IMG('1445789357-86d4c3fe4c3e', 'Tamang village'),
+      IMG('1469474968028-56623f02e42e', 'Mountain trail'),
+      IMG('1458442845773-0aed89d89c02', 'Himalayan sunrise'),
+    ],
     description:
       'Closest major trek to Kathmandu. Walk through dense forests into the "Valley of Glaciers", home to the Tamang people, yak cheese factories, and the sacred Kyanjin Gompa.',
     highlights: [
@@ -274,7 +295,13 @@ const packages = [
     duration: '5 Days',
     price: 449,
     featureImage: IMG('1526772662643-615ee21e0e47', 'Poon Hill sunrise Annapurna'),
-    gallery: [IMG('1470770903914-1b1e7e4e5e2e', 'Ghorepani rhododendron forest')],
+    gallery: [
+      IMG('1470770903914-1b1e7e4e5e2e', 'Ghorepani rhododendron forest'),
+      IMG('1526772662643-615ee21e0e47', 'Poon Hill viewpoint'),
+      IMG('1454496522416-2fa93add35d3', 'Annapurna range'),
+      IMG('1507003211169-0a1dd7228f2d', 'Gurung village'),
+      IMG('1532274402-852f246dafad', 'Mountain trail'),
+    ],
     description:
       'The perfect short trek for first-timers. Watch the sunrise paint the Annapurna and Dhaulagiri ranges gold from Poon Hill viewpoint (3,210 m) — one of Nepal\'s most photographed vistas.',
     highlights: [
@@ -309,7 +336,13 @@ const packages = [
     duration: '15 Days',
     price: 1599,
     featureImage: IMG('1501854140851-a503-f27b1d04ed54', 'Manaslu Circuit remote trail'),
-    gallery: [IMG('1469474968028-56623f02e42e', 'Larkya La Pass')],
+    gallery: [
+      IMG('1469474968028-56623f02e42e', 'Larkya La Pass'),
+      IMG('1501854140851-a503-f27b1d04ed54', 'Manaslu Circuit trail'),
+      IMG('1486911278844-86f6b7c0cbf1', 'Mountain panorama'),
+      IMG('1519904981063-b0cf448d6d11', 'High altitude camp'),
+      IMG('1547489636-d2bf4f4cb01e', 'Glacier views'),
+    ],
     description:
       'A restricted-area circuit around the world\'s 8th highest peak (8,163 m). More remote and less crowded than Annapurna, with stunning crossings over Larkya La Pass (5,160 m).',
     highlights: [
@@ -355,7 +388,13 @@ const packages = [
     duration: '12 Days',
     price: 1199,
     featureImage: IMG('1475924369316-14474a1aaa8e', 'Gokyo turquoise lake Everest'),
-    gallery: [IMG('1519904981063-b0cf448d6d11', 'Gokyo Ri summit view')],
+    gallery: [
+      IMG('1519904981063-b0cf448d6d11', 'Gokyo Ri summit view'),
+      IMG('1475924369316-14474a1aaa8e', 'Gokyo turquoise lakes'),
+      IMG('1464822859801-e21d4729df97', 'Ngozumpa Glacier'),
+      IMG('1506905489716-d5f7c687ab6d', 'Khumbu valley'),
+      IMG('1469474968028-56623f02e42e', 'High pass crossing'),
+    ],
     description:
       'Visit the stunning turquoise Gokyo lakes and summit Gokyo Ri (5,357 m) for arguably the finest panoramic view in Nepal — four 8,000 m peaks visible simultaneously.',
     highlights: [
@@ -398,7 +437,13 @@ const packages = [
     duration: '14 Days',
     price: 2499,
     featureImage: IMG('1544197289249-f9cd7a8d7e7e', 'Upper Mustang cave city desert'),
-    gallery: [IMG('1558618047-3563c059fa3b', 'Lo Manthang walled city')],
+    gallery: [
+      IMG('1558618047-3563c059fa3b', 'Lo Manthang walled city'),
+      IMG('1544197289249-f9cd7a8d7e7e', 'Mustang desert landscape'),
+      IMG('1498429089284-41f8cf3ffd39', 'Canyon trails'),
+      IMG('1578662996442-48f60103fc96', 'Ancient cave monastery'),
+      IMG('1523906730537-87a6c4e5c43b', 'Tibetan plateau'),
+    ],
     description:
       'Trek into the forbidden kingdom of Lo — a mystical, arid landscape of eroded canyons, ancient cave cities, and the medieval walled capital Lo Manthang. A truly off-the-beaten-track adventure.',
     highlights: [
@@ -443,7 +488,13 @@ const packages = [
     duration: '20 Days',
     price: 1899,
     featureImage: IMG('1547489636-d2bf4f4cb01e', 'Kongma La pass Khumbu glacier'),
-    gallery: [IMG('1464822859801-e21d4729df97', 'Khumbu valley panorama')],
+    gallery: [
+      IMG('1464822859801-e21d4729df97', 'Khumbu valley panorama'),
+      IMG('1547489636-d2bf4f4cb01e', 'Kongma La Pass'),
+      IMG('1519904981063-b0cf448d6d11', 'Everest Base Camp'),
+      IMG('1475924369316-14474a1aaa8e', 'Three passes route'),
+      IMG('1469474968028-56623f02e42e', 'Renjo La crossing'),
+    ],
     description:
       'The ultimate Khumbu adventure — cross all three high passes of the Everest region: Renjo La (5,360 m), Cho La (5,420 m), and Kongma La (5,535 m), plus Everest Base Camp and Gokyo Lakes.',
     highlights: [
@@ -494,7 +545,13 @@ const packages = [
     duration: '7 Days',
     price: 649,
     featureImage: IMG('1532274402-852f246dafad', 'Mardi Himal high camp Annapurna'),
-    gallery: [IMG('1487730116645-74f0d7d21a02', 'Mardi Himal ridge view')],
+    gallery: [
+      IMG('1487730116645-74f0d7d21a02', 'Mardi Himal ridge view'),
+      IMG('1532274402-852f246dafad', 'High camp sunrise'),
+      IMG('1454496522416-2fa93add35d3', 'Machhapuchhre close-up'),
+      IMG('1507003211169-0a1dd7228f2d', 'Rhododendron canopy'),
+      IMG('1526772662643-615ee21e0e47', 'Annapurna south face'),
+    ],
     description:
       'A hidden gem trail to the foot of Mardi Himal (5,587 m). The ridge-top forest trail offers intimate Machhapuchhre (Fish Tail) and Annapurna South views, far fewer crowds than neighbouring treks.',
     highlights: [
@@ -531,7 +588,13 @@ const packages = [
     duration: '10 Days',
     price: 799,
     featureImage: IMG('1522165978-8aa4c4b2c44a', 'Gosaikunda sacred lake'),
-    gallery: [IMG('1483728642387-6c3bdd6c29e5', 'Helambu valley view')],
+    gallery: [
+      IMG('1483728642387-6c3bdd6c29e5', 'Helambu valley view'),
+      IMG('1522165978-8aa4c4b2c44a', 'Gosaikunda Lake'),
+      IMG('1551632436-cbf8dd35adde', 'Lauribina Pass'),
+      IMG('1470770903914-1b1e7e4e5e2e', 'Rhododendron forest'),
+      IMG('1445789357-86d4c3fe4c3e', 'Hyolmo village'),
+    ],
     description:
       'Trek to the sacred alpine Gosaikunda Lake (4,380 m) — a revered Shiva pilgrimage site — then descend through the traditional Hyolmo culture of the Helambu valley.',
     highlights: [
@@ -571,7 +634,13 @@ const packages = [
     duration: '22 Days',
     price: 2199,
     featureImage: IMG('1540202404-1fde49f340be', 'Kanchenjunga massif north base camp'),
-    gallery: [IMG('1506905489716-d5f7c687ab6d', 'Yalung glacier south base camp')],
+    gallery: [
+      IMG('1506905489716-d5f7c687ab6d', 'Yalung glacier south base camp'),
+      IMG('1540202404-1fde49f340be', 'Kanchenjunga north face'),
+      IMG('1578662996442-48f60103fc96', 'Remote wilderness trail'),
+      IMG('1547489636-d2bf4f4cb01e', 'Tamur River gorge'),
+      IMG('1458442845773-0aed89d89c02', 'Eastern Himalaya'),
+    ],
     description:
       'A true wilderness expedition to both the North (5,143 m) and South (5,700 m) Base Camps of the world\'s third highest peak. Extremely remote, raw Himalayan beauty with almost no other trekkers.',
     highlights: [
@@ -624,7 +693,13 @@ const packages = [
     duration: '8 Days',
     price: 699,
     featureImage: IMG('1445789357-86d4c3fe4c3e', 'Tamang village monastery Langtang'),
-    gallery: [IMG('1483728642387-6c3bdd6c29e5', 'Traditional Tamang house')],
+    gallery: [
+      IMG('1483728642387-6c3bdd6c29e5', 'Traditional Tamang house'),
+      IMG('1445789357-86d4c3fe4c3e', 'Tamang monastery'),
+      IMG('1551632436-cbf8dd35adde', 'Prayer flags valley'),
+      IMG('1522165978-8aa4c4b2c44a', 'Hot springs Tatopani'),
+      IMG('1458442845773-0aed89d89c02', 'Ganesh Himal views'),
+    ],
     description:
       'Discover the living culture of the Tamang people — an ancient Tibetan-origin community. Visit hidden monasteries, traditional homes, and enjoy authentic village life near Langtang.',
     highlights: [
@@ -663,7 +738,13 @@ const packages = [
     duration: '10 Days',
     price: 1299,
     featureImage: IMG('1577717456-b55a7f0e8827', 'Rara Lake turquoise Nepal'),
-    gallery: [IMG('1475924369316-14474a1aaa8e', 'Rara National Park forest')],
+    gallery: [
+      IMG('1475924369316-14474a1aaa8e', 'Rara National Park forest'),
+      IMG('1577717456-b55a7f0e8827', 'Rara Lake turquoise'),
+      IMG('1578662996442-48f60103fc96', 'Remote western Nepal'),
+      IMG('1487730116645-74f0d7d21a02', 'Murma Top viewpoint'),
+      IMG('1498429089284-41f8cf3ffd39', 'Mugu valley'),
+    ],
     description:
       'Trek to Nepal\'s largest and deepest lake — the jewel of the remote mid-west. Rara Lake shimmers at 2,990 m amid pristine pine and juniper forest of Rara National Park. Truly off the grid.',
     highlights: [
@@ -704,7 +785,13 @@ const packages = [
     duration: '18 Days',
     price: 2099,
     featureImage: IMG('1549880481-af3e3a39fa03', 'Dhaulagiri massif glacier'),
-    gallery: [IMG('1486911278844-86f6b7c0cbf1', 'French Pass Dhaulagiri')],
+    gallery: [
+      IMG('1486911278844-86f6b7c0cbf1', 'French Pass Dhaulagiri'),
+      IMG('1549880481-af3e3a39fa03', 'Dhaulagiri glacier'),
+      IMG('1542314831-068cd1dbfeeb', 'Hidden Valley plateau'),
+      IMG('1469474968028-56623f02e42e', 'Myagdi gorge'),
+      IMG('1475924369316-14474a1aaa8e', 'Dhampus Pass crossing'),
+    ],
     description:
       'A raw, challenging circuit around the world\'s 7th highest peak (8,167 m). Cross the French Pass (5,360 m) and Dhampus Pass (5,182 m) on one of Nepal\'s least-trekked but most dramatic routes.',
     highlights: [
@@ -753,7 +840,13 @@ const packages = [
     duration: '14 Days',
     price: 1799,
     featureImage: IMG('1523906730537-87a6c4e5c43b', 'Nar Phu hidden valley Annapurna'),
-    gallery: [IMG('1486911278844-86f6b7c0cbf1', 'Kang La pass restricted area')],
+    gallery: [
+      IMG('1486911278844-86f6b7c0cbf1', 'Kang La pass restricted area'),
+      IMG('1523906730537-87a6c4e5c43b', 'Nar Phu hidden valley'),
+      IMG('1498429089284-41f8cf3ffd39', 'Tibetan-style village'),
+      IMG('1544197289249-f9cd7a8d7e7e', 'Phu walled village'),
+      IMG('1542314831-068cd1dbfeeb', 'Canyon trail Nar'),
+    ],
     description:
       'A restricted, hidden Himalayan valley frozen in time — the Nar Phu valley feels like Tibet before the border closed. Ancient salt-trade route villages, dramatic canyon landscapes, and the Kang La Pass (5,320 m).',
     highlights: [
@@ -798,7 +891,13 @@ const packages = [
     duration: '16 Days',
     price: 1699,
     featureImage: IMG('1498429089284-41f8cf3ffd39', 'Tsum valley Buddhist village'),
-    gallery: [IMG('1501854140851-a503-f27b1d04ed54', 'Ganesh Himal Tsum')],
+    gallery: [
+      IMG('1501854140851-a503-f27b1d04ed54', 'Ganesh Himal Tsum'),
+      IMG('1498429089284-41f8cf3ffd39', 'Mu Gompa monastery'),
+      IMG('1551632436-cbf8dd35adde', 'Ancient chortens Tsum'),
+      IMG('1445789357-86d4c3fe4c3e', 'Milarepa Cave pilgrimage'),
+      IMG('1523906730537-87a6c4e5c43b', 'Budhi Gandaki gorge'),
+    ],
     description:
       'The "Hidden Valley of Happiness" — Tsum Valley was opened to trekkers only in 2008. A deeply sacred Buddhist valley under the shadow of Ganesh Himal, where ancient pilgrimage routes, chortens, and gompas remain unchanged for centuries.',
     highlights: [
@@ -984,21 +1083,24 @@ async function seed() {
   console.log('Connected.');
 
   let inserted = 0;
-  let skipped  = 0;
+  let updated  = 0;
 
   for (const pkg of packages) {
-    const exists = await PackageModel.exists({ slug: pkg.slug });
-    if (exists) {
-      console.log(`  ⊙ skipped (already exists): ${pkg.slug}`);
-      skipped++;
-      continue;
+    const result = await PackageModel.updateOne(
+      { slug: pkg.slug },
+      { $set: pkg },
+      { upsert: true },
+    );
+    if (result.upsertedCount) {
+      console.log(`  ✓ inserted: ${pkg.title}`);
+      inserted++;
+    } else {
+      console.log(`  ↻ updated:  ${pkg.title}`);
+      updated++;
     }
-    await PackageModel.create(pkg);
-    console.log(`  ✓ inserted: ${pkg.title}`);
-    inserted++;
   }
 
-  console.log(`\nDone — ${inserted} inserted, ${skipped} skipped.`);
+  console.log(`\nDone — ${inserted} inserted, ${updated} updated.`);
   await mongoose.disconnect();
 }
 

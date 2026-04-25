@@ -1,92 +1,153 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
-import { Clock, Mountain, Users, Phone } from 'lucide-react';
+import { ChevronDown, CalendarDays, Minus, Plus } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
 
-const difficultyColor: Record<string, string> = {
-  easy:        'text-green-600 bg-green-50',
-  moderate:    'text-yellow-700 bg-yellow-50',
-  challenging: 'text-orange-600 bg-orange-50',
-  extreme:     'text-red-600 bg-red-50',
-};
+const GROUP_TIERS = [
+  { label: '1 pax',      min: 1, max: 1,  discount: 0.10 },
+  { label: '2 – 5 pax',  min: 2, max: 5,  discount: 0.15 },
+  { label: '6 – 8 pax',  min: 6, max: 8,  discount: 0.22 },
+  { label: '9 – 10 pax', min: 9, max: 10, discount: 0.28 },
+];
+
+function tierPrice(base: number, discount: number) {
+  return Math.round(base * (1 - discount));
+}
+
+function activeTier(travelers: number) {
+  return GROUP_TIERS.find(t => travelers >= t.min && travelers <= t.max) ?? GROUP_TIERS[0];
+}
 
 export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
-  const diffClass = difficultyColor[pkg.difficulty ?? ''] ?? 'text-gray-600 bg-gray-50';
+  const [groupOpen, setGroupOpen]   = useState(true);
+  const [date, setDate]             = useState('');
+  const [travelers, setTravelers]   = useState(1);
+
+  const base      = pkg.price;
+  const original  = Math.round(base * 1.15);
+  const tier      = activeTier(travelers);
+  const unitPrice = tierPrice(base, tier.discount);
+  const total     = unitPrice * travelers;
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 space-y-5">
+    <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden text-sm">
 
-      {/* Price */}
-      <div>
-        <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Starting from</p>
-        <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-bold text-gray-900">${pkg.price.toLocaleString()}</span>
-          <span className="text-gray-400 text-sm">/ person</span>
+      {/* Price header */}
+      <div className="px-5 pt-5 pb-4 flex items-start justify-between">
+        <div>
+          <p className="text-gray-500 text-xs mb-1">Price from:</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-[22px] font-bold text-gray-900">US${unitPrice.toLocaleString()}</span>
+            <span className="text-gray-400 line-through text-sm">US${original.toLocaleString()}</span>
+            <span className="text-gray-500 text-xs">P/P</span>
+          </div>
         </div>
       </div>
 
-      <hr className="border-gray-100" />
+      <div className="border-t border-gray-100" />
 
-      {/* Quick facts */}
-      <ul className="space-y-3 text-sm">
-        <li className="flex items-center gap-3 text-gray-600">
-          <Clock className="w-4 h-4 text-sky-500 shrink-0" />
-          <span><strong className="text-gray-900">Duration:</strong> {pkg.duration}</span>
-        </li>
-        {pkg.altitude && (
-          <li className="flex items-center gap-3 text-gray-600">
-            <Mountain className="w-4 h-4 text-sky-500 shrink-0" />
-            <span><strong className="text-gray-900">Max Altitude:</strong> {pkg.altitude}</span>
-          </li>
-        )}
-        <li className="flex items-center gap-3 text-gray-600">
-          <Users className="w-4 h-4 text-sky-500 shrink-0" />
-          <span><strong className="text-gray-900">Group Size:</strong> {pkg.groupSize}</span>
-        </li>
-        {pkg.difficulty && (
-          <li className="flex items-center gap-3">
-            <span className="w-4 h-4 shrink-0" />
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize ${diffClass}`}>
-              {pkg.difficulty}
-            </span>
-          </li>
-        )}
-      </ul>
+      {/* Group pricing */}
+      <div className="px-5">
+        <button
+          onClick={() => setGroupOpen(o => !o)}
+          className="w-full flex items-center justify-between py-3 text-gray-800 font-semibold"
+        >
+          <span>We offer group price</span>
+          {groupOpen
+            ? <Minus className="w-4 h-4 text-sky-800" />
+            : <ChevronDown className="w-4 h-4 text-sky-800" />}
+        </button>
 
-      <hr className="border-gray-100" />
-
-      {/* Best season pills */}
-      {pkg.bestSeason.length > 0 && (
-        <div>
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Best Season</p>
-          <div className="flex flex-wrap gap-1.5">
-            {pkg.bestSeason.map((m) => (
-              <span key={m} className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium">
-                {m}
-              </span>
+        {groupOpen && (
+          <div className="pb-3 space-y-0">
+            {GROUP_TIERS.map((t, i) => (
+              <div
+                key={t.label}
+                className={`flex justify-between py-2 text-gray-700 ${i < GROUP_TIERS.length - 1 ? 'border-b border-gray-100' : ''} ${tier === t ? 'font-semibold text-sky-800' : ''}`}
+              >
+                <span>{t.label}</span>
+                <span>US${tierPrice(base, t.discount).toLocaleString()}</span>
+              </div>
             ))}
           </div>
+        )}
+      </div>
+
+      <div className="border-t border-gray-100" />
+
+      {/* Departure date */}
+      <div className="px-5 py-4">
+        <p className="font-semibold text-gray-800 mb-2">Departure Date</p>
+        <div className="flex items-center border border-sky-800 px-3 py-2 gap-2">
+          <input
+            type="date"
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            className="flex-1 text-gray-500 focus:outline-none bg-transparent text-sm"
+            placeholder="Select Trip Date"
+          />
+          <CalendarDays className="w-5 h-5 text-gray-400 shrink-0" />
         </div>
-      )}
+      </div>
 
-      {/* CTA buttons */}
-      <Link
-        href={`/booking?package=${pkg.slug}`}
-        className="block w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3.5 rounded-xl text-center transition-colors duration-200 text-sm"
-      >
-        Book This Trek
-      </Link>
+      <div className="border-t border-gray-100" />
 
-      <Link
-        href="/custom-package"
-        className="block w-full border-2 border-sky-600 text-sky-600 hover:bg-sky-50 font-semibold py-3 rounded-xl text-center transition-colors duration-200 text-sm"
-      >
-        Customise Trip
-      </Link>
+      {/* Travelers */}
+      <div className="px-5 py-4">
+        <p className="font-semibold text-gray-800 mb-2">No. of Traveler</p>
+        <div className="flex items-center border border-gray-200 overflow-hidden">
+          <button
+            onClick={() => setTravelers(n => Math.max(1, n - 1))}
+            className="w-10 h-10 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-700 text-lg transition-colors"
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+          <span className="flex-1 text-center font-medium text-gray-800">{travelers}</span>
+          <button
+            onClick={() => setTravelers(n => Math.min(10, n + 1))}
+            className="w-10 h-10 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
 
-      {/* Contact */}
-      <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-1">
-        <Phone className="w-4 h-4" />
-        <span>Need help? <a href="tel:+977-1-0000000" className="text-sky-600 font-medium hover:underline">Call us</a></span>
+      <div className="border-t border-gray-100" />
+
+      {/* Total */}
+      <div className="px-5 py-3 flex items-center justify-between">
+        <span className="text-gray-600">Total Price</span>
+        <span className="text-lg font-bold text-gray-900">US${total.toLocaleString()}</span>
+      </div>
+
+      <div className="border-t border-gray-100" />
+
+      {/* Buttons */}
+      <div className="px-5 py-4 space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Link
+            href={`/booking?package=${pkg.slug}&travelers=${travelers}&date=${date}`}
+            className="bg-gray-900 hover:bg-black text-white font-bold py-2.5 text-center text-xs tracking-wide uppercase transition-colors"
+          >
+            Book Now
+          </Link>
+          <button className="bg-gray-900 hover:bg-black text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors">
+            Add to Cart
+          </button>
+        </div>
+
+        <button className="w-full bg-[#1E88E5] hover:bg-[#1565C0] text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors">
+          Check Availability
+        </button>
+
+        <Link
+          href="/custom-package"
+          className="block w-full bg-[#1E88E5] hover:bg-[#1565C0] text-white font-bold py-2.5 text-xs tracking-wide uppercase text-center transition-colors"
+        >
+          Send Inquiry
+        </Link>
       </div>
     </div>
   );
