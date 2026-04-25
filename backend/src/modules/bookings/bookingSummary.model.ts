@@ -21,7 +21,7 @@ const bookingSummarySchema = new Schema<IBookingSummary>(
       default: 'reserved',
       index: true,
     },
-    expiresAt: { type: Date, required: true, index: true },
+    expiresAt: { type: Date, required: true },
   },
   { timestamps: true }
 );

@@ -16,6 +16,16 @@ export interface IItinerary {
   activities: string[];
 }
 
+export interface IFaq {
+  question: string;
+  answer: string;
+}
+
+export interface IMoreInfo {
+  title: string;
+  points: string[];
+}
+
 export interface IPackage {
   slug: string;
   title: string;
@@ -29,11 +39,19 @@ export interface IPackage {
   description: string;
   highlights: string[];
   includes: string[];
+  notIncluded: string[];
   location: string;
   difficulty?: string;
   altitude?: string;
   groupSize: string;
   bestSeason: string[];
+  tripStart: string;
+  tripEnd: string;
+  meals: string;
+  accommodation: string;
+  mapUrl?: string;
+  faq: IFaq[];
+  moreInfo: IMoreInfo[];
   itinerary: IItinerary[];
   status?: 'active' | 'inactive';
 }

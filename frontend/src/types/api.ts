@@ -10,6 +10,16 @@ export interface ItineraryDay {
   activities: string[];
 }
 
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface MoreInfoItem {
+  title: string;
+  points: string[];
+}
+
 export interface ApiPackage {
   _id: string;
   slug: string;
@@ -24,11 +34,19 @@ export interface ApiPackage {
   description: string;
   highlights: string[];
   includes: string[];
+  notIncluded?: string[];
   location: string;
   difficulty?: 'easy' | 'moderate' | 'challenging' | 'extreme';
   altitude?: string;
   groupSize: string;
   bestSeason: string[];
+  tripStart?: string;
+  tripEnd?: string;
+  meals?: string;
+  accommodation?: string;
+  mapUrl?: string;
+  faq?: FaqItem[];
+  moreInfo?: MoreInfoItem[];
   itinerary: ItineraryDay[];
   status: 'active' | 'inactive';
   createdAt: string;

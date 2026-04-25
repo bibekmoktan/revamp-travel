@@ -46,7 +46,7 @@ export const PackageService = {
 
   async getAllPackages(query: Record<string, any>) {
     try {
-      const { searchTerm, category, minPrice, maxPrice, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc', status } = query;
+      const { searchTerm, category, minPrice, maxPrice, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc', status, difficulty, duration, season } = query;
       const filter: any = {};
 
       // Build filter
@@ -60,6 +60,31 @@ export const PackageService = {
       }
       if (category) filter.category = category;
       if (status) filter.status = status;
+      if (difficulty) filter.difficulty = difficulty;
+      if (season) filter.bestSeason = { $elemMatch: { $regex: new RegExp(season, 'i') } };
+      if (duration) {
+        const ranges: Record<string, { min: number; max?: number }> = {
+          '1':   { min: 1, max: 1 },
+          '2-3': { min: 2, max: 3 },
+          '4-7': { min: 4, max: 7 },
+          '8+':  { min: 8 },
+        };
+        const range = ranges[duration];
+        if (range) {
+          // Extract leading integer from duration string e.g. "7 Days" → 7
+          const numDays = {
+            $convert: {
+              input: { $arrayElemAt: [{ $split: ['$duration', ' '] }, 0] },
+              to: 'int',
+              onError: 0,
+              onNull: 0,
+            },
+          };
+          const conds: any[] = [{ $gte: [numDays, range.min] }];
+          if (range.max !== undefined) conds.push({ $lte: [numDays, range.max] });
+          filter.$expr = { $and: conds };
+        }
+      }
       if (minPrice || maxPrice) {
         filter.price = {};
         if (minPrice) filter.price.$gte = Number(minPrice);

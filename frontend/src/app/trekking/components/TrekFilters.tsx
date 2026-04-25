@@ -14,6 +14,17 @@ const PRICE_STEP = 50;
 
 const FILTER_SECTIONS = [
   {
+    label: 'Activity',
+    key: 'activity',
+    options: [
+      { label: 'Trekking',      value: 'trekking'      },
+      { label: 'Hiking',        value: 'hiking'        },
+      { label: 'Peak Climbing', value: 'peak-climbing' },
+      { label: 'Rafting',       value: 'rafting'       },
+      { label: 'Adventures',    value: 'adventures'    },
+    ],
+  },
+  {
     label: 'Difficulty',
     key: 'difficulty',
     options: [
@@ -230,10 +241,9 @@ export default function TrekFilters() {
     (currentMinPrice || currentMaxPrice ? 1 : 0);
 
   const clearAll = useCallback(() => {
-    setParam({
-      minPrice: null, maxPrice: null,
-      difficulty: null, duration: null, season: null, trekType: null,
-    });
+    const updates: Record<string, null> = { minPrice: null, maxPrice: null };
+    FILTER_SECTIONS.forEach((s) => { updates[s.key] = null; });
+    setParam(updates);
   }, [setParam]);
 
   return (

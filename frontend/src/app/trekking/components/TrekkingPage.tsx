@@ -2,38 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import HeroImage from '../../../../public/images/treks/bg-1.jpg';
-import TrekCard from './TrekCard';
-import TrekListItem from './TrekListItem';
 import TrekFilters from './TrekFilters';
 import TrekSortBar from './TrekSortBar';
-import Pagination from './Pagination';
-import type { ApiPackage, PaginationMeta } from '@/types/api';
 
 interface TrekkingPageProps {
-  packages: ApiPackage[];
-  meta: PaginationMeta;
-  view: 'card' | 'list';
+  children: React.ReactNode;
 }
 
-function PackageGridSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="bg-white rounded-[8px] overflow-hidden shadow-sm animate-pulse">
-          <div className="h-64 bg-[#E3F2FD]" />
-          <div className="p-6 space-y-3">
-            <div className="h-3 bg-[#E3F2FD] rounded w-1/3" />
-            <div className="h-4 bg-[#E3F2FD] rounded w-3/4" />
-            <div className="h-3 bg-[#E3F2FD] rounded w-1/2" />
-            <div className="h-10 bg-[#E3F2FD] rounded mt-4" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps) {
+export default function TrekkingPage({ children }: TrekkingPageProps) {
   return (
     <div className="min-h-screen bg-[#F8FAFB]">
 
@@ -50,10 +26,10 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
         <div className="relative z-10 flex items-center justify-center h-full px-4 md:pt-[200px]">
           <div className="text-center text-white max-w-[700px]">
             <h1 className="text-[24px] md:text-[42px] font-bold mb-4 drop-shadow-lg leading-[1.2]">
-             Step beyond the ordinary into the heart of the Himalayas.
+              Step beyond the ordinary into the heart of the Himalayas.
             </h1>
             <p className="text-sm md:text-base text-white/80 leading-[1.2] mb-8">
-              Explore world-class trekking routes through ancient valleys, high-altitude passes, and remote villages. Whether you're a first-time hiker or a seasoned mountaineer, Nepal has a trail that will leave you breathless.
+              Explore world-class trekking routes through ancient valleys, high-altitude passes, and remote villages. Whether you&apos;re a first-time hiker or a seasoned mountaineer, Nepal has a trail that will leave you breathless.
             </p>
             <Link
               href="/custom-package"
@@ -63,85 +39,30 @@ export default function TrekkingPage({ packages, meta, view }: TrekkingPageProps
             </Link>
           </div>
         </div>
-
-        {/* Stats bar */}
-        {/* <div className="absolute bottom-0 left-0 right-0 bg-[#0F4C81]/80 h-[200px] backdrop-blur-sm border-t border-white/10">
-          <div className="max-w-[1366px] mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-white/20 text-center text-white">
-            <div>
-              <p className="text-2xl font-bold">{meta.total}+</p>
-              <p className="text-xs text-blue-200 uppercase tracking-wide">Trekking Packages</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold">8848m</p>
-              <p className="text-xs text-blue-200 uppercase tracking-wide">Highest Summit</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold">10K+</p>
-              <p className="text-xs text-blue-200 uppercase tracking-wide">Happy Trekkers</p>
-            </div>
-          </div>
-        </div> */}
       </div>
 
       {/* ── Main content ─────────────────────────────────────────────────── */}
       <div id="packages" className="max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-        {/* Section heading */}
-        <div className="mb-6">
-          {/* <h2 className="text-2xl font-bold text-[#0F4C81] mb-1">All Treks</h2> */}
-        </div>
 
         {/* ── Two-column layout ── */}
         <div className="flex gap-6 items-start">
 
           {/* ── Left sidebar ── */}
           <aside className="hidden lg:block w-72 shrink-0 sticky top-4">
-            <Suspense fallback={<div className="h-96 bg-white  animate-pulse" />}>
+            <Suspense fallback={<div className="h-96 bg-white animate-pulse rounded-xl" />}>
               <TrekFilters />
             </Suspense>
           </aside>
 
-          {/* ── Right: sort bar + cards ── */}
+          {/* ── Right: sort bar + results ── */}
           <div className="flex-1 min-w-0">
-
-            {/* Sort bar */}
             <div className="mb-5">
-              <Suspense fallback={<div className="h-12 animate-pulse" />}>
-                <TrekSortBar total={meta.total} />
+              <Suspense fallback={<div className="h-12 animate-pulse rounded-xl bg-white" />}>
+                <TrekSortBar />
               </Suspense>
             </div>
 
-            {/* Package listing */}
-            {packages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center bg-white ">
-                <div className="w-20 h-20 bg-[#E3F2FD] rounded-full flex items-center justify-center mb-6">
-                  <span className="text-4xl">🏔️</span>
-                </div>
-                <h3 className="text-xl font-semibold text-[#37474F] mb-2">No treks found</h3>
-                <p className="text-[#607D8B] max-w-sm">
-                  Try adjusting your filters to find the perfect adventure.
-                </p>
-              </div>
-            ) : view === 'card' ? (
-              <Suspense fallback={<PackageGridSkeleton />}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {packages.map((pkg) => (
-                    <TrekCard key={pkg._id} package={pkg} />
-                  ))}
-                </div>
-              </Suspense>
-            ) : (
-              <div className="space-y-4">
-                {packages.map((pkg) => (
-                  <TrekListItem key={pkg._id} package={pkg} />
-                ))}
-              </div>
-            )}
-
-            {/* Pagination */}
-            <Suspense>
-              <Pagination currentPage={meta.page} totalPages={meta.pages} />
-            </Suspense>
+            {children}
           </div>
         </div>
       </div>

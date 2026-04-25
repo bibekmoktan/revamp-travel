@@ -1,16 +1,18 @@
 import { Router } from 'express';
 import { UserControllers } from './user.controller';
+import { protect } from '../../middlewares/protect';
+import { authorize } from '../../middlewares/authorize';
 
 const router = Router();
 
-// Basic CRUD operations
-router.post('/', ...UserControllers.createUser);
-router.get('/', ...UserControllers.getAllUsers);
-router.get('/:id', UserControllers.getUserById);
-router.put('/:id', ...UserControllers.updateUser);
-router.delete('/:id', UserControllers.deleteUser);
+// Admin-only routes
+router.post('/', protect, authorize('admin'), ...UserControllers.createUser);
+router.get('/', protect, authorize('admin'), ...UserControllers.getAllUsers);
+router.get('/:id', protect, authorize('admin'), UserControllers.getUserById);
+router.put('/:id', protect, authorize('admin'), ...UserControllers.updateUser);
+router.delete('/:id', protect, authorize('admin'), UserControllers.deleteUser);
 
-// Password management
-router.patch('/:id/password', ...UserControllers.updatePassword);
+// Password can be updated by the authenticated user themselves
+router.patch('/:id/password', protect, ...UserControllers.updatePassword);
 
 export const UserRoutes = router;
