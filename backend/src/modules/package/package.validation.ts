@@ -56,6 +56,9 @@ export const createPackageSchema = z.object({
   includes: z
     .array(z.string().min(1, 'Include item cannot be empty'))
     .min(1, 'At least one include item is required'),
+  notIncluded: z
+    .array(z.string().min(1, 'Not-included item cannot be empty'))
+    .default([]),
   location: z
     .string()
     .min(1, 'Location is required')
@@ -74,6 +77,24 @@ export const createPackageSchema = z.object({
   bestSeason: z
     .array(z.string().min(1, 'Season cannot be empty'))
     .min(1, 'At least one best season is required'),
+  tripStart: z.string().max(200).default(''),
+  tripEnd:   z.string().max(200).default(''),
+  meals:         z.string().max(200).default(''),
+  accommodation: z.string().max(200).default(''),
+  mapUrl:        z.string().url('Invalid map URL').optional().or(z.literal('')),
+  faq: z
+    .array(z.object({
+      question: z.string().min(1, 'Question is required'),
+      answer:   z.string().min(1, 'Answer is required'),
+    }))
+    .default([]),
+  moreInfo: z
+    .array(z.object({
+      title:  z.string().min(1, 'Title is required'),
+      points: z.array(z.string().min(1, 'Point cannot be empty'))
+                .min(1, 'At least one bullet point is required'),
+    }))
+    .default([]),
   itinerary: z
     .array(itinerarySchema)
     .min(1, 'At least one itinerary day is required'),
@@ -110,6 +131,13 @@ export const packageQuerySchema = z.object({
   status: z
     .enum(['active', 'inactive'])
     .optional(),
+  difficulty: z
+    .enum(['easy', 'moderate', 'challenging', 'extreme'])
+    .optional(),
+  duration: z
+    .enum(['1', '2-3', '4-7', '8+'])
+    .optional(),
+  season: z.string().optional(),
 });
 
 export const updatePackageStatusSchema = z.object({

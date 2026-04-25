@@ -1,16 +1,18 @@
-import { getPackages } from '@/lib/api';
+import { Suspense } from 'react';
 import TrekkingPage from './components/TrekkingPage';
+import PackageResults from './components/PackageResults';
+import PackageGridSkeleton from './components/PackageGridSkeleton';
 import type { PackageFilters } from '@/types/api';
-
-interface PageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}
 
 export const metadata = {
   title: 'Trekking Packages | Travel Nepal',
   description:
     'Discover breathtaking trekking adventures across the Himalayas. Browse packages by price, duration, difficulty, and season.',
 };
+
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
 
 export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -21,7 +23,8 @@ export default async function Page({ searchParams }: PageProps) {
   };
 
   const filters: PackageFilters = {
-    category:   'trekking',
+    // If an activity is selected use it as the category; fall back to 'trekking'
+    category:   getString('activity') ?? 'trekking',
     searchTerm: getString('searchTerm'),
     minPrice:   getString('minPrice') ? Number(getString('minPrice')) : undefined,
     maxPrice:   getString('maxPrice') ? Number(getString('maxPrice')) : undefined,
@@ -38,22 +41,15 @@ export default async function Page({ searchParams }: PageProps) {
 
   const view = getString('view') === 'list' ? 'list' : 'card';
 
-  // Fetch on the server — no loading flash, full SSR with caching
-  let packages: Awaited<ReturnType<typeof getPackages>>['data'] = [];
-  let meta: Awaited<ReturnType<typeof getPackages>>['meta'] = {
-    total: 0,
-    page: 1,
-    pages: 1,
-    limit: 12,
-  };
+  // Changing the key forces Suspense to unmount the old result and show the
+  // skeleton while the server fetches fresh data for the new filter combination.
+  const filterKey = JSON.stringify({ ...filters, view });
 
-  try {
-    const result = await getPackages(filters);
-    packages = result.data;
-    meta = result.meta;
-  } catch {
-    // Backend unavailable — render empty state rather than crash
-  }
-
-  return <TrekkingPage packages={packages} meta={meta} view={view} />;
+  return (
+    <TrekkingPage>
+      <Suspense key={filterKey} fallback={<PackageGridSkeleton />}>
+        <PackageResults filters={filters} view={view} />
+      </Suspense>
+    </TrekkingPage>
+  );
 }

@@ -3,12 +3,12 @@ import { ITraveler } from './traveler.interface';
 
 const travelerSchema = new Schema<ITraveler>(
   {
-    booking: { type: Schema.Types.ObjectId, ref: 'BookingSummary', required: true, index: true },
+    booking: { type: Schema.Types.ObjectId, ref: 'BookingSummary', required: true },
     fullName: { type: String, required: true, trim: true, maxlength: 200 },
     age: { type: Number, min: 0, max: 120 },
     gender: { type: String, trim: true, maxlength: 20 },
     idProof: { type: String, trim: true, maxlength: 200 },
-    status: { type: String, enum: ['active', 'cancelled'], default: 'active', index: true },
+    status: { type: String, enum: ['active', 'cancelled'], default: 'active' },
   },
   { timestamps: true }
 );

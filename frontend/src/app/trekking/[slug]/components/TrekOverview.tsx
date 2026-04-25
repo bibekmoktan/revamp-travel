@@ -1,32 +1,16 @@
 import { Clock, Mountain, Users, Gauge, CheckCircle, MapPin, MapPinOff, UtensilsCrossed, BedDouble } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
 
-function deriveMeals(includes: string[]): string {
-  const hit = includes.find(s => /meal|board|breakfast|lunch|dinner/i.test(s));
-  if (!hit) return 'Full Board';
-  if (/full board|B\/L\/D|breakfast.*lunch.*dinner/i.test(hit)) return 'Full Board (B/L/D)';
-  if (/breakfast/i.test(hit)) return 'Breakfast Only';
-  return 'Full Board';
-}
-
-function deriveAccommodation(includes: string[]): string {
-  const hit = includes.find(s => /accommodation|teahouse|tea house|hotel|camp|lodge/i.test(s));
-  if (!hit) return 'Teahouse';
-  if (/camp/i.test(hit)) return 'Camping';
-  if (/hotel/i.test(hit)) return 'Hotel';
-  return 'Teahouse';
-}
-
 export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
   const stats = [
-    { icon: Clock,           label: 'Duration',      value: pkg.duration },
-    { icon: Mountain,        label: 'Max Altitude',  value: pkg.altitude ?? '—' },
-    { icon: Users,           label: 'Group Size',    value: pkg.groupSize },
-    { icon: Gauge,           label: 'Difficulty',    value: pkg.difficulty ?? '—' },
-    { icon: MapPin,          label: 'Trip Starts',   value: 'Kathmandu' },
-    { icon: MapPinOff,       label: 'Trip Ends',     value: 'Kathmandu' },
-    { icon: UtensilsCrossed, label: 'Meals',         value: deriveMeals(pkg.includes) },
-    { icon: BedDouble,       label: 'Accommodation', value: deriveAccommodation(pkg.includes) },
+    { icon: Clock,           label: 'Duration',       value: pkg.duration },
+    { icon: Mountain,        label: 'Max Altitude',   value: pkg.altitude       || '—' },
+    { icon: Users,           label: 'Group Size',     value: pkg.groupSize },
+    { icon: Gauge,           label: 'Difficulty',     value: pkg.difficulty     || '—' },
+    { icon: MapPin,          label: 'Trip Starts',    value: pkg.tripStart      || '—' },
+    { icon: MapPinOff,       label: 'Trip Ends',      value: pkg.tripEnd        || '—' },
+    { icon: UtensilsCrossed, label: 'Meals',          value: pkg.meals          || '—' },
+    { icon: BedDouble,       label: 'Accommodation',  value: pkg.accommodation  || '—' },
   ];
 
   return (
