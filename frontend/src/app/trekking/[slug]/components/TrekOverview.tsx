@@ -1,12 +1,32 @@
-import { Clock, Mountain, Users, Calendar, CheckCircle } from 'lucide-react';
+import { Clock, Mountain, Users, Gauge, CheckCircle, MapPin, MapPinOff, UtensilsCrossed, BedDouble } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
+
+function deriveMeals(includes: string[]): string {
+  const hit = includes.find(s => /meal|board|breakfast|lunch|dinner/i.test(s));
+  if (!hit) return 'Full Board';
+  if (/full board|B\/L\/D|breakfast.*lunch.*dinner/i.test(hit)) return 'Full Board (B/L/D)';
+  if (/breakfast/i.test(hit)) return 'Breakfast Only';
+  return 'Full Board';
+}
+
+function deriveAccommodation(includes: string[]): string {
+  const hit = includes.find(s => /accommodation|teahouse|tea house|hotel|camp|lodge/i.test(s));
+  if (!hit) return 'Teahouse';
+  if (/camp/i.test(hit)) return 'Camping';
+  if (/hotel/i.test(hit)) return 'Hotel';
+  return 'Teahouse';
+}
 
 export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
   const stats = [
-    { icon: Clock,    label: 'Duration',   value: pkg.duration },
-    { icon: Mountain, label: 'Max Altitude', value: pkg.altitude ?? '—' },
-    { icon: Users,    label: 'Group Size',  value: pkg.groupSize },
-    { icon: Calendar, label: 'Best Season', value: pkg.bestSeason.slice(0, 3).join(', ') || '—' },
+    { icon: Clock,           label: 'Duration',      value: pkg.duration },
+    { icon: Mountain,        label: 'Max Altitude',  value: pkg.altitude ?? '—' },
+    { icon: Users,           label: 'Group Size',    value: pkg.groupSize },
+    { icon: Gauge,           label: 'Difficulty',    value: pkg.difficulty ?? '—' },
+    { icon: MapPin,          label: 'Trip Starts',   value: 'Kathmandu' },
+    { icon: MapPinOff,       label: 'Trip Ends',     value: 'Kathmandu' },
+    { icon: UtensilsCrossed, label: 'Meals',         value: deriveMeals(pkg.includes) },
+    { icon: BedDouble,       label: 'Accommodation', value: deriveAccommodation(pkg.includes) },
   ];
 
   return (
@@ -59,22 +79,6 @@ export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
         </div>
       )}
 
-      {/* Best Season */}
-      {pkg.bestSeason.length > 0 && (
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Best Season</h2>
-          <div className="flex flex-wrap gap-2">
-            {pkg.bestSeason.map((month) => (
-              <span
-                key={month}
-                className="bg-blue-50 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-full border border-blue-100"
-              >
-                {month}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
