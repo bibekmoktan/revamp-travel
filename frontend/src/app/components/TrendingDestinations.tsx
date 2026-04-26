@@ -1,108 +1,71 @@
-import React from "react";
-import Image from "next/image";
+import Image from 'next/image';
+import Link from 'next/link';
+import { trendingDestinations } from '@/data/destinations';
 
-const destinations = [
-  { title: "Chitwan", image: "/images/home/chitwan.jpg" },
-  { title: "Eastern Nepal", image: "/images/home/Eastern-nepal.jpg" },
-  { title: "Pokhara", image: "/images/home/pokhara.jpg" },
-  { title: "Rara Lake", image: "/images/home/rara.jpg" },
-  { title: "Kathmandu", image: "/images/home/kathmandu.jpg" },
-  { title: "Mustang", image: "/images/home/mustang.jpg" },
-];
+const [d0, d1, d2, d3, d4, d5] = trendingDestinations;
 
-const TrendingDestinations = () => {
+export default function TrendingDestinations() {
   return (
-    <section className="px-6 py-10">
+    <section className="px-6 md:px-16 py-12">
       <div className="max-w-[1320px] mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900">Trending Destinations</h2>
-          <a href="#" className="text-sm text-blaxk-600 px-4">See all</a>
+          <Link href="/destinations" className="text-sm text-sky-600 hover:underline font-medium">
+            See all
+          </Link>
         </div>
 
-        {/* Layout Grid */}
+        {/* Mosaic layout */}
         <div className="flex gap-4">
-          {/* Left Column (2/3 width) */}
+          {/* Left 2/3 */}
           <div className="w-2/3 h-[500px] flex flex-col gap-4">
-            {/* Top Row */}
+            {/* Top row */}
             <div className="flex gap-4 h-1/2">
-              {/* Box 1 - Cruises */}
-              <div className="w-1/3 relative overflow-hidden rounded-xl">
-                <Image
-                  src={destinations[0].image}
-                  alt={destinations[0].title}
-                  fill
-                  className="object-cover transition-transform duration-300 hover:scale-110"
-                />
-                <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[0].title}</div>
-              </div>
-
-              {/* Box 2 - Beach Tours */}
-              <div className="w-2/3 relative overflow-hidden rounded-xl">
-                <Image
-                  src={destinations[1].image}
-                  alt={destinations[1].title}
-                  fill
-                  className="object-cover transition-transform duration-300 hover:scale-110"
-                />
-                <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[1].title}</div>
-              </div>
+              <DestCard dest={d0} className="w-1/3" />
+              <DestCard dest={d1} className="w-2/3" />
             </div>
-
-            {/* Bottom Row */}
+            {/* Bottom row */}
             <div className="flex gap-4 h-1/2">
-              {/* Box 3 - Museum Tour */}
-              <div className="w-1/3 relative overflow-hidden rounded-xl">
-                <Image
-                  src={destinations[3].image}
-                  alt={destinations[3].title}
-                  fill
-                  className="object-cover transition-transform duration-300 hover:scale-110"
-                />
-                <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[3].title}</div>
-              </div>
-
-              {/* Nested Box 4 & 5 */}
+              <DestCard dest={d3} className="w-1/3" />
               <div className="w-2/3 flex gap-4">
-                {/* Box 4 - Food */}
-                <div className="w-1/3 relative overflow-hidden rounded-xl">
-                  <Image
-                    src={destinations[4].image}
-                    alt={destinations[4].title}
-                    fill
-                    className="object-cover transition-transform duration-300 hover:scale-110"
-                  />
-                  <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[4].title}</div>
-                </div>
-
-                {/* Box 5 - Hiking */}
-                <div className="w-2/3 relative overflow-hidden rounded-xl">
-                  <Image
-                    src={destinations[5].image}
-                    alt={destinations[5].title}
-                    fill
-                    className="object-cover transition-transform duration-300 hover:scale-110"
-                  />
-                  <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[5].title}</div>
-                </div>
+                <DestCard dest={d4} className="w-1/3" />
+                <DestCard dest={d5} className="w-2/3" />
               </div>
             </div>
           </div>
 
-          {/* Right Column - City Tours */}
-          <div className="w-1/3 h-[515px] relative overflow-hidden rounded-xl">
-            <Image
-              src={destinations[2].image}
-              alt={destinations[2].title}
-              fill
-              className="object-cover transition-transform duration-300 hover:scale-110"
-            />
-            <div className="absolute bottom-3 left-3 text-white font-semibold drop-shadow">{destinations[2].title}</div>
-          </div>
+          {/* Right 1/3 — tall card */}
+          <DestCard dest={d2} className="w-1/3 h-[500px]" tall />
         </div>
       </div>
     </section>
   );
-};
+}
 
-export default TrendingDestinations;
+function DestCard({
+  dest,
+  className,
+  tall,
+}: {
+  dest: (typeof trendingDestinations)[number];
+  className?: string;
+  tall?: boolean;
+}) {
+  return (
+    <Link
+      href={`/destinations/${dest.slug}`}
+      className={`group relative overflow-hidden block ${className ?? ''}`}
+    >
+      <Image
+        src={dest.image}
+        alt={dest.label}
+        fill
+        className="object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+      <div className={`absolute left-3 right-3 ${tall ? 'bottom-4' : 'bottom-3'}`}>
+        <p className="text-white font-semibold text-[14px] drop-shadow">{dest.label}</p>
+      </div>
+    </Link>
+  );
+}

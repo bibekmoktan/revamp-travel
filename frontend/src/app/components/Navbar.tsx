@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { User, ShoppingCart, Heart } from 'lucide-react';
 import logo from '../../../public/images/home/logo.svg';
+import HeroSearch from './HeroSearch';
 
 export default function Navbar() {
     const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
@@ -20,21 +21,21 @@ export default function Navbar() {
             title: 'Travel Packages',
             sections: [
                 {
-                    title: 'Popular Destinations',
+                    title: 'By Category',
                     links: [
-                        { name: 'Nepal Himalaya Tours', href: '/packages/nepal-himalaya' },
-                        { name: 'Everest Base Camp', href: '/packages/everest-base-camp' },
-                        { name: 'Annapurna Circuit', href: '/packages/annapurna-circuit' },
-                        { name: 'Langtang Valley', href: '/packages/langtang-valley' }
+                        { name: '🥾 Trekking in Nepal', href: '/trekking?category=trekking' },
+                        { name: '🏔️ Peak Climbing',     href: '/trekking?category=peak-climbing' },
+                        { name: '🚁 Heli Tour',          href: '/trekking?category=heli-tour' },
+                        { name: '🌄 One Day Tour',       href: '/trekking?category=one-day-tour' },
                     ]
                 },
                 {
-                    title: 'Package Types',
+                    title: 'Curated Lists',
                     links: [
-                        { name: 'Adventure Tours', href: '/packages/adventure' },
-                        { name: 'Cultural Tours', href: '/packages/cultural' },
-                        { name: 'Luxury Tours', href: '/packages/luxury' },
-                        { name: 'Budget Tours', href: '/packages/budget' }
+                        { name: 'Best Seller',          href: '/trekking' },
+                        { name: 'Top Destinations',     href: '/destinations' },
+                        { name: 'Trending Now',         href: '/destinations' },
+                        { name: 'Custom Package',       href: '/custom-package' },
                     ]
                 }
             ]
@@ -43,17 +44,25 @@ export default function Navbar() {
             title: 'Destinations',
             sections: [
                 {
-                    title: 'Asia',
+                    title: 'By Region',
                     links: [
-                        { name: 'Nepal', href: '/destinations/nepal' },
-                        { name: 'Tibet', href: '/destinations/tibet' },
-                        { name: 'Bhutan', href: '/destinations/bhutan' },
+                        { name: 'Everest Region',    href: '/destinations/everest-region' },
+                        { name: 'Annapurna Region',  href: '/destinations/annapurna-region' },
+                        { name: 'Langtang Region',   href: '/destinations/langtang-region' },
+                        { name: 'Manaslu Region',    href: '/destinations/manaslu-region' },
+                        { name: 'Mustang Region',    href: '/destinations/mustang-region' },
+                        { name: 'Dolpa Region',      href: '/destinations/dolpa-region' },
                     ]
                 },
                 {
-                    title: 'Africa',
+                    title: 'Trending Places',
                     links: [
-                        { name: 'Tanzania', href: '/destinations/tanzania' },
+                        { name: 'Upper Mustang',     href: '/destinations/upper-mustang' },
+                        { name: 'Pokhara',           href: '/destinations/pokhara' },
+                        { name: 'Chitwan',           href: '/destinations/chitwan' },
+                        { name: 'Kathmandu Valley',  href: '/destinations/kathmandu-valley' },
+                        { name: 'Rara Lake',         href: '/destinations/rara-lake' },
+                        { name: 'Eastern Nepal',     href: '/destinations/eastern-nepal' },
                     ]
                 }
             ]
@@ -124,153 +133,78 @@ export default function Navbar() {
 
             {/* Main Navbar */}
             <div className="bg-white border-b border-gray-200 shadow-sm w-full">
-            <nav
-                className="flex items-center justify-between w-full px-6 md:px-16 h-[80px] max-w-[1320px] mx-auto"
-                onMouseLeave={handleMouseLeave}
-            >
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 cursor-pointer">
-                    <div className="relative w-7 h-7">
-                        <Image
-                            src={logo}
-                            alt="HI-TRAVEL logo"
-                            fill
-                            className="object-contain"
-                            priority
-                        />
-                    </div>
-                    <span className="text-lg font-semibold text-gray-900">HI-TRAVEL</span>
-                </Link>
+                <nav
+                    className="flex items-center justify-between w-full px-6 md:px-16 h-[80px] max-w-[1320px] mx-auto gap-6"
+                    onMouseLeave={handleMouseLeave}
+                >
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-2 cursor-pointer shrink-0">
+                        <div className="relative w-7 h-7">
+                            <Image src={logo} alt="HI-TRAVEL logo" fill className="object-contain" priority />
+                        </div>
+                        <span className="text-lg font-semibold text-gray-900">HI-TRAVEL</span>
+                    </Link>
 
-                {/* Desktop Nav Links */}
-                <div className="hidden lg:flex items-center gap-[50px] text-[16px] font-medium text-gray-700">
-                    <div
-                        className="relative"
-                        onMouseEnter={() => handleMouseEnter('packages')}
-                    >
-                        <Link href="/packages" className="hover:text-sky-700 transition">
-                            Packages
+                    {/* Desktop Nav Links */}
+                    <div className="hidden lg:flex items-center gap-8 text-[15px] font-medium text-gray-700 shrink-0">
+                        <div className="relative" onMouseEnter={() => handleMouseEnter('packages')}>
+                            <Link href="/packages" className="hover:text-sky-700 transition">Packages</Link>
+                        </div>
+                        <Link href="/trekking" className="hover:text-sky-700 transition whitespace-nowrap">Trekking in Nepal</Link>
+                        <Link href="/blog" className="hover:text-sky-700 transition">Blog</Link>
+                        <div className="relative" onMouseEnter={() => handleMouseEnter('destinations')}>
+                            <Link href="/destinations" className="hover:text-sky-700 transition">Destinations</Link>
+                        </div>
+                        <Link href="/our-team" className="hover:text-sky-700 transition whitespace-nowrap">Our Team</Link>
+                    </div>
+
+                    {/* Search — takes remaining space */}
+                    <div className="hidden lg:block flex-1 max-w-[340px]">
+                        <HeroSearch />
+                    </div>
+
+                    {/* Right Side */}
+                    <div className="flex items-center gap-3 shrink-0">
+                        <Link
+                            href="/contact-us"
+                            className="hidden md:flex px-5 h-[40px] items-center justify-center text-sm font-semibold bg-sky-700 text-white hover:bg-sky-800 transition whitespace-nowrap"
+                        >
+                            Quick Inquiry
                         </Link>
+
+                        {/* Hamburger */}
+                        <button
+                            onClick={toggleMobileMenu}
+                            className="lg:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1 focus:outline-none"
+                            aria-label="Toggle mobile menu"
+                        >
+                            <div className={`w-6 h-0.5 bg-gray-900 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                            <div className={`w-6 h-0.5 bg-gray-900 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
+                            <div className={`w-6 h-0.5 bg-gray-900 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+                        </button>
                     </div>
-
-                    <Link href="/trekking" className="hover:text-sky-700 transition">
-                        Trekking in Nepal
-                    </Link>
-
-                    <Link href="/blog" className="hover:text-sky-700 transition">
-                        Blog
-                    </Link>
-
-                    <div
-                        className="relative"
-                        onMouseEnter={() => handleMouseEnter('destinations')}
-                    >
-                        <Link href="/destinations" className="hover:text-sky-700 transition">
-                            Destinations
-                        </Link>
-                    </div>
-
-                    <Link href="/our-team" className="hover:text-sky-700 transition">
-                        Our Team
-                    </Link>
-                </div>
-
-                {/* Right Side */}
-                <div className="flex items-center gap-4 text-sm font-medium">
-                    <Link
-                        href="/custom-package"
-                        className="hidden md:flex px-6 h-[42px] items-center justify-center text-sm font-semibold bg-sky-700 text-white hover:bg-sky-800 transition"
-                    >
-                        Plan Your Trip
-                    </Link>
-
-                    <Link
-                        href="/contact-us"
-                        className="hidden md:flex  px-6 h-[42px] items-center justify-center text-sm font-semibold bg-sky-700 text-white hover:bg-sky-800 transition"
-                    >
-                        Quick Inquiry
-                    </Link>
-
-                    {/* Hamburger Button */}
-                    <button
-                        onClick={toggleMobileMenu}
-                        className="lg:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1 focus:outline-none"
-                        aria-label="Toggle mobile menu"
-                    >
-                        <div className={`w-6 h-0.5 bg-gray-900 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
-                        <div className={`w-6 h-0.5 bg-gray-900 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
-                        <div className={`w-6 h-0.5 bg-gray-900 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
-                    </button>
-                </div>
-            </nav>
+                </nav>
             </div>
 
-            {/* Mobile Menu Dropdown */}
+            {/* Mobile Menu */}
             {isMobileMenuOpen && (
                 <div className="lg:hidden w-full bg-white shadow-lg border-t border-gray-200 animate-slideDown">
-                    <div className="px-6 py-6 max-w-[1320px] mx-auto">
-                        <div className="flex flex-col space-y-4">
-                            <Link
-                                href="/packages"
-                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
-                                onClick={closeMobileMenu}
-                            >
-                                Packages
-                            </Link>
+                    <div className="px-6 py-6 max-w-[1320px] mx-auto space-y-4">
+                        {/* Mobile Search */}
+                        <HeroSearch />
 
-                            <Link
-                                href="/trekking"
-                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
-                                onClick={closeMobileMenu}
-                            >
-                                Trekking in Nepal
-                            </Link>
-
-                            <Link
-                                href="/blog"
-                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
-                                onClick={closeMobileMenu}
-                            >
-                                Blog
-                            </Link>
-
-                            <Link
-                                href="/destinations"
-                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
-                                onClick={closeMobileMenu}
-                            >
-                                Destinations
-                            </Link>
-
-                            <Link
-                                href="/our-team"
-                                className="text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium"
-                                onClick={closeMobileMenu}
-                            >
-                                Our Team
-                            </Link>
-
-                            <Link
-                                href="/custom-package"
-                                className="border border-gray-300 text-gray-900 hover:bg-gray-100 rounded-[12px] px-6 py-3 text-center font-semibold transition mt-4"
-                                onClick={closeMobileMenu}
-                            >
-                                Plan Your Trip
-                            </Link>
-
-                            <Link
-                                href="/contact-us"
-                                className="bg-sky-700 text-white hover:bg-sky-800 rounded-[12px] px-6 py-3 text-center font-semibold transition"
-                                onClick={closeMobileMenu}
-                            >
-                                Quick Inquiry
-                            </Link>
-                        </div>
+                        <Link href="/packages" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Packages</Link>
+                        <Link href="/trekking" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Trekking in Nepal</Link>
+                        <Link href="/blog" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Blog</Link>
+                        <Link href="/destinations" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Destinations</Link>
+                        <Link href="/our-team" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Our Team</Link>
+                        <Link href="/custom-package" className="block border border-gray-300 text-gray-900 hover:bg-gray-100 rounded-xl px-6 py-3 text-center font-semibold transition mt-2" onClick={closeMobileMenu}>Plan Your Trip</Link>
+                        <Link href="/contact-us" className="block bg-sky-700 text-white hover:bg-sky-800 rounded-xl px-6 py-3 text-center font-semibold transition" onClick={closeMobileMenu}>Quick Inquiry</Link>
                     </div>
                 </div>
             )}
 
-            {/* Desktop Mega Menu */}
+            {/* Mega Menu */}
             {activeMegaMenu && megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent] && (
                 <div
                     className="hidden lg:block fixed top-[120px] w-full z-40"
@@ -279,30 +213,21 @@ export default function Navbar() {
                 >
                     <div className="flex justify-center">
                         <div className="w-full max-w-[800px] bg-sky-50 shadow-2xl border-t border-gray-200 animate-fadeIn">
-                            <div className="px-6 md:px-16 py-8">
+                            <div className="px-8 py-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     <div className="lg:col-span-1">
                                         <h3 className="text-2xl font-bold text-gray-900 mb-4">
                                             {megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent].title}
                                         </h3>
-                                        <p className="text-gray-600 text-sm">
-                                            Discover amazing travel experiences with our curated selection.
-                                        </p>
+                                        <p className="text-gray-600 text-sm">Discover amazing travel experiences with our curated selection.</p>
                                     </div>
-
-                                    {megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent].sections.map((section, index) => (
-                                        <div key={index} className="lg:col-span-1">
-                                            <h4 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">
-                                                {section.title}
-                                            </h4>
+                                    {megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent].sections.map((section, i) => (
+                                        <div key={i}>
+                                            <h4 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">{section.title}</h4>
                                             <ul className="space-y-2">
-                                                {section.links.map((link, linkIndex) => (
-                                                    <li key={linkIndex}>
-                                                        <Link
-                                                            href={link.href}
-                                                            className="text-gray-600 hover:text-gray-900 transition text-sm py-1 block"
-                                                            onClick={() => setActiveMegaMenu(null)}
-                                                        >
+                                                {section.links.map((link, j) => (
+                                                    <li key={j}>
+                                                        <Link href={link.href} className="text-gray-600 hover:text-gray-900 transition text-sm py-1 block" onClick={() => setActiveMegaMenu(null)}>
                                                             {link.name}
                                                         </Link>
                                                     </li>
@@ -318,14 +243,8 @@ export default function Navbar() {
             )}
 
             <style jsx>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(-10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                @keyframes slideDown {
-                    from { opacity: 0; transform: translateY(-20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
                 .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
                 .animate-slideDown { animation: slideDown 0.3s ease-out; }
             `}</style>

@@ -1,72 +1,72 @@
 'use client';
 
 import React from 'react';
-import { Zap, MapPin, Diamond, Award } from 'lucide-react';
+import { CalendarCheck, MapPin, Route, ShieldCheck, BadgeDollarSign, HeadphonesIcon } from 'lucide-react';
 
-// Features data matching the design image
 const features = [
     {
         id: 1,
-        icon: Zap,
-        title: 'Ultimate flexibility',
-        description: 'You\'re in control, with free cancellation and payment options to satisfy any plan or budget.',
-        color: 'text-orange-500'
+        icon: CalendarCheck,
+        title: '20+ Years of Experience',
+        description: 'Trusted by thousands of travelers across two decades of crafting Nepal journeys.',
     },
     {
         id: 2,
         icon: MapPin,
-        title: 'Memorable experiences',
-        description: 'Browse and book tours and activities so incredible, you\'ll want to tell your friends.',
-        color: 'text-orange-500'
+        title: 'Certified Local Guides',
+        description: 'Government-certified guides with deep local knowledge on every route.',
     },
     {
         id: 3,
-        icon: Diamond,
-        title: 'Quality at our core',
-        description: 'High-quality standards. Millions of reviews. A Tourz company.',
-        color: 'text-orange-500'
+        icon: Route,
+        title: 'Personalized Itineraries',
+        description: 'Every trip tailored to your pace, preferences, and budget.',
     },
     {
         id: 4,
-        icon: Award,
-        title: 'Award-winning support',
-        description: 'New price? New plan? No problem. We\'re here to help, 24/7.',
-        color: 'text-orange-500'
-    }
+        icon: ShieldCheck,
+        title: 'Safety First Approach',
+        description: 'Rigorous safety protocols and emergency planning on all expeditions.',
+    },
+    {
+        id: 5,
+        icon: BadgeDollarSign,
+        title: 'Transparent Pricing',
+        description: 'No hidden costs — full price clarity from booking to return.',
+    },
+    {
+        id: 6,
+        icon: HeadphonesIcon,
+        title: '24/7 Customer Support',
+        description: 'Our team is always on call before, during, and after your trip.',
+    },
 ];
 
 export default function WhyTravelWithUs() {
     return (
         <section className="py-16 px-6 bg-white">
             <div className="max-w-[1320px] mx-auto">
-                {/* Section Header */}
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                        Why choose Tourz
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                        Why Travel With Us
                     </h2>
+                    <p className="text-gray-500 text-base max-w-[520px] mx-auto">
+                        We go beyond booking — we build journeys that stay with you long after you return home.
+                    </p>
                 </div>
 
-                {/* Features Grid - 4 columns on desktop, responsive on smaller screens */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-[900px] mx-auto">
                     {features.map((feature) => {
-                        const IconComponent = feature.icon;
+                        const Icon = feature.icon;
                         return (
-                            <div 
-                                key={feature.id}
-                                className="text-center"
-                            >
-                                {/* Icon */}
-                                <div className="flex justify-center mb-4">
-                                    <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center">
-                                        <IconComponent className={`w-8 h-8 ${feature.color}`} />
-                                    </div>
+                            <div key={feature.id} className="flex flex-col items-center text-center bg-white px-6 py-8 shadow-[0_1px_8px_rgba(0,0,0,0.08)] max-w-[300px] mx-auto w-full">
+                                <div className="w-16 h-16 rounded-full bg-sky-100 flex items-center justify-center mb-4">
+                                    <Icon className="w-8 h-8 text-sky-700" />
                                 </div>
-
-                                {/* Content */}
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                                <h3 className="text-[15px] font-semibold text-gray-900 mb-2">
                                     {feature.title}
                                 </h3>
-                                <p className="text-gray-600 text-sm leading-relaxed">
+                                <p className="text-gray-400 text-[13px] leading-relaxed">
                                     {feature.description}
                                 </p>
                             </div>
@@ -76,4 +76,4 @@ export default function WhyTravelWithUs() {
             </div>
         </section>
     );
-} 
+}
