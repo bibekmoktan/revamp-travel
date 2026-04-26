@@ -1,68 +1,42 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { topDestinations } from '@/data/destinations';
 
-const attractions = [
-  {
-    name: 'Colosseum',
-    image: '/images/home/link1.svg',
-  },
-  {
-    name: 'Eiffel Tower',
-    image: '/images/home/link2.svg',
-  },
-  {
-    name: 'Stonehenge',
-    image: '/images/home/link3.svg',
-  },
-  {
-    name: 'Statue of Liberty',
-    image: '/images/home/link4.svg',
-  },
-  {
-    name: 'Tower of London',
-    image: '/images/home/link5.svg',
-  },
-  {
-    name: 'Antelope Canyon',
-    image: '/images/home/link6.svg',
-  },
-  {
-    name: 'Vatican Museums',
-    image: '/images/home/link7.svg',
-  },
-  {
-    name: 'National September 11 Memorial',
-    image: '/images/home/link1.svg',
-  },
-  {
-    name: 'Louvre',
-    image: '/images/home/link2.svg',
-  },
-];
-
-export default function TopAttractions() {
+export default function TopDestinations() {
   return (
-    <section className="py-10 px-4 max-w-[1320px] mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Top Attractions</h2>
-        <a href="#" className="text-sm text-gray-500 hover:underline">See all</a>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-10">
-        {attractions.map((attraction) => (
-          <div key={attraction.name} className="flex items-center gap-4">
-            <div className="w-16 h-16 relative rounded-md overflow-hidden flex-shrink-0">
-              <Image
-                src={attraction.image}
-                alt={attraction.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-800">{attraction.name}</h3>
-              <p className="text-xs text-gray-500">100+ Tours</p>
-            </div>
-          </div>
-        ))}
+    <section className="py-12 px-6 md:px-16">
+      <div className="max-w-[1320px] mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">Top Destinations</h2>
+          <Link href="/destinations" className="text-sm text-sky-600 hover:underline font-medium">
+            See all
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {topDestinations.map((destination, i) => (
+            <Link
+              key={destination.slug}
+              href={`/destinations/${destination.slug}`}
+              className={`group relative overflow-hidden block ${i === 0 ? 'row-span-2' : ''}`}
+            >
+              <div className={`relative w-full overflow-hidden ${i === 0 ? 'min-h-[390px]' : 'h-[185px]'}`}>
+                <Image
+                  src={destination.image}
+                  alt={destination.label}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <h3 className="text-white font-semibold text-[14px] leading-tight">
+                    {destination.label}
+                  </h3>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

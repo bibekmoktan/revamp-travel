@@ -1,15 +1,35 @@
 @import "tailwindcss";
 
+/* ── LT Superior font-face declarations ─────────────────────────────────── */
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-Thin.ttf') format('truetype'); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-ThinItalic.ttf') format('truetype'); font-weight: 100; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-ExtraLight.ttf') format('truetype'); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-ExtraLightItalic.ttf') format('truetype'); font-weight: 200; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-Light.ttf') format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-LightItalic.ttf') format('truetype'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-Italic.ttf') format('truetype'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-Medium.ttf') format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-MediumItalic.ttf') format('truetype'); font-weight: 500; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-SemiBoldItalic.ttf') format('truetype'); font-weight: 600; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-BoldItalic.ttf') format('truetype'); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-ExtraBold.ttf') format('truetype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-ExtraBoldItalic.ttf') format('truetype'); font-weight: 800; font-style: italic; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-Black.ttf') format('truetype'); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'LT Superior'; src: url('/font/lt_superior/LTSuperior-BlackItalic.ttf') format('truetype'); font-weight: 900; font-style: italic; font-display: swap; }
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-lt-superior: 'LT Superior', sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: 'LT Superior', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,7 +42,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'LT Superior', sans-serif;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
