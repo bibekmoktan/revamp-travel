@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { ChevronDown, CalendarDays, Minus, Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ChevronDown, CalendarDays, Minus, Plus, ShoppingCart, CheckCircle, Send } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
+import { useCart } from '@/context/CartContext';
+import EnquiryModal from '@/app/components/EnquiryModal';
 
 const GROUP_TIERS = [
   { label: '1 pax',      min: 1, max: 1,  discount: 0.10 },
@@ -21,15 +23,45 @@ function activeTier(travelers: number) {
 }
 
 export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
-  const [groupOpen, setGroupOpen]   = useState(true);
-  const [date, setDate]             = useState('');
-  const [travelers, setTravelers]   = useState(1);
+  const [groupOpen, setGroupOpen]     = useState(true);
+  const [date, setDate]               = useState('');
+  const [travelers, setTravelers]     = useState(1);
+  const [added, setAdded]             = useState(false);
+  const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const { addItem }                   = useCart();
+  const router                        = useRouter();
 
   const base      = pkg.price;
   const original  = Math.round(base * 1.15);
   const tier      = activeTier(travelers);
   const unitPrice = tierPrice(base, tier.discount);
   const total     = unitPrice * travelers;
+
+  function buildCartItem() {
+    return {
+      packageId:      pkg._id,
+      slug:           pkg.slug,
+      title:          pkg.title,
+      image:          pkg.featureImage?.url ?? '',
+      duration:       pkg.duration,
+      location:       pkg.location,
+      date,
+      travelers,
+      pricePerPerson: unitPrice,
+      totalAmount:    total,
+    };
+  }
+
+  function handleAddToCart() {
+    addItem(buildCartItem());
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  }
+
+  function handleBookNow() {
+    addItem(buildCartItem());
+    router.push('/cart');
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden text-sm">
@@ -127,14 +159,17 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
       {/* Buttons */}
       <div className="px-5 py-4 space-y-2">
         <div className="grid grid-cols-2 gap-2">
-          <Link
-            href={`/booking?package=${pkg.slug}&travelers=${travelers}&date=${date}`}
-            className="bg-gray-900 hover:bg-black text-white font-bold py-2.5 text-center text-xs tracking-wide uppercase transition-colors"
+          <button
+            onClick={handleBookNow}
+            className="bg-gray-900 hover:bg-black text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors"
           >
             Book Now
-          </Link>
-          <button className="bg-gray-900 hover:bg-black text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors">
-            Add to Cart
+          </button>
+          <button
+            onClick={handleAddToCart}
+            className={`font-bold py-2.5 text-xs tracking-wide uppercase transition-colors flex items-center justify-center gap-1.5 ${added ? 'bg-green-600 text-white' : 'bg-gray-900 hover:bg-black text-white'}`}
+          >
+            {added ? <><CheckCircle className="w-3.5 h-3.5" /> Added</> : <><ShoppingCart className="w-3.5 h-3.5" /> Add to Cart</>}
           </button>
         </div>
 
@@ -142,13 +177,20 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
           Check Availability
         </button>
 
-        <Link
-          href="/custom-package"
-          className="block w-full bg-[#1E88E5] hover:bg-[#1565C0] text-white font-bold py-2.5 text-xs tracking-wide uppercase text-center transition-colors"
+        <button
+          onClick={() => setEnquiryOpen(true)}
+          className="w-full flex items-center justify-center gap-2 bg-[#1E88E5] hover:bg-[#1565C0] text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors"
         >
-          Send Inquiry
-        </Link>
+          <Send className="w-3.5 h-3.5" /> Send Inquiry
+        </button>
       </div>
+
+      <EnquiryModal
+        open={enquiryOpen}
+        onClose={() => setEnquiryOpen(false)}
+        packageId={pkg._id}
+        packageTitle={pkg.title}
+      />
     </div>
   );
 }

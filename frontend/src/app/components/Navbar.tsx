@@ -2,14 +2,38 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
-import { User, ShoppingCart, Heart } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { User, ShoppingCart, Heart, LogOut, CalendarCheck, Settings } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import logo from '../../../public/images/home/logo.svg';
 import HeroSearch from './HeroSearch';
 
 export default function Navbar() {
     const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
+    const { count: cartCount } = useCart();
+    const { user, logout } = useAuth();
+    const router = useRouter();
+    const profileRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+                setProfileOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    function handleLogout() {
+        logout();
+        setProfileOpen(false);
+        router.push('/');
+    }
 
     const handleMouseEnter = (menuName: string) => setActiveMegaMenu(menuName);
     const handleMouseLeave = () => setActiveMegaMenu(null);
@@ -114,19 +138,98 @@ export default function Navbar() {
                         </Link>
                     </div>
 
-                    {/* Right — Wishlist, Cart, Login */}
+                    {/* Right — Wishlist, Cart, Profile/Login */}
                     <div className="flex items-center gap-4">
                         <Link href="/wishlist" aria-label="Wishlist" className="hover:text-white/80 transition">
                             <Heart className="w-4 h-4" />
                         </Link>
-                        <Link href="/cart" aria-label="Cart" className="hover:text-white/80 transition">
+                        <Link href="/cart" aria-label="Cart" className="relative hover:text-white/80 transition">
                             <ShoppingCart className="w-4 h-4" />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-sky-400 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                                    {cartCount > 9 ? '9+' : cartCount}
+                                </span>
+                            )}
                         </Link>
                         <span className="text-white/40">|</span>
-                        <Link href="/login" aria-label="Login" className="flex items-center gap-1.5 hover:text-white/80 transition text-xs">
-                            <User className="w-4 h-4" />
-                            <span>Login</span>
-                        </Link>
+
+                        {user ? (
+                            /* ── Profile avatar + dropdown ── */
+                            <div className="relative" ref={profileRef}>
+                                <button
+                                    onClick={() => setProfileOpen(o => !o)}
+                                    className="flex items-center gap-2 hover:text-white/80 transition focus:outline-none"
+                                    aria-label="Profile menu"
+                                >
+                                    <div className="w-7 h-7 rounded-full bg-sky-400 text-white font-bold text-xs flex items-center justify-center uppercase select-none">
+                                        {user.name.charAt(0)}
+                                    </div>
+                                    <span className="text-xs hidden sm:block max-w-[90px] truncate">{user.name.split(' ')[0]}</span>
+                                </button>
+
+                                {profileOpen && (
+                                    <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 text-gray-800">
+                                        {/* User info */}
+                                        <div className="px-4 py-3 bg-sky-50 border-b border-gray-100">
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-9 h-9 rounded-full bg-sky-500 text-white font-bold text-sm flex items-center justify-center uppercase shrink-0">
+                                                    {user.name.charAt(0)}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
+                                                    <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Links */}
+                                        <div className="py-1">
+                                            <Link
+                                                href="/profile"
+                                                onClick={() => setProfileOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
+                                            >
+                                                <User className="w-4 h-4 text-gray-400" />
+                                                My Profile
+                                            </Link>
+                                            <Link
+                                                href="/profile"
+                                                onClick={() => setProfileOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
+                                            >
+                                                <CalendarCheck className="w-4 h-4 text-gray-400" />
+                                                My Bookings
+                                            </Link>
+                                            {user.role === 'admin' && (
+                                                <Link
+                                                    href="/admin"
+                                                    onClick={() => setProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
+                                                >
+                                                    <Settings className="w-4 h-4 text-gray-400" />
+                                                    Admin Panel
+                                                </Link>
+                                            )}
+                                        </div>
+
+                                        <div className="border-t border-gray-100 py-1">
+                                            <button
+                                                onClick={handleLogout}
+                                                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                                            >
+                                                <LogOut className="w-4 h-4" />
+                                                Sign Out
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <Link href="/login" aria-label="Login" className="flex items-center gap-1.5 hover:text-white/80 transition text-xs">
+                                <User className="w-4 h-4" />
+                                <span>Login</span>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
@@ -193,13 +296,48 @@ export default function Navbar() {
                         {/* Mobile Search */}
                         <HeroSearch />
 
+                        {/* Mobile user card */}
+                        {user ? (
+                            <div className="flex items-center gap-3 py-3 border-b border-gray-100 mb-2">
+                                <div className="w-10 h-10 rounded-full bg-sky-500 text-white font-bold text-sm flex items-center justify-center uppercase shrink-0">
+                                    {user.name.charAt(0)}
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="font-semibold text-gray-900 truncate">{user.name}</p>
+                                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                </div>
+                            </div>
+                        ) : null}
+
                         <Link href="/packages" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Packages</Link>
                         <Link href="/trekking" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Trekking in Nepal</Link>
                         <Link href="/blog" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Blog</Link>
                         <Link href="/destinations" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Destinations</Link>
                         <Link href="/our-team" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Our Team</Link>
+
+                        {user ? (
+                            <>
+                                <Link href="/profile" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>My Profile</Link>
+                                <Link href="/profile" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>My Bookings</Link>
+                                {user.role === 'admin' && (
+                                    <Link href="/admin" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Admin Panel</Link>
+                                )}
+                            </>
+                        ) : null}
+
                         <Link href="/custom-package" className="block border border-gray-300 text-gray-900 hover:bg-gray-100 rounded-xl px-6 py-3 text-center font-semibold transition mt-2" onClick={closeMobileMenu}>Plan Your Trip</Link>
                         <Link href="/contact-us" className="block bg-sky-700 text-white hover:bg-sky-800 rounded-xl px-6 py-3 text-center font-semibold transition" onClick={closeMobileMenu}>Quick Inquiry</Link>
+
+                        {user ? (
+                            <button
+                                onClick={() => { handleLogout(); closeMobileMenu(); }}
+                                className="flex items-center justify-center gap-2 w-full border border-red-200 text-red-500 hover:bg-red-50 rounded-xl px-6 py-3 font-semibold transition"
+                            >
+                                <LogOut className="w-4 h-4" /> Sign Out
+                            </button>
+                        ) : (
+                            <Link href="/login" className="block bg-gray-900 text-white hover:bg-black rounded-xl px-6 py-3 text-center font-semibold transition" onClick={closeMobileMenu}>Login</Link>
+                        )}
                     </div>
                 </div>
             )}

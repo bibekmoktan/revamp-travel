@@ -12,16 +12,20 @@ import {
   Menu,
   X,
   Mountain,
+  Layers,
+  Mail,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
 const NAV = [
-  { label: 'Dashboard',  href: '/admin',          icon: LayoutDashboard },
-  { label: 'Packages',   href: '/admin/packages',  icon: Package2 },
-  { label: 'Bookings',   href: '/admin/bookings',  icon: CalendarCheck },
-  { label: 'Users',      href: '/admin/users',     icon: Users },
-  { label: 'Reviews',    href: '/admin/reviews',   icon: Star },
+  { label: 'Dashboard',   href: '/admin',              icon: LayoutDashboard },
+  { label: 'Categories',  href: '/admin/categories',   icon: Layers },
+  { label: 'Packages',    href: '/admin/packages',     icon: Package2 },
+  { label: 'Bookings',    href: '/admin/bookings',     icon: CalendarCheck },
+  { label: 'Enquiries',   href: '/admin/enquiries',    icon: Mail },
+  { label: 'Users',       href: '/admin/users',        icon: Users },
+  { label: 'Reviews',     href: '/admin/reviews',      icon: Star },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

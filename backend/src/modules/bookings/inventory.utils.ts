@@ -1,4 +1,4 @@
-import mongoose, { Types, ClientSession } from 'mongoose';
+import { Types } from 'mongoose';
 import { PackageDateInventoryModel } from '../package/packageDateInventory.model';
 import { BOOKING_CONSTANTS } from './booking.constants';
 
@@ -10,39 +10,32 @@ export interface InventoryUpdateResult {
 
 export class InventoryManager {
   static async reserveSeats(
-    packageId: string,
+    packageId: string | Types.ObjectId,
     trekDate: Date,
     numberOfPeople: number,
-    session: ClientSession
   ): Promise<InventoryUpdateResult> {
     try {
       const inventory = await PackageDateInventoryModel.findOneAndUpdate(
         {
-          package: new Types.ObjectId(packageId),
+          package: new Types.ObjectId(packageId.toString()),
           date: trekDate,
           availableSeats: { $gte: numberOfPeople },
         },
         { $inc: { availableSeats: -numberOfPeople } },
-        { new: true, session }
+        { new: true }
       ).lean();
 
       if (!inventory) {
         const exists = await PackageDateInventoryModel.findOne({
-          package: new Types.ObjectId(packageId),
+          package: new Types.ObjectId(packageId.toString()),
           date: trekDate,
-        }).session(session).lean();
+        }).lean();
 
         if (!exists) {
-          return {
-            success: false,
-            error: 'trekDate is not available for this package',
-          };
+          return { success: false, error: 'trekDate is not available for this package' };
         }
 
-        return {
-          success: false,
-          error: 'Not enough seats available',
-        };
+        return { success: false, error: 'Not enough seats available' };
       }
 
       return { success: true, inventory };
@@ -55,15 +48,13 @@ export class InventoryManager {
   }
 
   static async releaseSeats(
-    packageId: Types.ObjectId,
+    packageId: Types.ObjectId | string,
     trekDate: Date,
     numberOfPeople: number,
-    session: ClientSession
   ): Promise<void> {
     await PackageDateInventoryModel.updateOne(
-      { package: packageId, date: trekDate },
-      { $inc: { availableSeats: numberOfPeople } },
-      { session }
+      { package: new Types.ObjectId(packageId.toString()), date: trekDate },
+      { $inc: { availableSeats: numberOfPeople } }
     );
   }
 

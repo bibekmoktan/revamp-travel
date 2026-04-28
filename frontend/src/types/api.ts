@@ -78,6 +78,80 @@ export interface ApiErrorResponse {
   message: string;
 }
 
+export interface ApiEnquiry {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  packageId?: string;
+  packageTitle?: string;
+  status: 'new' | 'read' | 'replied';
+  createdAt: string;
+}
+
+export interface ApiCategory {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TravelerInput {
+  fullName: string;
+  age: number;
+  gender: 'male' | 'female' | 'other';
+  idProof: string;
+}
+
+export interface BookingSummary {
+  _id: string;
+  package: Pick<ApiPackage, '_id' | 'title' | 'slug' | 'featureImage' | 'duration' | 'location'>;
+  trekDate: string;
+  numberOfPeople: number;
+  totalAmount: number;
+  paymentStatus: 'pending' | 'paid' | 'failed';
+  bookingStatus: 'reserved' | 'confirmed' | 'cancelled';
+  expiresAt: string;
+  createdAt: string;
+}
+
+export interface CartItem {
+  packageId: string;
+  slug: string;
+  title: string;
+  image: string;
+  duration: string;
+  location: string;
+  date: string;
+  travelers: number;
+  pricePerPerson: number;
+  totalAmount: number;
+}
+
+export interface ApiReview {
+  _id: string;
+  user: { _id: string; name: string; email: string } | string;
+  package: { _id: string; title: string } | string;
+  rating: number;
+  comment: string;
+  title?: string;
+  isVerified: boolean;
+  helpfulCount: number;
+  response?: {
+    text: string;
+    respondedAt: string;
+    respondedBy: { name: string } | string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PackageFilters {
   category?: string;
   searchTerm?: string;

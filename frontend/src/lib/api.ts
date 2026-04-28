@@ -2,7 +2,13 @@ import type {
   ApiListResponse,
   ApiItemResponse,
   ApiPackage,
+  ApiCategory,
+  ApiEnquiry,
+  ApiReview,
   PackageFilters,
+  PaginationMeta,
+  TravelerInput,
+  BookingSummary,
 } from '@/types/api';
 
 const API_BASE =
@@ -40,6 +46,70 @@ async function apiFetch<T>(
 
 function authHeaders(token: string) {
   return { Authorization: `Bearer ${token}` };
+}
+
+// ─── Enquiries ────────────────────────────────────────────────────────────
+
+export async function submitEnquiry(payload: {
+  name: string; email: string; phone?: string;
+  message: string; packageId?: string; packageTitle?: string;
+}) {
+  return apiFetch<{ success: boolean; message: string; data: ApiEnquiry }>('/enquiries', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function adminGetEnquiries(token: string, params?: Record<string, string>) {
+  const qs = params ? '?' + new URLSearchParams(params).toString() : '';
+  return apiFetch<{ success: boolean; data: ApiEnquiry[]; meta: { total: number; page: number; limit: number; pages: number } }>(`/enquiries${qs}`, {
+    headers: authHeaders(token),
+    cache: 'no-store',
+  });
+}
+
+export async function adminUpdateEnquiryStatus(token: string, id: string, status: 'new' | 'read' | 'replied') {
+  return apiFetch<{ success: boolean; data: ApiEnquiry }>(`/enquiries/${id}`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function adminDeleteEnquiry(token: string, id: string) {
+  return apiFetch<{ success: boolean; message: string }>(`/enquiries/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+}
+
+// ─── Categories ───────────────────────────────────────────────────────────
+
+export async function getCategories(): Promise<{ success: boolean; data: ApiCategory[] }> {
+  return apiFetch('/categories', { next: { revalidate: 300 } } as RequestInit);
+}
+
+export async function adminCreateCategory(token: string, data: Partial<ApiCategory>) {
+  return apiFetch<{ success: boolean; data: ApiCategory }>('/categories', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminUpdateCategory(token: string, id: string, data: Partial<ApiCategory>) {
+  return apiFetch<{ success: boolean; data: ApiCategory }>(`/categories/${id}`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminDeleteCategory(token: string, id: string) {
+  return apiFetch<{ success: boolean; message: string }>(`/categories/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
 }
 
 // ─── Packages ──────────────────────────────────────────────────────────────
@@ -180,6 +250,61 @@ export async function adminDeleteUser(token: string, id: string) {
   return apiFetch<{ success: boolean; message: string }>(`/users/${id}`, {
     method: 'DELETE',
     headers: authHeaders(token),
+  });
+}
+
+// ─── User: Bookings ───────────────────────────────────────────────────────
+
+export async function createBooking(
+  token: string,
+  payload: { packageId: string; trekDate: string; travelers: TravelerInput[] },
+) {
+  return apiFetch<ApiItemResponse<BookingSummary>>('/bookings', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function getMyBookings(token: string, params?: Record<string, string>) {
+  const qs = params ? '?' + new URLSearchParams(params).toString() : '';
+  return apiFetch<ApiListResponse<BookingSummary>>(`/bookings/my${qs}`, {
+    headers: authHeaders(token),
+    cache: 'no-store',
+  });
+}
+
+export async function getBookingById(token: string, bookingId: string) {
+  return apiFetch<ApiItemResponse<BookingSummary>>(`/bookings/${bookingId}`, {
+    headers: authHeaders(token),
+    cache: 'no-store',
+  });
+}
+
+export async function cancelMyBooking(token: string, bookingId: string) {
+  return apiFetch<{ success: boolean; message: string }>(`/bookings/${bookingId}/cancel`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+  });
+}
+
+// ─── Public: Reviews ──────────────────────────────────────────────────────
+
+export async function getPackageReviews(packageId: string, params?: Record<string, string>) {
+  const qs = new URLSearchParams({ package: packageId, limit: '50', sortBy: 'createdAt', sortOrder: 'desc', ...params }).toString();
+  return apiFetch<{ success: boolean; data: ApiReview[]; meta: PaginationMeta }>(`/reviews?${qs}`, {
+    cache: 'no-store',
+  });
+}
+
+export async function createReview(
+  token: string,
+  payload: { user: string; package: string; rating: number; comment: string; title?: string },
+) {
+  return apiFetch<{ success: boolean; message: string; data: ApiReview }>('/reviews', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
   });
 }
 

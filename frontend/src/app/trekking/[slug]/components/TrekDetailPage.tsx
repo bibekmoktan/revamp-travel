@@ -5,6 +5,7 @@ import TrekItinerary from './TrekItinerary';
 import TrekGallery from './TrekGallery';
 import TrekBookingCard from './TrekBookingCard';
 import TrekExtras from './TrekExtras';
+import TrekReviews from './TrekReviews';
 
 const WRAPPER = 'max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8';
 
@@ -25,6 +26,7 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
             <TrekOverview pkg={pkg} />
             <TrekItinerary itinerary={pkg.itinerary} />
             <TrekExtras pkg={pkg} />
+            <TrekReviews packageId={pkg._id} />
           </div>
 
           {/* Sticky booking sidebar */}
