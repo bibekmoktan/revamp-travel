@@ -1,23 +1,22 @@
-'use client';
-
 import "./globals.css";
-import { usePathname } from 'next/navigation';
-import Header from './components/Header';
-import Footer from "./components/Footer";
 import { AuthProvider } from '@/context/AuthContext';
+import { CartProvider } from '@/context/CartContext';
+import LenisProvider from './components/LenisProvider';
+import ClientLayout from './components/ClientLayout';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const hideChrome = ['/login', '/signup'].includes(pathname) || pathname.startsWith('/admin');
-
   return (
     <html lang="en">
       <head />
       <body className="bg-white text-black">
         <AuthProvider>
-          {!hideChrome && <Header />}
-          {children}
-          {!hideChrome && <Footer />}
+          <CartProvider>
+            <LenisProvider>
+              <ClientLayout>
+                {children}
+              </ClientLayout>
+            </LenisProvider>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

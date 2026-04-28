@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Send, MapPin, Phone, Mail, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { submitEnquiry } from '@/lib/api';
 
 // Define types for form data to ensure type safety
 interface FormData {
@@ -179,10 +180,13 @@ export default function Contact() {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call (replace with actual API endpoint)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Success - reset form and show success message
+      await submitEnquiry({
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email,
+        phone: formData.countryCode + formData.phone,
+        message: `[${formData.subject}]\n\n${formData.message}`,
+      });
+
       setIsSubmitted(true);
       setFormData({
         firstName: '',
@@ -193,10 +197,8 @@ export default function Contact() {
         subject: 'General Inquiry',
         message: ''
       });
-      
-      // Hide success message after 5 seconds
+
       setTimeout(() => setIsSubmitted(false), 5000);
-      
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Plus, X, ChevronDown, ChevronUp, UploadCloud, ImageIcon } from 'lucide-react';
-import type { ApiPackage } from '@/types/api';
+import type { ApiPackage, ApiCategory } from '@/types/api';
 import { useAuth } from '@/context/AuthContext';
-import { adminUploadImage } from '@/lib/api';
+import { adminUploadImage, getCategories } from '@/lib/api';
 
 interface Props {
   initialData?: ApiPackage;
@@ -225,9 +225,10 @@ const SECTION = 'bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-
 export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   const d = initialData;
 
+  const [apiCategories, setApiCategories] = useState<ApiCategory[]>([]);
   const [title, setTitle]                   = useState(d?.title ?? '');
   const [slug, setSlug]                     = useState(d?.slug ?? '');
-  const [category, setCategory]             = useState(d?.category ?? 'trekking');
+  const [category, setCategory]             = useState(d?.category ?? '');
   const [duration, setDuration]             = useState(d?.duration ?? '');
   const [price, setPrice]                   = useState(String(d?.price ?? ''));
   const [location, setLocation]             = useState(d?.location ?? '');
@@ -240,6 +241,13 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   const [accommodation, setAccommodation]   = useState(d?.accommodation ?? '');
   const [mapUrl, setMapUrl]                 = useState(d?.mapUrl ?? '');
   const [description, setDescription]       = useState(d?.description ?? '');
+
+  useEffect(() => {
+    getCategories().then((res) => {
+      setApiCategories(res.data ?? []);
+      if (!category && res.data?.length) setCategory(res.data[0].slug);
+    }).catch(() => {});
+  }, []);
 
   const [featureImage, setFeatureImage] = useState<ImageValue | null>(
     d?.featureImage?.url ? { url: d.featureImage.url, public_id: (d.featureImage as any).public_id ?? '' } : null
@@ -367,12 +375,10 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
             <div>
               <label className={LABEL}>Category *</label>
               <select value={category} onChange={(e) => setCategory(e.target.value)} className={INPUT}>
-                <option value="trekking">Trekking</option>
-                <option value="hiking">Hiking</option>
-                <option value="peak-climbing">Peak Climbing</option>
-                <option value="rafting">Rafting</option>
-                <option value="adventures">Adventures</option>
-                <option value="tour">Tour</option>
+                {apiCategories.length === 0 && <option value="">Loading…</option>}
+                {apiCategories.map((cat) => (
+                  <option key={cat._id} value={cat.slug}>{cat.name}</option>
+                ))}
               </select>
             </div>
             <div>

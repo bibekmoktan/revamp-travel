@@ -4,39 +4,48 @@ import { topDestinations } from '@/data/destinations';
 
 export default function TopDestinations() {
   return (
-    <section className="py-12 px-6 md:px-16">
+    <section className="py-16 px-6 md:px-16 bg-gray-50">
       <div className="max-w-[1320px] mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Top Destinations</h2>
-          <Link href="/destinations" className="text-sm text-sky-600 hover:underline font-medium">
-            See all
-          </Link>
+
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Destinations to Inspire Adventure</h2>
+          <p className="text-gray-500 text-sm max-w-[480px] mx-auto leading-relaxed">
+            From the rooftop of the world to hidden valleys — discover Nepal's most breathtaking regions waiting to be explored.
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {topDestinations.map((destination, i) => (
+        {/* Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-[900px] mx-auto">
+          {topDestinations.map((destination) => (
             <Link
               key={destination.slug}
               href={`/destinations/${destination.slug}`}
-              className={`group relative overflow-hidden block ${i === 0 ? 'row-span-2' : ''}`}
+              className="group bg-white rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] transition-shadow duration-300 flex flex-col items-center p-4"
             >
-              <div className={`relative w-full overflow-hidden ${i === 0 ? 'min-h-[390px]' : 'h-[185px]'}`}>
+              {/* Rounded image */}
+              <div className="relative w-full h-[140px] rounded-xl overflow-hidden mb-4">
                 <Image
                   src={destination.image}
                   alt={destination.label}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <h3 className="text-white font-semibold text-[14px] leading-tight">
-                    {destination.label}
-                  </h3>
-                </div>
               </div>
+
+              {/* Name */}
+              <h3 className="text-[15px] font-semibold text-gray-900 mb-2 text-center">
+                {destination.label}
+              </h3>
+
+              {/* More link */}
+              <span className="text-[11px] font-bold text-sky-600 tracking-widest uppercase border-b border-sky-200 pb-0.5 group-hover:border-sky-500 transition-colors">
+                More
+              </span>
             </Link>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -1,496 +1,386 @@
 'use client';
 
 import { useState } from 'react';
+import { CheckCircle, X, Loader2, MapPin, Users, Calendar, Hotel, Wallet, Globe, MessageSquare } from 'lucide-react';
+import { submitEnquiry } from '@/lib/api';
 
-// Main component for custom trekking package form
-const CustomPackage = () => {
-  // State to manage form data
-  const [formData, setFormData] = useState({
-    // Trip Details
-    tripType: '',
-    approxDateOfTravel: '',
-    approxStartDate: '',
-    approxEndDate: '',
-    tripDuration: '',
-    numberOfAdults: '',
-    numberOfChildren: '',
-    hotelType: '',
-    estimatedBudget: '',
-    guideLanguage: '',
-    moreInformation: '',
-    
-    // Personal Information
-    fullName: '',
-    emailAddress: '',
-    phoneNumberWithCountryCode: '',
-    selectYourCountry: '',
-    whereDidYouFindUs: ''
-  });
+interface FormData {
+  tripType: string;
+  approxStartDate: string;
+  approxEndDate: string;
+  tripDuration: string;
+  numberOfAdults: string;
+  numberOfChildren: string;
+  hotelType: string;
+  estimatedBudget: string;
+  guideLanguage: string;
+  moreInformation: string;
+  fullName: string;
+  emailAddress: string;
+  phoneNumberWithCountryCode: string;
+  selectYourCountry: string;
+  whereDidYouFindUs: string;
+}
 
-  // State to manage popup modal visibility
-  const [showSuccessModal, setShowSuccessModal] = useState(true);
+const EMPTY: FormData = {
+  tripType: '', approxStartDate: '', approxEndDate: '', tripDuration: '',
+  numberOfAdults: '', numberOfChildren: '', hotelType: '', estimatedBudget: '',
+  guideLanguage: '', moreInformation: '', fullName: '', emailAddress: '',
+  phoneNumberWithCountryCode: '', selectYourCountry: '', whereDidYouFindUs: '',
+};
 
-  // Handle input changes for all form fields
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+function buildMessage(f: FormData): string {
+  return [
+    '[Custom Trip Request]',
+    '',
+    `Trip Type: ${f.tripType}`,
+    `Start Date: ${f.approxStartDate}`,
+    `End Date: ${f.approxEndDate}`,
+    `Duration: ${f.tripDuration} days`,
+    `Adults: ${f.numberOfAdults}${f.numberOfChildren ? `, Children: ${f.numberOfChildren}` : ''}`,
+    `Accommodation: ${f.hotelType}`,
+    `Budget: ${f.estimatedBudget}`,
+    `Guide Language: ${f.guideLanguage}`,
+    `Country: ${f.selectYourCountry}`,
+    `Found Via: ${f.whereDidYouFindUs}`,
+    '',
+    'Additional Information:',
+    f.moreInformation,
+  ].join('\n');
+}
+
+const inputCls = 'w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500/20 bg-white transition-colors';
+const selectCls = inputCls + ' text-gray-600';
+const labelCls = 'block text-xs font-semibold text-gray-600 mb-1.5';
+
+export default function CustomPackage() {
+  const [form, setForm]           = useState<FormData>(EMPTY);
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess]     = useState(false);
+  const [error, setError]         = useState('');
+
+  function update(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+    setForm(prev => ({ ...prev, [name]: value }));
+  }
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log('Custom Trekking Package Form Data:', formData);
-    // Here you would typically send data to your backend
-    
-    // Show success modal instead of browser alert
-    setShowSuccessModal(true);
-  };
-
-  // Close the success modal
-  const closeModal = () => {
-    setShowSuccessModal(false);
-    // Optionally reset form after successful submission
-    // setFormData({ /* reset to initial state */ });
-  };
+    if (!form.fullName.trim() || !form.emailAddress.trim()) {
+      setError('Full name and email are required.');
+      return;
+    }
+    setError('');
+    setSubmitting(true);
+    try {
+      await submitEnquiry({
+        name: form.fullName.trim(),
+        email: form.emailAddress.trim(),
+        phone: form.phoneNumberWithCountryCode || undefined,
+        message: buildMessage(form),
+        packageTitle: `Custom ${form.tripType || 'Trip'} — ${form.approxStartDate || 'TBD'}`,
+      });
+      setSuccess(true);
+      setForm(EMPTY);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 mt-24">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Tailored Trekking Package</h1>
-        
-        {/* Form Container */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          
-          <form onSubmit={handleSubmit} className="p-8">
-            
-            {/* Trip Details Section */}
-            <div className="mb-8">
-              <h2 className="text-xl font-medium text-gray-800 mb-6">
-                Trip Details
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Trip Type */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Trip Type <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="tripType"
-                    value={formData.tripType}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600 bg-white text-gray-500"
-                  >
-                    <option value="">---- Select One Option ----</option>
-                    <option value="trekking">Trekking</option>
-                    <option value="hiking">Hiking</option>
-                    <option value="mountaineering">Mountaineering</option>
-                    <option value="adventure">Adventure Tour</option>
-                    <option value="cultural">Cultural Tour</option>
-                  </select>
-                </div>
-                {/* Approx Start Date */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Approx Start Date <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      name="approxStartDate"
-                      value={formData.approxStartDate}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <svg className="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Approx End Date */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Approx End Date <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      name="approxEndDate"
-                      value={formData.approxEndDate}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <svg className="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Trip Duration */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Trip Duration <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="tripDuration"
-                    value={formData.tripDuration}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    placeholder="Please enter a number greater than or equal to 1"
-                  />
-                </div>
-
-                {/* Number of Adults */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Number of Adults <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="numberOfAdults"
-                    value={formData.numberOfAdults}
-                    onChange={handleInputChange}
-                    required
-                    min="1"
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    placeholder="Number of Adults"
-                  />
-                </div>
-
-                {/* Number of Children */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Number of Children (Age Below 10)
-                  </label>
-                  <input
-                    type="number"
-                    name="numberOfChildren"
-                    value={formData.numberOfChildren}
-                    onChange={handleInputChange}
-                    min="0"
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    placeholder="Number of Children (Age Below 10)"
-                  />
-                </div>
-
-                {/* Hotel Type */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Hotel Type <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="hotelType"
-                    value={formData.hotelType}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600 bg-white text-gray-500"
-                  >
-                    <option value="">---- Select One Option ----</option>
-                    <option value="budget">Budget Hotel</option>
-                    <option value="standard">Standard Hotel</option>
-                    <option value="deluxe">Deluxe Hotel</option>
-                    <option value="luxury">Luxury Hotel</option>
-                    <option value="teahouse">Tea House</option>
-                    <option value="guesthouse">Guest House</option>
-                  </select>
-                </div>
-
-                {/* Estimated Budget */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Estimated Budget <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="estimatedBudget"
-                    value={formData.estimatedBudget}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600 bg-white text-gray-500"
-                  >
-                    <option value="">---- Select One Option ----</option>
-                    <option value="under-1000">Under $1,000</option>
-                    <option value="1000-2500">$1,000 - $2,500</option>
-                    <option value="2500-5000">$2,500 - $5,000</option>
-                    <option value="5000-10000">$5,000 - $10,000</option>
-                    <option value="above-10000">Above $10,000</option>
-                  </select>
-                </div>
-
-                {/* Guide Language */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Guide Language <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="guideLanguage"
-                    value={formData.guideLanguage}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600 bg-white text-gray-500"
-                  >
-                    <option value="">---- Select One Option ----</option>
-                    <option value="english">English</option>
-                    <option value="spanish">Spanish</option>
-                    <option value="french">French</option>
-                    <option value="german">German</option>
-                    <option value="italian">Italian</option>
-                    <option value="japanese">Japanese</option>
-                    <option value="chinese">Chinese</option>
-                  </select>
-                </div>
-
-                {/* More Information */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-2">
-                    More Information <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    name="moreInformation"
-                    value={formData.moreInformation}
-                    onChange={handleInputChange}
-                    required
-                    rows={6}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600 resize-none"
-                    placeholder="Please provide more details about your trip requirements..."
-                  />
-                </div>
-
-              </div>
-            </div>
-
-            {/* Personal Information Section */}
-            <div className="mb-8">
-              <h2 className="text-xl font-medium text-gray-800 mb-6">
-                Personal Information
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Full Name */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    placeholder="Full Name"
-                  />
-                </div>
-
-                {/* Email Address */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="emailAddress"
-                    value={formData.emailAddress}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    placeholder="Email Address"
-                  />
-                </div>
-
-                {/* Phone Number With Country Code */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Phone Number With Country Code
-                  </label>
-                  <input
-                    type="tel"
-                    name="phoneNumberWithCountryCode"
-                    value={formData.phoneNumberWithCountryCode}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600"
-                    placeholder="Phone Number With Country Code"
-                  />
-                </div>
-
-                {/* Select Your Country */}
-                <div>
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Select Your Country <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="selectYourCountry"
-                    value={formData.selectYourCountry}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600 bg-white text-gray-500"
-                  >
-                    <option value="">--- Select Your Country ---</option>
-                    <option value="usa">United States</option>
-                    <option value="uk">United Kingdom</option>
-                    <option value="canada">Canada</option>
-                    <option value="australia">Australia</option>
-                    <option value="germany">Germany</option>
-                    <option value="france">France</option>
-                    <option value="spain">Spain</option>
-                    <option value="italy">Italy</option>
-                    <option value="japan">Japan</option>
-                    <option value="china">China</option>
-                    <option value="india">India</option>
-                    <option value="nepal">Nepal</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                {/* Where Did You Find Us */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Where Did You Find Us? <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="whereDidYouFindUs"
-                    value={formData.whereDidYouFindUs}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-sky-600 focus:border-sky-600 bg-white text-gray-500"
-                  >
-                    <option value="">---- Select One Option ----</option>
-                    <option value="google">Google Search</option>
-                    <option value="social-media">Social Media</option>
-                    <option value="friend-recommendation">Friend Recommendation</option>
-                    <option value="travel-blog">Travel Blog</option>
-                    <option value="travel-agent">Travel Agent</option>
-                    <option value="advertisement">Advertisement</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="text-right">
-              <button
-                type="submit"
-                className="px-8 py-3 bg-sky-600 text-white font-medium rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-600 transition-colors duration-200"
-              >
-                Submit Request
-              </button>
-            </div>
-
-          </form>
-        </div>
+    <div className="min-h-screen bg-[#F3F6FB] mt-20">
+      {/* Page hero */}
+      <div className="bg-white border-b border-gray-100 py-10 text-center">
+        <p className="text-xs font-semibold tracking-widest text-sky-600 uppercase mb-2">Plan Your Adventure</p>
+        <h1 className="text-3xl font-bold text-gray-900">Customise Your Trip</h1>
+        <p className="text-gray-500 mt-2 text-sm max-w-md mx-auto">
+          Tell us your dream itinerary and our team will craft a personalised package just for you.
+        </p>
       </div>
 
-      {/* Success Modal Popup */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 transform transition-all border border-gray-200">
-            
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-8 border-b border-gray-200">
-              <div className="flex items-center">
-                {/* Success Icon */}
-                <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <h3 className="ml-4 text-xl font-semibold text-gray-900">Request Submitted Successfully!</h3>
-              </div>
-              
-              {/* Close Button */}
-              <button
-                onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors duration-200 p-1"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* ── Trip Details ──────────────────────────────── */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-sky-50/60">
+              <MapPin className="w-4 h-4 text-sky-600 shrink-0" />
+              <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Trip Details</h2>
             </div>
-            
-            {/* Modal Body */}
-            <div className="p-8">
-              <p className="text-gray-700 text-base leading-relaxed mb-6">
-                Thank you for your interest in our custom trekking packages! Your request has been submitted successfully. 
-                Our experienced travel team will carefully review your requirements and create a personalized itinerary just for you.
+
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+              {/* Trip Type */}
+              <div>
+                <label className={labelCls}>Trip Type <span className="text-red-500">*</span></label>
+                <select name="tripType" value={form.tripType} onChange={update} required className={selectCls}>
+                  <option value="">Select trip type</option>
+                  <option value="Trekking">Trekking</option>
+                  <option value="Hiking">Hiking</option>
+                  <option value="Mountaineering">Mountaineering</option>
+                  <option value="Adventure Tour">Adventure Tour</option>
+                  <option value="Cultural Tour">Cultural Tour</option>
+                  <option value="Wildlife Safari">Wildlife Safari</option>
+                  <option value="Pilgrimage">Pilgrimage</option>
+                </select>
+              </div>
+
+              {/* Trip Duration */}
+              <div>
+                <label className={labelCls}>
+                  <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Duration (days) <span className="text-red-500">*</span></span>
+                </label>
+                <input
+                  type="number" name="tripDuration" value={form.tripDuration} onChange={update}
+                  required min="1" placeholder="e.g. 14"
+                  className={inputCls}
+                />
+              </div>
+
+              {/* Start Date */}
+              <div>
+                <label className={labelCls}>Approx Start Date <span className="text-red-500">*</span></label>
+                <input type="date" name="approxStartDate" value={form.approxStartDate} onChange={update} required className={inputCls} />
+              </div>
+
+              {/* End Date */}
+              <div>
+                <label className={labelCls}>Approx End Date <span className="text-red-500">*</span></label>
+                <input type="date" name="approxEndDate" value={form.approxEndDate} onChange={update} required className={inputCls} />
+              </div>
+
+              {/* Adults */}
+              <div>
+                <label className={labelCls}>
+                  <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Number of Adults <span className="text-red-500">*</span></span>
+                </label>
+                <input
+                  type="number" name="numberOfAdults" value={form.numberOfAdults} onChange={update}
+                  required min="1" placeholder="1"
+                  className={inputCls}
+                />
+              </div>
+
+              {/* Children */}
+              <div>
+                <label className={labelCls}>Children <span className="text-gray-400 font-normal">(age below 10)</span></label>
+                <input
+                  type="number" name="numberOfChildren" value={form.numberOfChildren} onChange={update}
+                  min="0" placeholder="0"
+                  className={inputCls}
+                />
+              </div>
+
+              {/* Hotel Type */}
+              <div>
+                <label className={labelCls}>
+                  <span className="flex items-center gap-1.5"><Hotel className="w-3.5 h-3.5" /> Accommodation Type <span className="text-red-500">*</span></span>
+                </label>
+                <select name="hotelType" value={form.hotelType} onChange={update} required className={selectCls}>
+                  <option value="">Select accommodation</option>
+                  <option value="Tea House">Tea House</option>
+                  <option value="Guest House">Guest House</option>
+                  <option value="Budget Hotel">Budget Hotel</option>
+                  <option value="Standard Hotel">Standard Hotel</option>
+                  <option value="Deluxe Hotel">Deluxe Hotel</option>
+                  <option value="Luxury Hotel">Luxury Hotel</option>
+                </select>
+              </div>
+
+              {/* Budget */}
+              <div>
+                <label className={labelCls}>
+                  <span className="flex items-center gap-1.5"><Wallet className="w-3.5 h-3.5" /> Estimated Budget <span className="text-red-500">*</span></span>
+                </label>
+                <select name="estimatedBudget" value={form.estimatedBudget} onChange={update} required className={selectCls}>
+                  <option value="">Select budget range</option>
+                  <option value="Under $1,000">Under $1,000</option>
+                  <option value="$1,000 – $2,500">$1,000 – $2,500</option>
+                  <option value="$2,500 – $5,000">$2,500 – $5,000</option>
+                  <option value="$5,000 – $10,000">$5,000 – $10,000</option>
+                  <option value="Above $10,000">Above $10,000</option>
+                </select>
+              </div>
+
+              {/* Guide Language */}
+              <div className="sm:col-span-2">
+                <label className={labelCls}>
+                  <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> Guide Language <span className="text-red-500">*</span></span>
+                </label>
+                <select name="guideLanguage" value={form.guideLanguage} onChange={update} required className={selectCls}>
+                  <option value="">Select language</option>
+                  <option value="English">English</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Italian">Italian</option>
+                  <option value="Japanese">Japanese</option>
+                  <option value="Chinese">Chinese</option>
+                </select>
+              </div>
+
+              {/* More Information */}
+              <div className="sm:col-span-2">
+                <label className={labelCls}>
+                  <span className="flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> Additional Requirements <span className="text-red-500">*</span></span>
+                </label>
+                <textarea
+                  name="moreInformation" value={form.moreInformation} onChange={update}
+                  required rows={5}
+                  placeholder="Describe your dream trip — destinations, activities, special requests, dietary needs, fitness level…"
+                  className={inputCls + ' resize-none'}
+                />
+              </div>
+
+            </div>
+          </div>
+
+          {/* ── Personal Information ──────────────────────── */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-sky-50/60">
+              <Users className="w-4 h-4 text-sky-600 shrink-0" />
+              <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Personal Information</h2>
+            </div>
+
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+              <div>
+                <label className={labelCls}>Full Name <span className="text-red-500">*</span></label>
+                <input
+                  type="text" name="fullName" value={form.fullName} onChange={update}
+                  required placeholder="Your full name"
+                  className={inputCls}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls}>Email Address <span className="text-red-500">*</span></label>
+                <input
+                  type="email" name="emailAddress" value={form.emailAddress} onChange={update}
+                  required placeholder="you@example.com"
+                  className={inputCls}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls}>Phone <span className="text-gray-400 font-normal">(with country code)</span></label>
+                <input
+                  type="tel" name="phoneNumberWithCountryCode" value={form.phoneNumberWithCountryCode} onChange={update}
+                  placeholder="+977 98XXXXXXXX"
+                  className={inputCls}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls}>Country <span className="text-red-500">*</span></label>
+                <select name="selectYourCountry" value={form.selectYourCountry} onChange={update} required className={selectCls}>
+                  <option value="">Select your country</option>
+                  <option value="United States">United States</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Australia">Australia</option>
+                  <option value="Germany">Germany</option>
+                  <option value="France">France</option>
+                  <option value="Spain">Spain</option>
+                  <option value="Italy">Italy</option>
+                  <option value="Japan">Japan</option>
+                  <option value="China">China</option>
+                  <option value="India">India</option>
+                  <option value="Nepal">Nepal</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className={labelCls}>How did you find us? <span className="text-red-500">*</span></label>
+                <select name="whereDidYouFindUs" value={form.whereDidYouFindUs} onChange={update} required className={selectCls}>
+                  <option value="">Select an option</option>
+                  <option value="Google Search">Google Search</option>
+                  <option value="Social Media">Social Media</option>
+                  <option value="Friend Recommendation">Friend Recommendation</option>
+                  <option value="Travel Blog">Travel Blog</option>
+                  <option value="Travel Agent">Travel Agent</option>
+                  <option value="Advertisement">Advertisement</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
+          {error && (
+            <p className="text-red-500 text-sm px-1">{error}</p>
+          )}
+
+          {/* Submit */}
+          <div className="flex justify-end pb-4">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 disabled:bg-sky-400 text-white font-bold px-8 py-3 rounded-lg text-sm uppercase tracking-wide transition-colors shadow-md"
+            >
+              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : 'Submit Request'}
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      {/* Success Modal */}
+      {success && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSuccess(false)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+
+            <button
+              onClick={() => setSuccess(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="px-8 pt-10 pb-6 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-9 h-9 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Request Submitted!</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Thank you! Our travel experts will review your requirements and send you a personalised proposal within <strong className="text-gray-700">24 hours</strong>.
               </p>
-              
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h4 className="text-blue-900 font-semibold text-lg mb-4 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  What Happens Next?
-                </h4>
-                
-                <div className="space-y-3">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                      <span className="text-white text-xs font-bold">1</span>
-                    </div>
-                    <p className="text-blue-800 text-sm leading-relaxed">
-                      <strong>Review & Analysis:</strong> Our travel experts will analyze your requirements and preferences
-                    </p>
+            </div>
+
+            <div className="mx-8 mb-6 bg-sky-50 rounded-xl px-5 py-4 space-y-3">
+              {[
+                ['Review & Analysis', 'Our experts analyse your requirements'],
+                ['Custom Proposal', 'Detailed itinerary & pricing within 24 h'],
+                ['Personal Consultation', 'A call to refine your perfect adventure'],
+              ].map(([title, desc], i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    {i + 1}
                   </div>
-                  
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                      <span className="text-white text-xs font-bold">2</span>
-                    </div>
-                    <p className="text-blue-800 text-sm leading-relaxed">
-                      <strong>Custom Proposal:</strong> You&apos;ll receive a detailed itinerary and pricing within 24 hours
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                      <span className="text-white text-xs font-bold">3</span>
-                    </div>
-                    <p className="text-blue-800 text-sm leading-relaxed">
-                      <strong>Personal Consultation:</strong> We&apos;ll schedule a call to discuss and refine your perfect adventure
-                    </p>
+                  <div>
+                    <p className="text-xs font-semibold text-sky-900">{title}</p>
+                    <p className="text-xs text-sky-700">{desc}</p>
                   </div>
                 </div>
-              </div>
-              
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-gray-600 text-sm text-center">
-                  <strong>Response Time:</strong> Within 24 hours via email
-                </p>
-              </div>
+              ))}
             </div>
-            
-            {/* Modal Footer */}
-            <div className="px-8 py-6 bg-gray-50 rounded-b-lg flex justify-end border-t border-gray-200">
+
+            <div className="px-8 pb-8">
               <button
-                onClick={closeModal}
-                className="px-8 py-3 bg-sky-600 text-white text-base font-medium rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-600 transition-colors duration-200 shadow-sm"
+                onClick={() => setSuccess(false)}
+                className="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-lg text-sm transition-colors"
               >
-                Perfect, Got it!
+                Got it, thanks!
               </button>
             </div>
-            
+
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default CustomPackage;
+}
