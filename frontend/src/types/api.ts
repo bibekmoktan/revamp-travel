@@ -122,6 +122,7 @@ export interface BookingSummary {
 }
 
 export interface CartItem {
+  cartId: string;
   packageId: string;
   slug: string;
   title: string;

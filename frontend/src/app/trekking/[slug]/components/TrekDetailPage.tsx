@@ -29,11 +29,9 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
             <TrekReviews packageId={pkg._id} />
           </div>
 
-          {/* Sticky booking sidebar */}
+          {/* Booking sidebar */}
           <aside className="lg:w-80 shrink-0">
-            <div className="sticky top-[150px]">
-              <TrekBookingCard pkg={pkg} />
-            </div>
+            <TrekBookingCard pkg={pkg} />
           </aside>
 
         </div>

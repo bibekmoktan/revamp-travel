@@ -28,7 +28,21 @@ const createBooking = [
     res.status(201).json({
       success: true,
       message: 'Booking created successfully',
-      data: result,
+      data: result.booking,
+    });
+  }),
+];
+
+const getAllBookings = [
+  protect,
+  authorize('admin'),
+  catchAsync(async (req: Request, res: Response) => {
+    const result = await BookingService.getAllBookings(req.query as any);
+    res.status(200).json({
+      success: true,
+      message: 'Bookings retrieved successfully',
+      data: result.data,
+      meta: result.meta,
     });
   }),
 ];
@@ -58,8 +72,8 @@ const getBooking = [
 
     res.status(200).json({
       success: true,
-      message: 'Booking group retrieved successfully',
-      data: result,
+      message: 'Booking retrieved successfully',
+      data: result.booking,
     });
   }),
 ];
@@ -96,6 +110,7 @@ const confirmBooking = [
 
 export const BookingControllers = {
   createBooking,
+  getAllBookings,
   getMyBookings,
   getBooking,
   cancelBooking,

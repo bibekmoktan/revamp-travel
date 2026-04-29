@@ -6,8 +6,10 @@ import type { CartItem } from '@/types/api';
 interface CartContextValue {
   items: CartItem[];
   count: number;
+  hydrated: boolean;
   addItem: (item: CartItem) => void;
-  removeItem: (packageId: string, date: string) => void;
+  removeItem: (cartId: string) => void;
+  updateItem: (cartId: string, updates: Partial<CartItem>) => void;
   clearCart: () => void;
 }
 
@@ -17,12 +19,19 @@ const STORAGE_KEY = 'tn_cart';
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw));
+      if (raw) {
+        const parsed: CartItem[] = JSON.parse(raw);
+        const migrated = parsed.map(i => i.cartId ? i : { ...i, cartId: crypto.randomUUID() });
+        setItems(migrated);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      }
     } catch {}
+    setHydrated(true);
   }, []);
 
   const persist = (next: CartItem[]) => {
@@ -32,18 +41,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback((item: CartItem) => {
     setItems(prev => {
-      const exists = prev.find(i => i.packageId === item.packageId && i.date === item.date);
-      const next = exists
-        ? prev.map(i => i.packageId === item.packageId && i.date === item.date ? item : i)
-        : [...prev, item];
+      const next = [...prev, item];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;
     });
   }, []);
 
-  const removeItem = useCallback((packageId: string, date: string) => {
+  const removeItem = useCallback((cartId: string) => {
     setItems(prev => {
-      const next = prev.filter(i => !(i.packageId === packageId && i.date === date));
+      const next = prev.filter(i => i.cartId !== cartId);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const updateItem = useCallback((cartId: string, updates: Partial<CartItem>) => {
+    setItems(prev => {
+      const next = prev.map(i => i.cartId === cartId ? { ...i, ...updates } : i);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;
     });
@@ -54,7 +68,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <CartContext.Provider value={{ items, count: items.length, addItem, removeItem, clearCart }}>
+    <CartContext.Provider value={{ items, count: items.length, hydrated, addItem, removeItem, updateItem, clearCart }}>
       {children}
     </CartContext.Provider>
   );

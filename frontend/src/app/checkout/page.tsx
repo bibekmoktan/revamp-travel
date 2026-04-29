@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import { createBooking } from '@/lib/api';
 import type { TravelerInput } from '@/types/api';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ function emptyTraveler(): TravelerInput {
 }
 
 export default function CheckoutPage() {
-  const { items, clearCart } = useCart();
+  const { items, hydrated, clearCart } = useCart();
   const { user, token } = useAuth();
   const router = useRouter();
 
@@ -33,6 +33,14 @@ export default function CheckoutPage() {
   const [error, setError] = useState('');
 
   const grandTotal = safeItems.reduce((s, i) => s + i.totalAmount, 0);
+
+  if (!hydrated) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-7 h-7 border-2 border-sky-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (safeItems.length === 0) {
     return (
@@ -84,13 +92,14 @@ export default function CheckoutPage() {
       const bookingIds: string[] = [];
       for (let i = 0; i < safeItems.length; i++) {
         const item = safeItems[i];
-        const res = await createBooking(token, {
+        const res = await createBooking(token!, {
           packageId: item.packageId,
           trekDate: new Date(item.date).toISOString(),
           travelers: travelersByItem[i],
         });
         bookingIds.push(res.data._id);
       }
+
       clearCart();
       router.push(`/booking/${bookingIds[0]}?all=${bookingIds.join(',')}`);
     } catch (e: unknown) {
@@ -102,7 +111,7 @@ export default function CheckoutPage() {
 
   return (
     <section className="py-12 px-6 md:px-16 min-h-[70vh]">
-      <div className="max-w-[1100px] mx-auto pt-[200px] md:pt-[200px]">
+      <div className="max-w-[1100px] mx-auto pt-24 md:pt-28">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">Checkout</h1>
 
         <div className="flex flex-col lg:flex-row gap-8">

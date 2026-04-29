@@ -7,6 +7,8 @@ import { BookingRoutes } from '../modules/bookings/booking.route';
 import { UploadRoutes } from '../modules/upload/upload.route';
 import { CategoryRoutes } from '../modules/category/category.route';
 import { EnquiryRoutes } from '../modules/enquiry/enquiry.route';
+import { PaymentRoutes } from '../modules/payment/payment.route';
+import { WishlistRoutes } from '../modules/wishlist/wishlist.route';
 
 const router = Router();
 
@@ -42,6 +44,14 @@ const moduleRoutes = [
   {
     path: '/enquiries',
     route: EnquiryRoutes,
+  },
+  {
+    path: '/payments',
+    route: PaymentRoutes,
+  },
+  {
+    path: '/wishlist',
+    route: WishlistRoutes,
   },
 ];
 

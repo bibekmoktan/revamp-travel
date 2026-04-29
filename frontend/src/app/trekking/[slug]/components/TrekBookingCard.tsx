@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, CalendarDays, Minus, Plus, ShoppingCart, CheckCircle, Send } from 'lucide-react';
+import { ChevronDown, Minus, Plus, ShoppingCart, CheckCircle, Send, AlertCircle } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
 import { useCart } from '@/context/CartContext';
 import EnquiryModal from '@/app/components/EnquiryModal';
+import WishlistButton from '@/app/components/WishlistButton';
 
 const GROUP_TIERS = [
   { label: '1 pax',      min: 1, max: 1,  discount: 0.10 },
@@ -25,11 +26,23 @@ function activeTier(travelers: number) {
 export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
   const [groupOpen, setGroupOpen]     = useState(true);
   const [date, setDate]               = useState('');
+  const [dateError, setDateError]     = useState('');
   const [travelers, setTravelers]     = useState(1);
   const [added, setAdded]             = useState(false);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const { addItem }                   = useCart();
   const router                        = useRouter();
+
+  const today = new Date().toISOString().split('T')[0];
+
+  function validateDate(): boolean {
+    if (!date) {
+      setDateError('Departure date is required.');
+      return false;
+    }
+    setDateError('');
+    return true;
+  }
 
   const base      = pkg.price;
   const original  = Math.round(base * 1.15);
@@ -39,6 +52,7 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
 
   function buildCartItem() {
     return {
+      cartId:         crypto.randomUUID(),
       packageId:      pkg._id,
       slug:           pkg.slug,
       title:          pkg.title,
@@ -53,12 +67,14 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
   }
 
   function handleAddToCart() {
+    if (!validateDate()) return;
     addItem(buildCartItem());
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
 
   function handleBookNow() {
+    if (!validateDate()) return;
     addItem(buildCartItem());
     router.push('/cart');
   }
@@ -76,6 +92,7 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
             <span className="text-gray-500 text-xs">P/P</span>
           </div>
         </div>
+        <WishlistButton pkg={pkg} />
       </div>
 
       <div className="border-t border-gray-100" />
@@ -111,17 +128,21 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
 
       {/* Departure date */}
       <div className="px-5 py-4">
-        <p className="font-semibold text-gray-800 mb-2">Departure Date</p>
-        <div className="flex items-center border border-sky-800 px-3 py-2 gap-2">
+        <p className="font-semibold text-gray-800 mb-2">Departure Date <span className="text-red-500">*</span></p>
+        <div className={`flex items-center border px-3 py-2 ${dateError ? 'border-red-400' : 'border-sky-800'}`}>
           <input
             type="date"
             value={date}
-            onChange={e => setDate(e.target.value)}
-            className="flex-1 text-gray-500 focus:outline-none bg-transparent text-sm"
-            placeholder="Select Trip Date"
+            min={today}
+            onChange={e => { setDate(e.target.value); setDateError(''); }}
+            className="flex-1 text-gray-700 focus:outline-none bg-transparent text-sm"
           />
-          <CalendarDays className="w-5 h-5 text-gray-400 shrink-0" />
         </div>
+        {dateError && (
+          <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0" />{dateError}
+          </p>
+        )}
       </div>
 
       <div className="border-t border-gray-100" />
@@ -172,10 +193,6 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
             {added ? <><CheckCircle className="w-3.5 h-3.5" /> Added</> : <><ShoppingCart className="w-3.5 h-3.5" /> Add to Cart</>}
           </button>
         </div>
-
-        <button className="w-full bg-[#1E88E5] hover:bg-[#1565C0] text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors">
-          Check Availability
-        </button>
 
         <button
           onClick={() => setEnquiryOpen(true)}

@@ -4,24 +4,20 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { adminGetBookings, adminConfirmBooking, adminCancelBooking } from '@/lib/api';
 
-type BookingStatus = 'pending' | 'confirmed' | 'cancelled';
-
 interface Booking {
   _id: string;
   user?: { name?: string; email?: string };
-  package?: { title?: string };
-  packageId?: string;
-  travelerInfo?: { fullName?: string; email?: string; phone?: string };
-  departureDate?: string;
-  paxInGroup?: number;
+  package?: { title?: string; location?: string; duration?: string };
+  trekDate?: string;
+  numberOfPeople?: number;
   totalAmount?: number;
-  status: BookingStatus;
+  bookingStatus: 'reserved' | 'confirmed' | 'cancelled';
   paymentStatus?: string;
   createdAt?: string;
 }
 
-const STATUS_COLORS: Record<BookingStatus, string> = {
-  pending:   'bg-yellow-100 text-yellow-700',
+const STATUS_COLORS: Record<string, string> = {
+  reserved:  'bg-amber-100 text-amber-700',
   confirmed: 'bg-green-100 text-green-700',
   cancelled: 'bg-red-100 text-red-700',
 };
@@ -29,10 +25,10 @@ const STATUS_COLORS: Record<BookingStatus, string> = {
 export default function AdminBookingsPage() {
   const { token } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
+  const [total, setTotal]       = useState(0);
+  const [page, setPage]         = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]   = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -78,7 +74,7 @@ export default function AdminBookingsPage() {
           className="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Statuses</option>
-          <option value="pending">Pending</option>
+          <option value="reserved">Reserved</option>
           <option value="confirmed">Confirmed</option>
           <option value="cancelled">Cancelled</option>
         </select>
@@ -118,27 +114,30 @@ export default function AdminBookingsPage() {
                 : bookings.map((b) => (
                     <tr key={b._id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-5 py-3.5">
-                        <p className="font-medium text-gray-900">{b.travelerInfo?.fullName ?? b.user?.name ?? '—'}</p>
-                        <p className="text-xs text-gray-400">{b.travelerInfo?.email ?? b.user?.email ?? ''}</p>
+                        <p className="font-medium text-gray-900">{b.user?.name ?? '—'}</p>
+                        <p className="text-xs text-gray-400">{b.user?.email ?? ''}</p>
                       </td>
                       <td className="px-4 py-3.5 text-gray-700 max-w-[180px]">
                         <p className="line-clamp-1">{b.package?.title ?? '—'}</p>
+                        {b.package?.location && (
+                          <p className="text-xs text-gray-400">{b.package.location}</p>
+                        )}
                       </td>
                       <td className="px-4 py-3.5 text-gray-600">
-                        {b.departureDate ? new Date(b.departureDate).toLocaleDateString() : '—'}
+                        {b.trekDate ? new Date(b.trekDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                       </td>
-                      <td className="px-4 py-3.5 text-gray-600">{b.paxInGroup ?? '—'}</td>
+                      <td className="px-4 py-3.5 text-gray-600">{b.numberOfPeople ?? '—'}</td>
                       <td className="px-4 py-3.5 font-medium text-gray-900">
                         {b.totalAmount != null ? `$${b.totalAmount.toLocaleString()}` : '—'}
                       </td>
                       <td className="px-4 py-3.5">
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${STATUS_COLORS[b.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                          {b.status}
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${STATUS_COLORS[b.bookingStatus] ?? 'bg-gray-100 text-gray-600'}`}>
+                          {b.bookingStatus}
                         </span>
                       </td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center justify-end gap-2">
-                          {b.status === 'pending' && (
+                          {b.bookingStatus === 'reserved' && (
                             <>
                               <button
                                 onClick={() => handleAction(b._id, 'confirm')}
@@ -163,6 +162,7 @@ export default function AdminBookingsPage() {
             </tbody>
           </table>
         </div>
+
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 text-sm text-gray-500">
             <span>Page {page} of {totalPages}</span>

@@ -288,6 +288,55 @@ export async function cancelMyBooking(token: string, bookingId: string) {
   });
 }
 
+// ─── Wishlist ─────────────────────────────────────────────────────────────
+
+export async function getWishlist(token: string) {
+  return apiFetch<{ success: boolean; data: any[] }>('/wishlist', {
+    headers: authHeaders(token),
+    cache: 'no-store',
+  });
+}
+
+export async function getWishlistIds(token: string) {
+  return apiFetch<{ success: boolean; data: string[] }>('/wishlist/ids', {
+    headers: authHeaders(token),
+    cache: 'no-store',
+  });
+}
+
+export async function addToWishlist(token: string, packageId: string) {
+  return apiFetch<{ success: boolean; message: string }>('/wishlist', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ packageId }),
+  });
+}
+
+export async function removeFromWishlist(token: string, packageId: string) {
+  return apiFetch<{ success: boolean; message: string }>(`/wishlist/${packageId}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+}
+
+// ─── Payments ─────────────────────────────────────────────────────────────
+
+export async function initiatePayment(token: string, bookingIds: string[]) {
+  return apiFetch<{ success: boolean; message: string; data: { payment_url: string; pidx: string; expires_at: string } }>('/payments/initiate', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ bookingIds }),
+  });
+}
+
+export async function verifyPayment(token: string, pidx: string, bookingIds: string[]) {
+  return apiFetch<{ success: boolean; message: string; data: { primaryBookingId: string; allBookingIds: string[] } }>('/payments/verify', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ pidx, bookingIds }),
+  });
+}
+
 // ─── Public: Reviews ──────────────────────────────────────────────────────
 
 export async function getPackageReviews(packageId: string, params?: Record<string, string>) {
