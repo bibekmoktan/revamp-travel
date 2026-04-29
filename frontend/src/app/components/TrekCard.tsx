@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Clock, Mountain } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
+import WishlistButton from './WishlistButton';
 
 interface TrekCardProps {
   package: ApiPackage;
@@ -15,15 +16,18 @@ export default function TrekCard({ package: pkg, href }: TrekCardProps) {
     <div className="w-full h-[500px] bg-white overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-200">
 
       {/* Image — clickable */}
-      <Link href={dest} className="block relative h-[260px] w-full overflow-hidden">
-        <Image
-          src={pkg.featureImage.url}
-          alt={pkg.featureImage.alt ?? pkg.title}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          className="object-cover hover:scale-105 transition-transform duration-500"
-        />
-      </Link>
+      <div className="relative h-[260px] w-full overflow-hidden">
+        <Link href={dest} className="block w-full h-full">
+          <Image
+            src={pkg.featureImage.url}
+            alt={pkg.featureImage.alt ?? pkg.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-cover hover:scale-105 transition-transform duration-500"
+          />
+        </Link>
+        <WishlistButton pkg={pkg} className="absolute top-3 right-3 z-10" />
+      </div>
 
       {/* Details */}
       <div className="px-4 py-2">

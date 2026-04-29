@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Clock, Mountain, Users } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
+import WishlistButton from '@/app/components/WishlistButton';
 
 const difficultyStyles: Record<string, string> = {
   easy:        'bg-green-100 text-green-700',
@@ -34,6 +35,7 @@ export default function TrekListItem({ package: pkg }: TrekListItemProps) {
             />
             {/* Left accent stripe */}
             <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#1E88E5] hidden md:block" />
+            <WishlistButton pkg={pkg} className="absolute top-3 right-3 z-10" />
           </div>
 
           {/* Content */}

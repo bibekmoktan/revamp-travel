@@ -128,6 +128,37 @@ export const BookingService = {
     return { booking: updated, travelers };
   },
 
+  async getAllBookings(query: BookingQueryParams): Promise<PaginatedBookings> {
+    const { page = BOOKING_CONSTANTS.DEFAULT_PAGE, limit = BOOKING_CONSTANTS.DEFAULT_LIMIT, status, sortBy = 'createdAt', sortOrder = 'desc' } = query;
+
+    const filter: any = {};
+    if (status) filter.bookingStatus = status;
+
+    const sort: any = {};
+    const allowedSortFields = ['createdAt', 'trekDate', 'bookingStatus', 'totalAmount'];
+    sort[allowedSortFields.includes(sortBy) ? sortBy : 'createdAt'] = sortOrder === 'desc' ? -1 : 1;
+
+    const pageNum = Math.max(1, Number(page));
+    const limitNum = Math.min(Math.max(1, Number(limit)), 100);
+    const skip = (pageNum - 1) * limitNum;
+
+    const [bookings, total] = await Promise.all([
+      BookingSummaryModel.find(filter)
+        .populate('user', 'name email')
+        .populate('package', 'title slug duration location price')
+        .sort(sort)
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      BookingSummaryModel.countDocuments(filter),
+    ]);
+
+    return {
+      data: bookings,
+      meta: { total, page: pageNum, limit: limitNum, pages: Math.ceil(total / limitNum) },
+    };
+  },
+
   async getMyBookings(userId: string, query: BookingQueryParams): Promise<PaginatedBookings> {
     const { page = BOOKING_CONSTANTS.DEFAULT_PAGE, limit = BOOKING_CONSTANTS.DEFAULT_LIMIT, status, sortBy = 'createdAt', sortOrder = 'desc' } = query;
 
@@ -146,7 +177,7 @@ export const BookingService = {
     const [bookings, total] = await Promise.all([
       BookingSummaryModel.find(filter)
         .select('user package trekDate numberOfPeople totalAmount bookingStatus paymentStatus expiresAt createdAt')
-        .populate('package', 'title price')
+        .populate('package', 'title slug featureImage duration location price')
         .sort(sort)
         .skip(skip)
         .limit(limitNum)
@@ -163,7 +194,7 @@ export const BookingService = {
   async getBooking(bookingId: string, userId: string, userRole: string): Promise<BookingResult> {
     const booking = await BookingSummaryModel.findById(bookingId)
       .select('user package trekDate numberOfPeople totalAmount bookingStatus paymentStatus expiresAt createdAt')
-      .populate('package', 'title price')
+      .populate('package', 'title slug featureImage duration location price')
       .lean();
 
     if (!booking) throw new NotFoundError('Booking not found');

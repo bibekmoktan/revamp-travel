@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { User, ShoppingCart, Heart, LogOut, CalendarCheck, Settings } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { useRouter } from 'next/navigation';
 import logo from '../../../public/images/home/logo.svg';
 import HeroSearch from './HeroSearch';
@@ -15,6 +16,7 @@ export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const { count: cartCount } = useCart();
+    const { count: wishlistCount } = useWishlist();
     const { user, logout } = useAuth();
     const router = useRouter();
     const profileRef = useRef<HTMLDivElement>(null);
@@ -140,8 +142,13 @@ export default function Navbar() {
 
                     {/* Right — Wishlist, Cart, Profile/Login */}
                     <div className="flex items-center gap-4">
-                        <Link href="/wishlist" aria-label="Wishlist" className="hover:text-white/80 transition">
+                        <Link href="/wishlist" aria-label="Wishlist" className="relative hover:text-white/80 transition">
                             <Heart className="w-4 h-4" />
+                            {wishlistCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-sky-800 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                                    {wishlistCount > 9 ? '9+' : wishlistCount}
+                                </span>
+                            )}
                         </Link>
                         <Link href="/cart" aria-label="Cart" className="relative hover:text-white/80 transition">
                             <ShoppingCart className="w-4 h-4" />
