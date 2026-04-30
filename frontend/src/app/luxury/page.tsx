@@ -5,8 +5,13 @@ import { getPackages } from '@/lib/api';
 import { Clock, MapPin, Mountain, Star } from 'lucide-react';
 
 async function LuxuryPackageGrid() {
-  const res = await getPackages({ limit: 24, status: 'active' });
-  const packages = res.data;
+  let packages: Awaited<ReturnType<typeof getPackages>>['data'] = [];
+  try {
+    const res = await getPackages({ limit: 24, status: 'active' });
+    packages = res.data;
+  } catch {
+    // backend unavailable
+  }
 
   if (packages.length === 0) {
     return (

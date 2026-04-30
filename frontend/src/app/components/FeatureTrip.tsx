@@ -3,8 +3,13 @@ import Link from 'next/link';
 import { getCategories } from '@/lib/api';
 
 export default async function FeaturedTrips() {
-  const res = await getCategories();
-  const categories = res.data ?? [];
+  let categories: Awaited<ReturnType<typeof getCategories>>['data'] = [];
+  try {
+    const res = await getCategories();
+    categories = res.data ?? [];
+  } catch {
+    // backend unavailable at build time — render empty
+  }
 
   return (
     <section className="relative z-20 bg-sky-50 py-8 md:py-16 px-6 md:px-16 md:mt-[-150px]">

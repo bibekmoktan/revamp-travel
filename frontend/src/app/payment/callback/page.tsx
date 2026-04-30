@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { verifyPayment } from '@/lib/api';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 type State = 'verifying' | 'success' | 'error';
 
-export default function PaymentCallbackPage() {
+function PaymentCallback() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { token } = useAuth();
@@ -58,54 +58,67 @@ export default function PaymentCallbackPage() {
   }, []);
 
   return (
+    <div className="max-w-md w-full text-center">
+      {state === 'verifying' && (
+        <>
+          <div className="w-12 h-12 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto mb-5" />
+          <h1 className="text-xl font-bold text-gray-900 mb-2">Verifying Payment</h1>
+          <p className="text-gray-500 text-sm">Please wait while we confirm your payment with Khalti…</p>
+        </>
+      )}
+
+      {state === 'success' && (
+        <>
+          <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
+          <p className="text-gray-500 text-sm mb-6">Your booking has been confirmed. Redirecting to your booking details…</p>
+          {primaryBookingId && (
+            <Link
+              href={`/booking/${primaryBookingId}`}
+              className="inline-block bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-3 text-sm transition-colors"
+            >
+              View Booking
+            </Link>
+          )}
+        </>
+      )}
+
+      {state === 'error' && (
+        <>
+          <XCircle className="w-14 h-14 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Issue</h1>
+          <p className="text-sm text-gray-600 mb-6 leading-relaxed">{error}</p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/profile/bookings"
+              className="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-5 py-2.5 text-sm transition-colors"
+            >
+              My Bookings
+            </Link>
+            <Link
+              href="/trekking"
+              className="border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold px-5 py-2.5 text-sm transition-colors"
+            >
+              Browse Packages
+            </Link>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default function PaymentCallbackPage() {
+  return (
     <div className="min-h-[70vh] flex items-center justify-center px-6">
-      <div className="max-w-md w-full text-center">
-        {state === 'verifying' && (
-          <>
-            <div className="w-12 h-12 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto mb-5" />
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Verifying Payment</h1>
-            <p className="text-gray-500 text-sm">Please wait while we confirm your payment with Khalti…</p>
-          </>
-        )}
-
-        {state === 'success' && (
-          <>
-            <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
-            <p className="text-gray-500 text-sm mb-6">Your booking has been confirmed. Redirecting to your booking details…</p>
-            {primaryBookingId && (
-              <Link
-                href={`/booking/${primaryBookingId}`}
-                className="inline-block bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-3 text-sm transition-colors"
-              >
-                View Booking
-              </Link>
-            )}
-          </>
-        )}
-
-        {state === 'error' && (
-          <>
-            <XCircle className="w-14 h-14 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Issue</h1>
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed">{error}</p>
-            <div className="flex gap-3 justify-center">
-              <Link
-                href="/profile/bookings"
-                className="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-5 py-2.5 text-sm transition-colors"
-              >
-                My Bookings
-              </Link>
-              <Link
-                href="/trekking"
-                className="border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold px-5 py-2.5 text-sm transition-colors"
-              >
-                Browse Packages
-              </Link>
-            </div>
-          </>
-        )}
-      </div>
+      <Suspense fallback={
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto mb-5" />
+          <p className="text-gray-500 text-sm">Loading…</p>
+        </div>
+      }>
+        <PaymentCallback />
+      </Suspense>
     </div>
   );
 }

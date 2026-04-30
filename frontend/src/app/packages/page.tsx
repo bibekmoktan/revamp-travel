@@ -3,9 +3,16 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getCategories } from '@/lib/api';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PackagesPage() {
-  const res = await getCategories();
-  const categories = res.data ?? [];
+  let categories: Awaited<ReturnType<typeof getCategories>>['data'] = [];
+  try {
+    const res = await getCategories();
+    categories = res.data ?? [];
+  } catch {
+    // backend unavailable
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

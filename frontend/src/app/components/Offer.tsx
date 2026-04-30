@@ -1,8 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Gem, Star, ConciergeBell, Plane } from "lucide-react";
-import { getPackages } from "@/lib/api";
-import TrekCard from "./TrekCard";
 
 const perks = [
   { icon: Gem,           label: "5-Star Accommodation" },
@@ -11,9 +9,7 @@ const perks = [
   { icon: Plane,         label: "Heli Transfers Available" },
 ];
 
-const Offer = async () => {
-  const res = await getPackages({ limit: 3, status: "active" });
-  const luxuryPackages = res.data;
+const Offer = () => {
 
   return (
     <section className="px-6 md:px-16 py-12">

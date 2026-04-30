@@ -9,8 +9,15 @@ interface Props {
 }
 
 async function Results({ q, page }: { q: string; page: number }) {
-  const res = await getPackages({ searchTerm: q, page, limit: 12, status: 'active' });
-  const { data, meta } = res;
+  let data: Awaited<ReturnType<typeof getPackages>>['data'] = [];
+  let meta: Awaited<ReturnType<typeof getPackages>>['meta'] = { total: 0, page: 1, pages: 1, limit: 12 };
+  try {
+    const res = await getPackages({ searchTerm: q, page, limit: 12, status: 'active' });
+    data = res.data;
+    meta = res.meta;
+  } catch {
+    // backend unavailable
+  }
 
   if (data.length === 0) {
     return (
