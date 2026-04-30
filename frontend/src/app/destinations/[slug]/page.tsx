@@ -11,8 +11,13 @@ interface Props {
 }
 
 async function PackageGrid({ locationKeyword }: { locationKeyword: string }) {
-  const res = await getPackages({ searchTerm: locationKeyword, status: 'active', limit: 12 });
-  const packages = res.data;
+  let packages: Awaited<ReturnType<typeof getPackages>>['data'] = [];
+  try {
+    const res = await getPackages({ searchTerm: locationKeyword, status: 'active', limit: 12 });
+    packages = res.data;
+  } catch {
+    // backend unavailable
+  }
 
   if (packages.length === 0) {
     return (
