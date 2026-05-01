@@ -54,6 +54,9 @@ export interface LogEntry {
   adminId?: string;
   isVerified?: boolean;
   rating?: number;
+  id?: any;
+  pidx?: string;
+  bookingIds?: string[];
 }
 
 class Logger {
