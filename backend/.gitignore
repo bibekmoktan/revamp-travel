@@ -1,2 +1,4 @@
-
-backend/nodu_moulde
+node_modules
+dist
+.env
+*.log
