@@ -8,7 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useRouter } from 'next/navigation';
-import logo from '../../../public/images/home/logo.svg';
+import logo from '../../../public/icons/logo.jpg';
 import HeroSearch from './HeroSearch';
 
 const categories = [
@@ -287,7 +287,7 @@ export default function Navbar() {
         <header className="fixed top-0 left-0 w-full z-50">
             {/* Top Bar */}
             <div className="bg-[#607D8B] w-full">
-                <div className="max-w-[1320px] mx-auto px-6 md:px-16 h-10 flex items-center justify-between text-white text-sm">
+                <div className="max-w-[1366px] mx-auto px-6 md:px-8 h-10 flex items-center justify-between text-white text-sm">
                     {/* Left — Social + Contact */}
                     <div className="flex items-center gap-5">
                         <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-white/80 transition">
@@ -413,13 +413,16 @@ export default function Navbar() {
 
             {/* Main Navbar */}
             <div className="bg-white border-b border-gray-200 shadow-sm w-full">
-                <nav className="flex items-center justify-between w-full px-6 md:px-16 h-[80px] max-w-[1320px] mx-auto gap-6">
+                <nav className="flex items-center justify-between w-full px-6 md:px-8 h-[80px] max-w-[1366px] mx-auto gap-8">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 cursor-pointer shrink-0">
-                        <div className="relative w-7 h-7">
-                            <Image src={logo} alt="HI-TRAVEL logo" fill className="object-contain" priority />
+                        <div className="relative w-12 h-12">
+                            <Image src={logo} alt="Himalayan Highspirits Adventure logo" fill className="object-contain" priority />
                         </div>
-                        <span className="text-lg font-semibold text-gray-900">HI-TRAVEL</span>
+                        <span className="flex flex-col leading-tight">
+                            <span className="text-[15px] font-bold text-sky-900">Himalayan High</span>
+                            <span className="text-[15px] font-bold text-sky-900 tracking-wide">Spirits Adventure</span>
+                        </span>
                     </Link>
 
                     {/* Desktop Nav Links */}
