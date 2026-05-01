@@ -12,7 +12,7 @@ import type {
 } from '@/types/api';
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002/api/v1';
+  process.env.NEXT_PUBLIC_API_URL ?? 'https://revamp-travel.onrender.com/api/v1';
 
 export class ApiError extends Error {
   constructor(
@@ -47,7 +47,8 @@ async function apiFetch<T>(
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new ApiError(res.status, body.message ?? 'Request failed');
+    const fieldErrors = body.errors?.map((e: { field: string; message: string }) => `${e.field}: ${e.message}`).join(', ');
+    throw new ApiError(res.status, fieldErrors ?? body.message ?? 'Request failed');
   }
 
   return res.json() as Promise<T>;

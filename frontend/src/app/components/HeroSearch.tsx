@@ -7,7 +7,7 @@ import { Search, Loader2 } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { ApiPackage } from '@/types/api';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002/api/v1';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://revamp-travel.onrender.com/api/v1';
 
 async function fetchSuggestions(term: string): Promise<ApiPackage[]> {
   try {
