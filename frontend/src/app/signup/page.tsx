@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002/api/v1';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://revamp-travel.onrender.com/api/v1';
 
 export default function SignupPage() {
   const router = useRouter();
