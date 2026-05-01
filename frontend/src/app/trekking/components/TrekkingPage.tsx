@@ -48,7 +48,7 @@ export default function TrekkingPage({ children }: TrekkingPageProps) {
         <div className="flex gap-6 items-start">
 
           {/* ── Left sidebar ── */}
-          <aside className="hidden lg:block w-72 shrink-0 sticky top-4">
+          <aside className="hidden lg:block w-72 shrink-0">
             <Suspense fallback={<div className="h-96 bg-white animate-pulse rounded-xl" />}>
               <TrekFilters />
             </Suspense>

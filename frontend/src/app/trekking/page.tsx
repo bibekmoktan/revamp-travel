@@ -24,7 +24,7 @@ export default async function Page({ searchParams }: PageProps) {
 
   const filters: PackageFilters = {
     // If an activity is selected use it as the category; fall back to 'trekking'
-    category:   getString('activity') ?? 'trekking',
+    category:   getString('activity') ?? getString('category'),
     searchTerm: getString('searchTerm'),
     minPrice:   getString('minPrice') ? Number(getString('minPrice')) : undefined,
     maxPrice:   getString('maxPrice') ? Number(getString('maxPrice')) : undefined,

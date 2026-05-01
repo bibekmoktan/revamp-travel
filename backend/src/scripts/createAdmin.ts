@@ -20,7 +20,11 @@ async function createAdmin() {
 
   const existing = await users.findOne({ email: EMAIL });
   if (existing) {
-    console.log('Admin user already exists:', EMAIL);
+    const hashed = await bcrypt.hash(PASSWORD, 12);
+    await users.updateOne({ email: EMAIL }, { $set: { password: hashed, role: 'admin', isBlocked: false } });
+    console.log('✅ Admin password reset successfully');
+    console.log('   Email:   ', EMAIL);
+    console.log('   Password:', PASSWORD);
     await mongoose.disconnect();
     return;
   }

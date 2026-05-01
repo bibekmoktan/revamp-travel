@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
-import { User, ShoppingCart, Heart, LogOut, CalendarCheck, Settings } from 'lucide-react';
+import { User, ShoppingCart, Heart, LogOut, CalendarCheck, Settings, ChevronRight, ChevronDown } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -11,8 +11,217 @@ import { useRouter } from 'next/navigation';
 import logo from '../../../public/images/home/logo.svg';
 import HeroSearch from './HeroSearch';
 
+const categories = [
+    {
+        name: 'Trekking in Nepal',
+        href: '/trekking?activity=trekking',
+        subItems: [
+            { name: 'Everest Base Camp Trek – 14 Days',      href: '/trekking?activity=trekking&searchTerm=everest+base+camp' },
+            { name: 'Annapurna Circuit Trek – 15 Days',      href: '/trekking?activity=trekking&searchTerm=annapurna+circuit' },
+            { name: 'Langtang Valley Trek – 10 Days',        href: '/trekking?activity=trekking&searchTerm=langtang' },
+            { name: 'Gokyo Lakes Trek – 12 Days',            href: '/trekking?activity=trekking&searchTerm=gokyo' },
+            { name: 'Manaslu Circuit Trek – 14 Days',        href: '/trekking?activity=trekking&searchTerm=manaslu' },
+            { name: 'Upper Mustang Trek – 14 Days',          href: '/trekking?activity=trekking&searchTerm=upper+mustang' },
+        ],
+    },
+    {
+        name: 'Climbing & Expedition',
+        href: '/trekking?activity=climbing',
+        subItems: [
+            { name: 'Island Peak Climbing – 18 Days',        href: '/trekking?activity=climbing&searchTerm=island+peak' },
+            { name: 'Mera Peak Climbing – 19 Days',          href: '/trekking?activity=climbing&searchTerm=mera+peak' },
+            { name: 'Lobuche Peak Climbing – 20 Days',       href: '/trekking?activity=climbing&searchTerm=lobuche' },
+            { name: 'Everest Expedition – 60 Days',          href: '/trekking?activity=climbing&searchTerm=everest+expedition' },
+        ],
+    },
+    {
+        name: 'Luxury Treks',
+        href: '/trekking?activity=luxury-trek',
+        subItems: [
+            { name: 'Luxury Everest Base Camp – 14 Days',    href: '/trekking?activity=luxury-trek&searchTerm=luxury+everest' },
+            { name: 'Luxury Annapurna – 12 Days',            href: '/trekking?activity=luxury-trek&searchTerm=luxury+annapurna' },
+            { name: 'Heli & Trek Combo – 10 Days',           href: '/trekking?activity=luxury-trek&searchTerm=heli+trek' },
+        ],
+    },
+    {
+        name: 'Cultural Tour & Sightseeing',
+        href: '/trekking?activity=cultural-tour',
+        subItems: [
+            { name: 'Kathmandu Valley Tour – 3 Days',        href: '/trekking?activity=cultural-tour&searchTerm=kathmandu+valley' },
+            { name: 'Pokhara Sightseeing – 2 Days',          href: '/trekking?activity=cultural-tour&searchTerm=pokhara' },
+            { name: 'Lumbini Pilgrimage – 3 Days',           href: '/trekking?activity=cultural-tour&searchTerm=lumbini' },
+            { name: 'UNESCO Heritage Tour – 4 Days',         href: '/trekking?activity=cultural-tour&searchTerm=unesco' },
+        ],
+    },
+    {
+        name: 'Cycling & Mountain Biking',
+        href: '/trekking?activity=cycling',
+        subItems: [
+            { name: 'Kathmandu Valley Cycling – 1 Day',      href: '/trekking?activity=cycling&searchTerm=kathmandu+cycling' },
+            { name: 'Annapurna Cycling Tour – 12 Days',      href: '/trekking?activity=cycling&searchTerm=annapurna+cycling' },
+            { name: 'Mountain Biking to Nagarkot – 1 Day',   href: '/trekking?activity=cycling&searchTerm=nagarkot+biking' },
+        ],
+    },
+    {
+        name: 'Luxury Tours',
+        href: '/trekking?activity=luxury-tour',
+        subItems: [
+            { name: 'Nepal Luxury Package – 10 Days',        href: '/trekking?activity=luxury-tour&searchTerm=nepal+luxury' },
+            { name: 'Private Heli Tour – Everest – 1 Day',   href: '/trekking?activity=luxury-tour&searchTerm=heli+tour' },
+            { name: 'Luxury Nepal & Tibet – 14 Days',        href: '/trekking?activity=luxury-tour&searchTerm=nepal+tibet' },
+        ],
+    },
+    {
+        name: 'Day Trips',
+        href: '/trekking?activity=day-trip',
+        subItems: [
+            { name: 'Day Tour to UNESCO Heritage Sites – 1 Day',   href: '/trekking?activity=day-trip&searchTerm=unesco+heritage' },
+            { name: 'Nagarkot Sunrise Tour – 1 Day',               href: '/trekking?activity=day-trip&searchTerm=nagarkot+sunrise' },
+            { name: 'Dhulikhel & Namobuddha Day Tour – 1 Day',    href: '/trekking?activity=day-trip&searchTerm=dhulikhel' },
+            { name: 'Changunarayan Temple Day Tour – 1 Day',       href: '/trekking?activity=day-trip&searchTerm=changunarayan' },
+        ],
+    },
+    {
+        name: 'Multi Country Tours',
+        href: '/trekking?activity=multi-country',
+        subItems: [
+            { name: 'Nepal & Tibet Tour – 12 Days',          href: '/trekking?activity=multi-country&searchTerm=nepal+tibet' },
+            { name: 'Nepal & Bhutan Tour – 14 Days',         href: '/trekking?activity=multi-country&searchTerm=nepal+bhutan' },
+            { name: 'Nepal, India & Tibet – 18 Days',        href: '/trekking?activity=multi-country&searchTerm=nepal+india+tibet' },
+        ],
+    },
+    {
+        name: 'Voluntourism Trips',
+        href: '/trekking?activity=voluntourism',
+        subItems: [
+            { name: 'Teaching Volunteer Program – 2 Weeks',  href: '/trekking?activity=voluntourism&searchTerm=teaching' },
+            { name: 'Orphanage Volunteer – 1 Week',          href: '/trekking?activity=voluntourism&searchTerm=orphanage' },
+            { name: 'Environmental Conservation – 2 Weeks',  href: '/trekking?activity=voluntourism&searchTerm=conservation' },
+        ],
+    },
+    {
+        name: 'Extend Your Trip',
+        href: '/trekking?activity=extend',
+        subItems: [
+            { name: 'Bardiya Jungle Safari – 4 Days',                   href: '/trekking?activity=extend&searchTerm=bardiya' },
+            { name: 'Chitwan Jungle Safari – 3 Days',                   href: '/trekking?activity=extend&searchTerm=chitwan' },
+            { name: 'One Day Biking Trip – Kathmandu – 1 Day',          href: '/trekking?activity=extend&searchTerm=biking+kathmandu' },
+            { name: 'Trishuli River Rafting – 1 Day',                   href: '/trekking?activity=extend&searchTerm=trishuli+rafting' },
+            { name: 'Paragliding in Nepal (Pokhara) – 1 Day',          href: '/trekking?activity=extend&searchTerm=paragliding' },
+            { name: 'Ultra Light Flight – 1 Day',                       href: '/trekking?activity=extend&searchTerm=ultra+light+flight' },
+            { name: 'Scenic Mountain Flight (Everest Flight) – 1 Day', href: '/trekking?activity=extend&searchTerm=everest+flight' },
+            { name: 'Day Tour to UNESCO Heritage Sites – 1 Day',        href: '/trekking?activity=extend&searchTerm=unesco+day+tour' },
+        ],
+    },
+];
+
+const trekkingRegions = [
+    {
+        name: 'Everest Region',
+        href: '/trekking?activity=trekking&searchTerm=everest',
+        subItems: [
+            { name: 'Everest View Heli Trek – 8 Days',                          href: '/trekking?searchTerm=everest+view+heli' },
+            { name: 'Everest Base Camp Trek without Lukla Flight – 17 Days',    href: '/trekking?searchTerm=ebc+without+lukla' },
+            { name: 'Luxury Everest Base Camp Heli Trek – 11 Days',             href: '/trekking?searchTerm=luxury+ebc+heli' },
+            { name: 'Gokyo to Everest Base Camp Trek – 17 Days',                href: '/trekking?searchTerm=gokyo+ebc' },
+            { name: 'Everest Base Camp Heli Trek – 11 Days',                    href: '/trekking?searchTerm=ebc+heli' },
+            { name: 'Mt Everest Base Camp to Gokyo Trek – 19 Days',             href: '/trekking?searchTerm=ebc+gokyo' },
+            { name: 'Everest Panorama Trek – 9 Days',                           href: '/trekking?searchTerm=everest+panorama' },
+            { name: 'Gokyo to Everest Base Camp Trek with Heli Return – 15 Days', href: '/trekking?searchTerm=gokyo+ebc+heli' },
+            { name: 'Everest Base Camp Trek with Helicopter Return – 12 Days',  href: '/trekking?searchTerm=ebc+helicopter+return' },
+            { name: 'Everest Base Camp with Island Peak – 19 Days',             href: '/trekking?searchTerm=ebc+island+peak' },
+            { name: 'Everest Base Camp Trek – 14 Days',                         href: '/trekking?searchTerm=everest+base+camp+14' },
+            { name: 'Everest Three Passes Trek – 20 Days',                      href: '/trekking?searchTerm=everest+three+passes' },
+            { name: 'Everest Base Camp Luxury Trek – 14 Days',                  href: '/trekking?searchTerm=ebc+luxury' },
+            { name: 'Everest High Passes and Island Peak – 23 Days',            href: '/trekking?searchTerm=everest+high+passes' },
+            { name: 'Gokyo Lake Trek – 13 Days',                                href: '/trekking?searchTerm=gokyo+lake' },
+            { name: 'Classical Everest Base Camp Trek – 21 Days',               href: '/trekking?searchTerm=classical+ebc' },
+            { name: 'Gokyo and Renjo La Pass Trek – 14 Days',                   href: '/trekking?searchTerm=gokyo+renjo' },
+            { name: 'VIP Everest Base Camp Trek – 10 Days',                     href: '/trekking?searchTerm=vip+ebc' },
+        ],
+    },
+    {
+        name: 'Annapurna Region',
+        href: '/trekking?activity=trekking&searchTerm=annapurna',
+        subItems: [
+            { name: 'Annapurna Base Camp Trek – 12 Days',           href: '/trekking?searchTerm=annapurna+base+camp' },
+            { name: 'Annapurna Circuit Trek – 15 Days',             href: '/trekking?searchTerm=annapurna+circuit' },
+            { name: 'Poon Hill Trek – 5 Days',                      href: '/trekking?searchTerm=poon+hill' },
+            { name: 'Mardi Himal Trek – 7 Days',                    href: '/trekking?searchTerm=mardi+himal' },
+            { name: 'Annapurna Panorama Trek – 7 Days',             href: '/trekking?searchTerm=annapurna+panorama' },
+            { name: 'Annapurna Circuit with Tilicho Lake – 18 Days', href: '/trekking?searchTerm=annapurna+tilicho' },
+        ],
+    },
+    {
+        name: 'Langtang Region',
+        href: '/trekking?activity=trekking&searchTerm=langtang',
+        subItems: [
+            { name: 'Langtang Valley Trek – 10 Days',               href: '/trekking?searchTerm=langtang+valley' },
+            { name: 'Gosaikunda Lake Trek – 10 Days',               href: '/trekking?searchTerm=gosaikunda' },
+            { name: 'Helambu Trek – 8 Days',                        href: '/trekking?searchTerm=helambu' },
+            { name: 'Langtang Gosaikunda Helambu Trek – 15 Days',   href: '/trekking?searchTerm=langtang+gosaikunda+helambu' },
+        ],
+    },
+    {
+        name: 'Manaslu Region',
+        href: '/trekking?activity=trekking&searchTerm=manaslu',
+        subItems: [
+            { name: 'Manaslu Circuit Trek – 14 Days',               href: '/trekking?searchTerm=manaslu+circuit' },
+            { name: 'Tsum Valley Trek – 20 Days',                   href: '/trekking?searchTerm=tsum+valley' },
+            { name: 'Manaslu Tsum Valley Trek – 22 Days',           href: '/trekking?searchTerm=manaslu+tsum' },
+        ],
+    },
+    {
+        name: 'Mustang Region',
+        href: '/trekking?activity=trekking&searchTerm=mustang',
+        subItems: [
+            { name: 'Upper Mustang Trek – 14 Days',                 href: '/trekking?searchTerm=upper+mustang' },
+            { name: 'Lower Mustang Trek – 9 Days',                  href: '/trekking?searchTerm=lower+mustang' },
+            { name: 'Muktinath Trek – 12 Days',                     href: '/trekking?searchTerm=muktinath' },
+        ],
+    },
+    {
+        name: 'Dhaulagiri Region',
+        href: '/trekking?activity=trekking&searchTerm=dhaulagiri',
+        subItems: [
+            { name: 'Dhaulagiri Circuit Trek – 22 Days',            href: '/trekking?searchTerm=dhaulagiri+circuit' },
+            { name: 'Dhaulagiri Base Camp Trek – 16 Days',          href: '/trekking?searchTerm=dhaulagiri+base+camp' },
+        ],
+    },
+    {
+        name: 'Dolpo Region',
+        href: '/trekking?activity=trekking&searchTerm=dolpo',
+        subItems: [
+            { name: 'Upper Dolpo Trek – 28 Days',                   href: '/trekking?searchTerm=upper+dolpo' },
+            { name: 'Lower Dolpo Trek – 20 Days',                   href: '/trekking?searchTerm=lower+dolpo' },
+            { name: 'Phoksundo Lake Trek – 14 Days',                href: '/trekking?searchTerm=phoksundo+lake' },
+        ],
+    },
+    {
+        name: 'Kanchenjunga Region',
+        href: '/trekking?activity=trekking&searchTerm=kanchenjunga',
+        subItems: [
+            { name: 'Kanchenjunga Base Camp Trek – 24 Days',        href: '/trekking?searchTerm=kanchenjunga+base+camp' },
+            { name: 'Kanchenjunga North Base Camp – 22 Days',       href: '/trekking?searchTerm=kanchenjunga+north' },
+            { name: 'Kanchenjunga Circuit Trek – 28 Days',          href: '/trekking?searchTerm=kanchenjunga+circuit' },
+        ],
+    },
+];
+
+const companyLinks = [
+    { name: 'Company Info',  href: '/about' },
+    { name: 'Travel Guide',  href: '/travel-guide' },
+    { name: 'Blog',          href: '/blog' },
+    { name: 'Meet Our Team', href: '/our-team' },
+];
+
 export default function Navbar() {
-    const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
+    const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+    const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+    const [trekkingMenuOpen, setTrekkingMenuOpen] = useState(false);
+    const [activeTrekkingRegionIndex, setActiveTrekkingRegionIndex] = useState(0);
+    const [destinationsOpen, setDestinationsOpen] = useState(false);
+    const [companyOpen, setCompanyOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const { count: cartCount } = useCart();
@@ -20,6 +229,40 @@ export default function Navbar() {
     const { user, logout } = useAuth();
     const router = useRouter();
     const profileRef = useRef<HTMLDivElement>(null);
+    const megaMenuRef = useRef<HTMLDivElement>(null);
+    const megaCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const trekkingCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const destCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const companyCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    function openMegaMenu() {
+        if (megaCloseTimer.current) clearTimeout(megaCloseTimer.current);
+        setMegaMenuOpen(true);
+    }
+    function closeMegaMenuDelayed() {
+        megaCloseTimer.current = setTimeout(() => setMegaMenuOpen(false), 150);
+    }
+    function openTrekkingMenu() {
+        if (trekkingCloseTimer.current) clearTimeout(trekkingCloseTimer.current);
+        setTrekkingMenuOpen(true);
+    }
+    function closeTrekkingMenuDelayed() {
+        trekkingCloseTimer.current = setTimeout(() => setTrekkingMenuOpen(false), 150);
+    }
+    function openDestinations() {
+        if (destCloseTimer.current) clearTimeout(destCloseTimer.current);
+        setDestinationsOpen(true);
+    }
+    function closeDestinationsDelayed() {
+        destCloseTimer.current = setTimeout(() => setDestinationsOpen(false), 150);
+    }
+    function openCompany() {
+        if (companyCloseTimer.current) clearTimeout(companyCloseTimer.current);
+        setCompanyOpen(true);
+    }
+    function closeCompanyDelayed() {
+        companyCloseTimer.current = setTimeout(() => setCompanyOpen(false), 150);
+    }
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -37,63 +280,8 @@ export default function Navbar() {
         router.push('/');
     }
 
-    const handleMouseEnter = (menuName: string) => setActiveMegaMenu(menuName);
-    const handleMouseLeave = () => setActiveMegaMenu(null);
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
-
-    const megaMenuContent = {
-        packages: {
-            title: 'Travel Packages',
-            sections: [
-                {
-                    title: 'By Category',
-                    links: [
-                        { name: '🥾 Trekking in Nepal', href: '/trekking?category=trekking' },
-                        { name: '🏔️ Peak Climbing',     href: '/trekking?category=peak-climbing' },
-                        { name: '🚁 Heli Tour',          href: '/trekking?category=heli-tour' },
-                        { name: '🌄 One Day Tour',       href: '/trekking?category=one-day-tour' },
-                    ]
-                },
-                {
-                    title: 'Curated Lists',
-                    links: [
-                        { name: 'Best Seller',          href: '/trekking' },
-                        { name: 'Top Destinations',     href: '/destinations' },
-                        { name: 'Trending Now',         href: '/destinations' },
-                        { name: 'Custom Package',       href: '/custom-package' },
-                    ]
-                }
-            ]
-        },
-        destinations: {
-            title: 'Destinations',
-            sections: [
-                {
-                    title: 'By Region',
-                    links: [
-                        { name: 'Everest Region',    href: '/destinations/everest-region' },
-                        { name: 'Annapurna Region',  href: '/destinations/annapurna-region' },
-                        { name: 'Langtang Region',   href: '/destinations/langtang-region' },
-                        { name: 'Manaslu Region',    href: '/destinations/manaslu-region' },
-                        { name: 'Mustang Region',    href: '/destinations/mustang-region' },
-                        { name: 'Dolpa Region',      href: '/destinations/dolpa-region' },
-                    ]
-                },
-                {
-                    title: 'Trending Places',
-                    links: [
-                        { name: 'Upper Mustang',     href: '/destinations/upper-mustang' },
-                        { name: 'Pokhara',           href: '/destinations/pokhara' },
-                        { name: 'Chitwan',           href: '/destinations/chitwan' },
-                        { name: 'Kathmandu Valley',  href: '/destinations/kathmandu-valley' },
-                        { name: 'Rara Lake',         href: '/destinations/rara-lake' },
-                        { name: 'Eastern Nepal',     href: '/destinations/eastern-nepal' },
-                    ]
-                }
-            ]
-        }
-    };
 
     return (
         <header className="fixed top-0 left-0 w-full z-50">
@@ -161,7 +349,6 @@ export default function Navbar() {
                         <span className="text-white/40">|</span>
 
                         {user ? (
-                            /* ── Profile avatar + dropdown ── */
                             <div className="relative" ref={profileRef}>
                                 <button
                                     onClick={() => setProfileOpen(o => !o)}
@@ -176,7 +363,6 @@ export default function Navbar() {
 
                                 {profileOpen && (
                                     <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 text-gray-800">
-                                        {/* User info */}
                                         <div className="px-4 py-3 bg-sky-50 border-b border-gray-100">
                                             <div className="flex items-center gap-2.5">
                                                 <div className="w-9 h-9 rounded-full bg-sky-500 text-white font-bold text-sm flex items-center justify-center uppercase shrink-0">
@@ -189,30 +375,17 @@ export default function Navbar() {
                                             </div>
                                         </div>
 
-                                        {/* Links */}
                                         <div className="py-1">
-                                            <Link
-                                                href="/profile"
-                                                onClick={() => setProfileOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
-                                            >
+                                            <Link href="/profile" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors">
                                                 <User className="w-4 h-4 text-gray-400" />
                                                 My Profile
                                             </Link>
-                                            <Link
-                                                href="/profile"
-                                                onClick={() => setProfileOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
-                                            >
+                                            <Link href="/profile" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors">
                                                 <CalendarCheck className="w-4 h-4 text-gray-400" />
                                                 My Bookings
                                             </Link>
                                             {user.role === 'admin' && (
-                                                <Link
-                                                    href="/admin"
-                                                    onClick={() => setProfileOpen(false)}
-                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
-                                                >
+                                                <Link href="/admin" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors">
                                                     <Settings className="w-4 h-4 text-gray-400" />
                                                     Admin Panel
                                                 </Link>
@@ -220,10 +393,7 @@ export default function Navbar() {
                                         </div>
 
                                         <div className="border-t border-gray-100 py-1">
-                                            <button
-                                                onClick={handleLogout}
-                                                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
-                                            >
+                                            <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
                                                 <LogOut className="w-4 h-4" />
                                                 Sign Out
                                             </button>
@@ -243,10 +413,7 @@ export default function Navbar() {
 
             {/* Main Navbar */}
             <div className="bg-white border-b border-gray-200 shadow-sm w-full">
-                <nav
-                    className="flex items-center justify-between w-full px-6 md:px-16 h-[80px] max-w-[1320px] mx-auto gap-6"
-                    onMouseLeave={handleMouseLeave}
-                >
+                <nav className="flex items-center justify-between w-full px-6 md:px-16 h-[80px] max-w-[1320px] mx-auto gap-6">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 cursor-pointer shrink-0">
                         <div className="relative w-7 h-7">
@@ -257,18 +424,91 @@ export default function Navbar() {
 
                     {/* Desktop Nav Links */}
                     <div className="hidden lg:flex items-center gap-8 text-[15px] font-medium text-gray-700 shrink-0">
-                        <div className="relative" onMouseEnter={() => handleMouseEnter('packages')}>
-                            <Link href="/packages" className="hover:text-sky-700 transition">Packages</Link>
+                        {/* Trips — triggers mega menu */}
+                        <div
+                            className="relative"
+                            onMouseEnter={openMegaMenu}
+                            onMouseLeave={closeMegaMenuDelayed}
+                        >
+                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                                Trips
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${megaMenuOpen ? 'rotate-180' : ''}`} />
+                            </button>
                         </div>
-                        <Link href="/trekking" className="hover:text-sky-700 transition whitespace-nowrap">Trekking in Nepal</Link>
-                        <Link href="/blog" className="hover:text-sky-700 transition">Blog</Link>
-                        <div className="relative" onMouseEnter={() => handleMouseEnter('destinations')}>
-                            <Link href="/destinations" className="hover:text-sky-700 transition">Destinations</Link>
+                        {/* Trekking — triggers region mega menu */}
+                        <div
+                            className="relative"
+                            onMouseEnter={openTrekkingMenu}
+                            onMouseLeave={closeTrekkingMenuDelayed}
+                        >
+                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                                Trekking
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${trekkingMenuOpen ? 'rotate-180' : ''}`} />
+                            </button>
                         </div>
-                        <Link href="/our-team" className="hover:text-sky-700 transition whitespace-nowrap">Our Team</Link>
+                        <Link href="/activities" className="hover:text-sky-700 transition">Activities</Link>
+                        {/* Destinations dropdown */}
+                        <div
+                            className="relative"
+                            onMouseEnter={openDestinations}
+                            onMouseLeave={closeDestinationsDelayed}
+                        >
+                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                                Destinations
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${destinationsOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                            <div
+                                className={`absolute top-full left-0 w-44 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 transition-all duration-200 ease-out origin-top ${destinationsOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'}`}
+                                onMouseEnter={openDestinations}
+                                onMouseLeave={closeDestinationsDelayed}
+                            >
+                                {[
+                                    { name: 'Nepal',  href: '/destinations/nepal' },
+                                    { name: 'Bhutan', href: '/destinations/bhutan' },
+                                    { name: 'Tibet',  href: '/destinations/tibet' },
+                                    { name: 'India',  href: '/destinations/india' },
+                                ].map((item) => (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setDestinationsOpen(false)}
+                                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81] transition-colors"
+                                    >
+                                        {item.name}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                        {/* Company dropdown */}
+                        <div
+                            className="relative"
+                            onMouseEnter={openCompany}
+                            onMouseLeave={closeCompanyDelayed}
+                        >
+                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                                Company
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${companyOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                            <div
+                                className={`absolute top-full left-0 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 transition-all duration-200 ease-out origin-top ${companyOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'}`}
+                                onMouseEnter={openCompany}
+                                onMouseLeave={closeCompanyDelayed}
+                            >
+                                {companyLinks.map((item) => (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setCompanyOpen(false)}
+                                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81] transition-colors"
+                                    >
+                                        {item.name}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Search — takes remaining space */}
+                    {/* Search */}
                     <div className="hidden lg:block flex-1 max-w-[340px]">
                         <HeroSearch />
                     </div>
@@ -296,14 +536,107 @@ export default function Navbar() {
                 </nav>
             </div>
 
+            {/* ── Trips Mega Menu ─────────────────────────────────────────────── */}
+            <div
+                ref={megaMenuRef}
+                className={`hidden lg:block fixed top-[120px] left-0 w-full z-40 bg-white border-t border-gray-100 shadow-xl transition-all duration-200 ease-out ${megaMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}`}
+                onMouseEnter={openMegaMenu}
+                onMouseLeave={closeMegaMenuDelayed}
+            >
+                <div className="max-w-[1320px] mx-auto px-6 md:px-16 flex" style={{ minHeight: 420 }}>
+                    <div className="w-64 shrink-0 border-r border-gray-100 py-4">
+                        {categories.map((cat, i) => (
+                            <div
+                                key={i}
+                                onMouseEnter={() => setActiveCategoryIndex(i)}
+                                className={`flex items-center justify-between px-4 py-2.5 cursor-pointer text-sm transition-colors ${activeCategoryIndex === i ? 'bg-gray-50 text-[#0F4C81] font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81]'}`}
+                            >
+                                <Link href={cat.href} className="flex-1" onClick={() => setMegaMenuOpen(false)}>
+                                    {cat.name}
+                                </Link>
+                                <ChevronRight className={`w-4 h-4 shrink-0 transition-colors ${activeCategoryIndex === i ? 'text-[#0F4C81]' : 'text-gray-300'}`} />
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex-1 py-6 px-8">
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
+                            {categories[activeCategoryIndex].name}
+                        </p>
+                        <div className="grid grid-cols-2 gap-x-10 gap-y-1">
+                            {categories[activeCategoryIndex].subItems.map((item, j) => (
+                                <Link
+                                    key={j}
+                                    href={item.href}
+                                    onClick={() => setMegaMenuOpen(false)}
+                                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#0F4C81] py-2 border-b border-gray-50 transition-colors group"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#0F4C81] shrink-0 transition-colors" />
+                                    {item.name}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Trekking Regions Mega Menu ──────────────────────────────────── */}
+            <div
+                className={`hidden lg:block fixed top-[120px] left-0 w-full z-40 bg-white border-t border-gray-100 shadow-xl transition-all duration-200 ease-out ${trekkingMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}`}
+                onMouseEnter={openTrekkingMenu}
+                onMouseLeave={closeTrekkingMenuDelayed}
+            >
+                <div className="max-w-[1320px] mx-auto px-6 md:px-16 flex" style={{ minHeight: 400 }}>
+                    <div className="w-64 shrink-0 border-r border-gray-100 py-4">
+                        {trekkingRegions.map((region, i) => (
+                            <div
+                                key={i}
+                                onMouseEnter={() => setActiveTrekkingRegionIndex(i)}
+                                className={`flex items-center justify-between px-4 py-2.5 cursor-pointer text-sm transition-colors ${activeTrekkingRegionIndex === i ? 'bg-gray-50 text-[#0F4C81] font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81]'}`}
+                            >
+                                <Link href={region.href} className="flex-1" onClick={() => setTrekkingMenuOpen(false)}>
+                                    {region.name}
+                                </Link>
+                                <ChevronRight className={`w-4 h-4 shrink-0 transition-colors ${activeTrekkingRegionIndex === i ? 'text-[#0F4C81]' : 'text-gray-300'}`} />
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex-1 py-6 px-8 flex flex-col">
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
+                            {trekkingRegions[activeTrekkingRegionIndex].name}
+                        </p>
+                        <div className="grid grid-cols-2 gap-x-10 gap-y-0 flex-1">
+                            {trekkingRegions[activeTrekkingRegionIndex].subItems.map((item, j) => (
+                                <Link
+                                    key={j}
+                                    href={item.href}
+                                    onClick={() => setTrekkingMenuOpen(false)}
+                                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#0F4C81] py-2 border-b border-gray-50 transition-colors group"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#0F4C81] shrink-0 transition-colors" />
+                                    {item.name}
+                                </Link>
+                            ))}
+                        </div>
+                        <div className="pt-5 border-t border-gray-100 mt-4">
+                            <Link
+                                href={trekkingRegions[activeTrekkingRegionIndex].href}
+                                onClick={() => setTrekkingMenuOpen(false)}
+                                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0F4C81] text-white text-sm font-semibold hover:bg-sky-800 transition-colors rounded-lg"
+                            >
+                                View All {trekkingRegions[activeTrekkingRegionIndex].name} Treks
+                                <ChevronRight className="w-4 h-4" />
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
                 <div className="lg:hidden w-full bg-white shadow-lg border-t border-gray-200 animate-slideDown">
                     <div className="px-6 py-6 max-w-[1320px] mx-auto space-y-4">
-                        {/* Mobile Search */}
                         <HeroSearch />
 
-                        {/* Mobile user card */}
                         {user ? (
                             <div className="flex items-center gap-3 py-3 border-b border-gray-100 mb-2">
                                 <div className="w-10 h-10 rounded-full bg-sky-500 text-white font-bold text-sm flex items-center justify-center uppercase shrink-0">
@@ -316,11 +649,20 @@ export default function Navbar() {
                             </div>
                         ) : null}
 
-                        <Link href="/packages" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Packages</Link>
-                        <Link href="/trekking" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Trekking in Nepal</Link>
-                        <Link href="/blog" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Blog</Link>
-                        <Link href="/destinations" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Destinations</Link>
-                        <Link href="/our-team" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Our Team</Link>
+                        <Link href="/packages" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Trips</Link>
+                        <Link href="/trekking" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Trekking</Link>
+                        <Link href="/activities" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Activities</Link>
+                        {[
+                            { name: 'Nepal',  href: '/destinations/nepal' },
+                            { name: 'Bhutan', href: '/destinations/bhutan' },
+                            { name: 'Tibet',  href: '/destinations/tibet' },
+                            { name: 'India',  href: '/destinations/india' },
+                        ].map((item) => (
+                            <Link key={item.href} href={item.href} className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>{item.name}</Link>
+                        ))}
+                        {companyLinks.map((item) => (
+                            <Link key={item.href} href={item.href} className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>{item.name}</Link>
+                        ))}
 
                         {user ? (
                             <>
@@ -349,48 +691,10 @@ export default function Navbar() {
                 </div>
             )}
 
-            {/* Mega Menu */}
-            {activeMegaMenu && megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent] && (
-                <div
-                    className="hidden lg:block fixed top-[120px] w-full z-40"
-                    onMouseEnter={() => setActiveMegaMenu(activeMegaMenu)}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <div className="flex justify-center">
-                        <div className="w-full max-w-[800px] bg-sky-50 shadow-2xl border-t border-gray-200 animate-fadeIn">
-                            <div className="px-8 py-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    <div className="lg:col-span-1">
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                                            {megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent].title}
-                                        </h3>
-                                        <p className="text-gray-600 text-sm">Discover amazing travel experiences with our curated selection.</p>
-                                    </div>
-                                    {megaMenuContent[activeMegaMenu as keyof typeof megaMenuContent].sections.map((section, i) => (
-                                        <div key={i}>
-                                            <h4 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">{section.title}</h4>
-                                            <ul className="space-y-2">
-                                                {section.links.map((link, j) => (
-                                                    <li key={j}>
-                                                        <Link href={link.href} className="text-gray-600 hover:text-gray-900 transition text-sm py-1 block" onClick={() => setActiveMegaMenu(null)}>
-                                                            {link.name}
-                                                        </Link>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <style jsx>{`
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
                 @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-                .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+                .animate-fadeIn { animation: fadeIn 0.15s ease-out; }
                 .animate-slideDown { animation: slideDown 0.3s ease-out; }
             `}</style>
         </header>
