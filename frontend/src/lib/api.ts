@@ -29,7 +29,7 @@ async function apiFetch<T>(
   init?: RequestInit,
 ): Promise<T> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 5000);
+  const timer = setTimeout(() => controller.abort(), 20000);
 
   let res: Response;
   try {
