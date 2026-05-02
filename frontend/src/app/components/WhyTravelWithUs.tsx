@@ -44,14 +44,14 @@ const features = [
 
 export default function WhyTravelWithUs() {
     return (
-        <section className="py-16 px-6 bg-white">
+        <section className="py-16 px-6 bg-[#F2FAFF]">
             <div className="max-w-[1320px] mx-auto">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                    <h2 className="text-3xl md:text-[40px] font-bold text-gray-800 mb-3">
                         Why Travel With Us
                     </h2>
-                    <p className="text-gray-500 text-base max-w-[520px] mx-auto">
-                        We go beyond booking — we build journeys that stay with you long after you return home.
+                    <p className="text-gray-500 text-[16px] max-w-[400px] mx-auto">
+                        We go beyond booking we build journeys that stay with you long after you return home.
                     </p>
                 </div>
 

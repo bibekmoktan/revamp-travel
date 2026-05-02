@@ -4,7 +4,7 @@ import { topDestinations } from '@/data/destinations';
 
 export default function TopDestinations() {
   return (
-    <section className="py-16 px-6 md:px-16 bg-gray-50">
+    <section className="py-16 px-6 md:px-16">
       <div className="max-w-[1320px] mx-auto">
 
         {/* Header */}

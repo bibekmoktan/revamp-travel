@@ -29,9 +29,9 @@ export default function TrendingDestinations() {
           {/* Left button */}
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white shadow-md p-2 rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity duration-200 hover:bg-sky-50"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-sky-800 shadow-md p-2 rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity duration-200 hover:bg-sky-900"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
+            <ChevronLeft className="w-5 h-5 text-white" />
           </button>
 
           {/* Cards */}
@@ -40,7 +40,7 @@ export default function TrendingDestinations() {
               <Link
                 key={dest.slug}
                 href={`/destinations/${dest.slug}`}
-                className="group relative overflow-hidden block h-[220px] w-[220px] shrink-0"
+                className="group relative overflow-hidden block h-[220px] w-[220px] shrink-0 rounded-[12px]"
               >
                 <Image
                   src={dest.image}
@@ -63,9 +63,9 @@ export default function TrendingDestinations() {
           {/* Right button */}
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white shadow-md p-2 rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity duration-200 hover:bg-sky-50"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-sky-800 shadow-md p-2 rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity duration-200 hover:bg-sky-900"
           >
-            <ChevronRight className="w-5 h-5 text-gray-700" />
+            <ChevronRight className="w-5 h-5 text-white" />
           </button>
 
         </div>

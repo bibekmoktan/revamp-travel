@@ -23,7 +23,7 @@ const articles = [
 
 export default function Articles() {
   return (
-    <section className="py-12">
+    <section className="py-12 bg-[#F2FAFF]">
       <div className="max-w-[1320px] px-[96px] mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

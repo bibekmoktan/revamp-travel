@@ -12,12 +12,12 @@ export default async function FeaturedTrips() {
   }
 
   return (
-    <section className="relative z-20 bg-sky-50 py-8 md:py-16 px-6 md:px-16 md:mt-[-150px]">
+    <section className="relative z-20 bg-[#F2FAFF] py-8 md:py-16 px-6 md:px-16">
       <div className="max-w-[1366px] mx-auto">
         <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Activities We Offer</h2>
-          <p className="text-gray-500 text-sm max-w-[480px] mx-auto">
-            From high-altitude treks to cultural tours and thrilling heli rides — explore Nepal your way.
+          <h2 className="text-[40px] font-bold text-gray-800 mb-2">Activities We Offer</h2>
+          <p className="text-gray-800 text-[16px] max-w-[480px] mx-auto">
+            Discover Nepal your way from high-altitude treks and cultural tours to thrilling helicopter rides.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">

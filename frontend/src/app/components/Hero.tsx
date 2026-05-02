@@ -2,12 +2,21 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import hero from "../../../public/images/home/hero.svg";
 
 export default function Hero() {
   return (
-    <div className="relative h-[900px] w-full overflow-hidden">
-      {/* Video Background */}
+    <div className="relative h-[850px] w-full overflow-hidden">
+      {/* Hero Image Background */}
+      <Image
+        src="/images/hero-background.png"
+        alt="Himalayan adventure background"
+        fill
+        className="object-cover z-0 scale-100"
+        quality={100}
+        priority
+      />
+
+      {/* Video Background — commented out
       <video
         autoPlay
         muted
@@ -16,15 +25,8 @@ export default function Hero() {
         className="absolute inset-0 w-full h-full object-cover z-0"
       >
         <source src="/images/home/bg-hero.mp4" type="video/mp4" />
-        <Image
-          src={hero}
-          alt="Background"
-          fill
-          className="object-cover"
-          quality={100}
-          priority
-        />
       </video>
+      */}
 
       <div className="absolute inset-0 bg-black/30 z-10" />
 
