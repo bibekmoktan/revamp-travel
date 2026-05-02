@@ -1,4 +1,7 @@
 import Hero from "./components/Hero"
+import HeroOne from "./components/HeroOne"
+import HeroTwo from "./components/HeroTwo"
+import HeroThree from "./components/HeroThree"
 import FeaturedTrips from "./components/FeatureTrip";
 import BestSeller from "./components/BestSeller";
 import TopDestinations from "./components/TopDestinations";
@@ -11,8 +14,11 @@ import WhyTravelWithUs from "./components/WhyTravelWithUs";
 
 export default function Home() {
   return (
-    <div className="">
-        <Hero />
+    <div className="mt-[100px] bg-[#FAFFFF]">
+        {/* <Hero /> */}
+        {/* <HeroOne /> */}
+        {/* <HeroTwo /> */}
+        <HeroThree />
         <FeaturedTrips />
         <BestSeller />
         <Offer />
