@@ -208,6 +208,59 @@ const trekkingRegions = [
     },
 ];
 
+const activityCountries = [
+    {
+        name: 'Nepal',
+        href: '/activities?country=nepal',
+        subItems: [
+            { name: 'Trekking',            href: '/activities?country=nepal&type=trekking' },
+            { name: 'Mountaineering',      href: '/activities?country=nepal&type=mountaineering' },
+            { name: 'Paragliding',         href: '/activities?country=nepal&type=paragliding' },
+            { name: 'White Water Rafting', href: '/activities?country=nepal&type=rafting' },
+            { name: 'Jungle Safari',       href: '/activities?country=nepal&type=safari' },
+            { name: 'Bungee Jumping',      href: '/activities?country=nepal&type=bungee' },
+            { name: 'Mountain Biking',     href: '/activities?country=nepal&type=biking' },
+            { name: 'Yoga & Meditation',   href: '/activities?country=nepal&type=yoga' },
+            { name: 'Zip Lining',          href: '/activities?country=nepal&type=ziplining' },
+            { name: 'Rock Climbing',       href: '/activities?country=nepal&type=rock-climbing' },
+            { name: 'Kayaking',            href: '/activities?country=nepal&type=kayaking' },
+            { name: 'Scenic Mountain Flight', href: '/activities?country=nepal&type=scenic-flight' },
+        ],
+    },
+    {
+        name: 'Bhutan',
+        href: '/activities?country=bhutan',
+        subItems: [
+            { name: 'Trekking',            href: '/activities?country=bhutan&type=trekking' },
+            { name: 'Cultural Tours',      href: '/activities?country=bhutan&type=cultural' },
+            { name: 'Archery Experience',  href: '/activities?country=bhutan&type=archery' },
+            { name: 'Cycling',             href: '/activities?country=bhutan&type=cycling' },
+            { name: 'Bird Watching',       href: '/activities?country=bhutan&type=birdwatching' },
+            { name: 'Yoga & Meditation',   href: '/activities?country=bhutan&type=yoga' },
+            { name: 'River Rafting',       href: '/activities?country=bhutan&type=rafting' },
+            { name: 'Zip Lining',          href: '/activities?country=bhutan&type=ziplining' },
+            { name: 'Dzong Monastery Tour',href: '/activities?country=bhutan&type=monastery' },
+            { name: 'Hot Stone Bath',      href: '/activities?country=bhutan&type=hotstone' },
+        ],
+    },
+    {
+        name: 'Tibet',
+        href: '/activities?country=tibet',
+        subItems: [
+            { name: 'Trekking',            href: '/activities?country=tibet&type=trekking' },
+            { name: 'Cultural Tours',      href: '/activities?country=tibet&type=cultural' },
+            { name: 'Pilgrimage Tours',    href: '/activities?country=tibet&type=pilgrimage' },
+            { name: 'Mt. Kailash Tour',    href: '/activities?country=tibet&type=kailash' },
+            { name: 'Cycling',             href: '/activities?country=tibet&type=cycling' },
+            { name: 'Monastery Visits',    href: '/activities?country=tibet&type=monastery' },
+            { name: 'Hot Springs',         href: '/activities?country=tibet&type=hotsprings' },
+            { name: 'Scenic Drives',       href: '/activities?country=tibet&type=scenic' },
+            { name: 'Yak Safari',          href: '/activities?country=tibet&type=yak-safari' },
+            { name: 'Lake Namtso Trek',    href: '/activities?country=tibet&type=namtso' },
+        ],
+    },
+];
+
 const companyLinks = [
     { name: 'Company Info',  href: '/about' },
     { name: 'Travel Guide',  href: '/travel-guide' },
@@ -220,6 +273,8 @@ export default function Navbar() {
     const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
     const [trekkingMenuOpen, setTrekkingMenuOpen] = useState(false);
     const [activeTrekkingRegionIndex, setActiveTrekkingRegionIndex] = useState(0);
+    const [activitiesOpen, setActivitiesOpen] = useState(false);
+    const [activeActivityIndex, setActiveActivityIndex] = useState(0);
     const [destinationsOpen, setDestinationsOpen] = useState(false);
     const [companyOpen, setCompanyOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -232,6 +287,7 @@ export default function Navbar() {
     const megaMenuRef = useRef<HTMLDivElement>(null);
     const megaCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const trekkingCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const activitiesCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const destCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const companyCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -255,6 +311,13 @@ export default function Navbar() {
     }
     function closeDestinationsDelayed() {
         destCloseTimer.current = setTimeout(() => setDestinationsOpen(false), 150);
+    }
+    function openActivities() {
+        if (activitiesCloseTimer.current) clearTimeout(activitiesCloseTimer.current);
+        setActivitiesOpen(true);
+    }
+    function closeActivitiesDelayed() {
+        activitiesCloseTimer.current = setTimeout(() => setActivitiesOpen(false), 150);
     }
     function openCompany() {
         if (companyCloseTimer.current) clearTimeout(companyCloseTimer.current);
@@ -433,7 +496,7 @@ export default function Navbar() {
                             onMouseEnter={openMegaMenu}
                             onMouseLeave={closeMegaMenuDelayed}
                         >
-                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                            <button className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition focus:outline-none hover:bg-gray-100 hover:text-sky-700`}>
                                 Trips
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${megaMenuOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -444,19 +507,29 @@ export default function Navbar() {
                             onMouseEnter={openTrekkingMenu}
                             onMouseLeave={closeTrekkingMenuDelayed}
                         >
-                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                            <button className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition focus:outline-none hover:bg-gray-100 hover:text-sky-700`}>
                                 Trekking
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${trekkingMenuOpen ? 'rotate-180' : ''}`} />
                             </button>
                         </div>
-                        <Link href="/activities" className="hover:text-sky-700 transition">Activities</Link>
+                        {/* Activities — triggers mega menu */}
+                        <div
+                            className="relative"
+                            onMouseEnter={openActivities}
+                            onMouseLeave={closeActivitiesDelayed}
+                        >
+                            <button className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition focus:outline-none hover:bg-gray-100 hover:text-sky-700`}>
+                                Activities
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activitiesOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                        </div>
                         {/* Destinations dropdown */}
                         <div
                             className="relative"
                             onMouseEnter={openDestinations}
                             onMouseLeave={closeDestinationsDelayed}
                         >
-                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                            <button className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition focus:outline-none hover:bg-gray-100 hover:text-sky-700`}>
                                 Destinations
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${destinationsOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -488,7 +561,7 @@ export default function Navbar() {
                             onMouseEnter={openCompany}
                             onMouseLeave={closeCompanyDelayed}
                         >
-                            <button className="flex items-center gap-1 hover:text-sky-700 transition focus:outline-none">
+                            <button className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition focus:outline-none hover:bg-gray-100 hover:text-sky-700`}>
                                 Company
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${companyOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -634,6 +707,48 @@ export default function Navbar() {
                 </div>
             </div>
 
+            {/* ── Activities Mega Menu ────────────────────────────────────── */}
+            <div
+                className={`hidden lg:block fixed top-[120px] left-0 w-full z-40 bg-white border-t border-gray-100 shadow-xl transition-all duration-200 ease-out ${activitiesOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}`}
+                onMouseEnter={openActivities}
+                onMouseLeave={closeActivitiesDelayed}
+            >
+                <div className="max-w-[1320px] mx-auto px-6 md:px-16 flex" style={{ minHeight: 360 }}>
+                    <div className="w-64 shrink-0 border-r border-gray-100 py-4">
+                        {activityCountries.map((country, i) => (
+                            <div
+                                key={i}
+                                onMouseEnter={() => setActiveActivityIndex(i)}
+                                className={`flex items-center justify-between px-4 py-2.5 cursor-pointer text-sm transition-colors ${activeActivityIndex === i ? 'bg-gray-50 text-[#0F4C81] font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81]'}`}
+                            >
+                                <Link href={country.href} className="flex-1" onClick={() => setActivitiesOpen(false)}>
+                                    {country.name}
+                                </Link>
+                                <ChevronRight className={`w-4 h-4 shrink-0 transition-colors ${activeActivityIndex === i ? 'text-[#0F4C81]' : 'text-gray-300'}`} />
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex-1 py-6 px-8">
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
+                            {activityCountries[activeActivityIndex].name}
+                        </p>
+                        <div className="grid grid-cols-2 gap-x-10 gap-y-1">
+                            {activityCountries[activeActivityIndex].subItems.map((item, j) => (
+                                <Link
+                                    key={j}
+                                    href={item.href}
+                                    onClick={() => setActivitiesOpen(false)}
+                                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#0F4C81] py-2 border-b border-gray-50 transition-colors group"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#0F4C81] shrink-0 transition-colors" />
+                                    {item.name}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
                 <div className="lg:hidden w-full bg-white shadow-lg border-t border-gray-200 animate-slideDown">
@@ -677,7 +792,6 @@ export default function Navbar() {
                             </>
                         ) : null}
 
-                        <Link href="/custom-package" className="block border border-gray-300 text-gray-900 hover:bg-gray-100 rounded-xl px-6 py-3 text-center font-semibold transition mt-2" onClick={closeMobileMenu}>Plan Your Trip</Link>
                         <Link href="/contact-us" className="block bg-sky-700 text-white hover:bg-sky-800 rounded-xl px-6 py-3 text-center font-semibold transition" onClick={closeMobileMenu}>Quick Inquiry</Link>
 
                         {user ? (

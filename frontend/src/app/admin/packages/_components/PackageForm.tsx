@@ -229,6 +229,7 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   const [title, setTitle]                   = useState(d?.title ?? '');
   const [slug, setSlug]                     = useState(d?.slug ?? '');
   const [category, setCategory]             = useState(d?.category ?? '');
+  const [country, setCountry]               = useState((d as any)?.country ?? '');
   const [duration, setDuration]             = useState(d?.duration ?? '');
   const [price, setPrice]                   = useState(String(d?.price ?? ''));
   const [location, setLocation]             = useState(d?.location ?? '');
@@ -318,6 +319,7 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
       title,
       slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
       category,
+      country: country || undefined,
       duration,
       price: parseFloat(price),
       location,
@@ -379,6 +381,16 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
                 {apiCategories.map((cat) => (
                   <option key={cat._id} value={cat.slug}>{cat.name}</option>
                 ))}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL}>Country</label>
+              <select value={country} onChange={(e) => setCountry(e.target.value)} className={INPUT}>
+                <option value="">— Select Country —</option>
+                <option value="nepal">Nepal</option>
+                <option value="bhutan">Bhutan</option>
+                <option value="tibet">Tibet</option>
+                <option value="india">India</option>
               </select>
             </div>
             <div>
@@ -460,7 +472,26 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
         <SectionHeader id="tags" label="Seasons, Highlights & Inclusions" />
         {openSection === 'tags' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-            <TagInput label="Best Season" values={bestSeason} onChange={setBestSeason} />
+            <div>
+              <label className={LABEL}>Best Time</label>
+              <div className="grid grid-cols-3 gap-2">
+                {['January','February','March','April','May','June','July','August','September','October','November','December'].map((month) => (
+                  <label key={month} className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={bestSeason.includes(month)}
+                      onChange={(e) =>
+                        setBestSeason(e.target.checked
+                          ? [...bestSeason, month]
+                          : bestSeason.filter((m) => m !== month))
+                      }
+                      className="w-3.5 h-3.5 accent-blue-600"
+                    />
+                    {month}
+                  </label>
+                ))}
+              </div>
+            </div>
             <TagInput label="Highlights" values={highlights} onChange={setHighlights} />
             <TagInput label="What's Included" values={includes} onChange={setIncludes} />
             <TagInput label="What's Not Included" values={notIncluded} onChange={setNotIncluded} />

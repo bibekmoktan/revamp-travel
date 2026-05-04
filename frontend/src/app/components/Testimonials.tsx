@@ -55,7 +55,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="px-6 md:px-16 py-16 bg-gray-50">
+    <section className="px-6 md:px-16 py-16 bg-[#F2FAFF]">
       <div className="max-w-[1320px] mx-auto">
 
         <div className="mb-10">

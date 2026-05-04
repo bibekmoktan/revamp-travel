@@ -53,5 +53,6 @@ export interface IPackage {
   faq: IFaq[];
   moreInfo: IMoreInfo[];
   itinerary: IItinerary[];
+  country?: 'nepal' | 'bhutan' | 'tibet' | 'india';
   status?: 'active' | 'inactive';
 }
