@@ -50,6 +50,7 @@ const packageSchema = new Schema<IPackage>({
   faq:        { type: [faqSchema], default: [] },
   moreInfo:   { type: [moreInfoSchema], default: [] },
   itinerary: [itinerarySchema],
+  country: { type: String, enum: ['nepal', 'bhutan', 'tibet', 'india'] },
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 }, { timestamps: true });
 
