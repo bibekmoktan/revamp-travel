@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const imageSchema = z.object({
   url: z.string().url('Invalid image URL'),
   alt: z.string().optional(),
-  public_id: z.string().min(1, 'Public ID is required'),
+  public_id: z.string().optional(),
 });
 
 export const itinerarySchema = z.object({
