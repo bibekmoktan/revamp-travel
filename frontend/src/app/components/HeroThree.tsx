@@ -29,7 +29,7 @@ export default function HeroThree() {
           <p className="text-xs font-semibold text-[#0F4C81] uppercase tracking-widest mb-3">
             Handcrafted Adventures Since 2005
           </p>
-          <h2 className="text-3xl md:text-[42px] font-bold text-gray-900 leading-[1.2] mb-5">
+          <h2 className="text-[24px] md:text-[42px] font-bold text-gray-900 leading-[1.2] mb-5">
             Explore the World with<br />
             <span className="text-[#0F4C81]">20+ Years</span> of Trusted Expertise
           </h2>
@@ -53,18 +53,18 @@ export default function HeroThree() {
           </div>
 
           {/* Trust stats */}
-          <div className="flex flex-wrap items-center gap-6 border-t border-gray-200 pt-8">
+          <div className="flex flex-nowrap items-center justify-between sm:justify-start gap-3 sm:gap-6 border-t border-gray-200 pt-6 sm:pt-8">
             {[
               { value: '20+',  label: 'Years Experience' },
               { value: '1K+',  label: 'Happy Travelers' },
               { value: '100%', label: 'Certified Guides' },
               { value: '24/7', label: 'Local Support' },
             ].map((stat, i) => (
-              <div key={i} className="flex items-center gap-6">
-                {i > 0 && <span className="w-px h-8 bg-gray-200" />}
+              <div key={i} className="flex items-center gap-3 sm:gap-6">
+                {i > 0 && <span className="w-px h-6 sm:h-8 bg-gray-200" />}
                 <div>
-                  <p className="text-2xl font-bold text-[#0F4C81] leading-none">{stat.value}</p>
-                  <p className="text-xs text-gray-400 mt-1 whitespace-nowrap">{stat.label}</p>
+                  <p className="text-base sm:text-2xl font-bold text-[#0F4C81] leading-none">{stat.value}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400 mt-1 whitespace-nowrap">{stat.label}</p>
                 </div>
               </div>
             ))}

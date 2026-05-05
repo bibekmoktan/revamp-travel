@@ -24,12 +24,12 @@ const regions = [
 
 export default function PopularTrips() {
   return (
-    <section className="px-6 md:px-16 py-12">
-      <div className="max-w-[1320px] mx-auto flex flex-col md:flex-row items-center gap-10">
+    <section className="px-6 md:px-16 py-10 md:py-12">
+      <div className="max-w-[1320px] mx-auto flex flex-col md:flex-row md:items-center gap-8 md:gap-10">
 
         {/* Left — text */}
         <div className="w-full md:w-[240px] shrink-0">
-          <h2 className="text-2xl font-bold text-gray-900 leading-tight mb-3">
+          <h2 className="text-[24px] md:text-2xl font-bold text-gray-900 leading-tight mb-3">
             Journey to the <br /> Himalayan Lands
           </h2>
           <div className="w-10 h-0.5 bg-[#F59E0B] mb-4" />
@@ -39,12 +39,12 @@ export default function PopularTrips() {
         </div>
 
         {/* Right — destination cards */}
-        <div className="flex-1 grid grid-cols-3 gap-4">
+        <div className="w-full md:flex-1 flex md:grid md:grid-cols-3 gap-4 overflow-x-auto md:overflow-visible scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 snap-x snap-mandatory md:snap-none scroll-pl-6">
           {regions.map((region) => (
             <Link
               key={region.name}
               href={region.href}
-              className="group relative overflow-hidden rounded-2xl h-[280px] block"
+              className="group relative overflow-hidden rounded-2xl h-[260px] md:h-[280px] block w-[260px] md:w-auto flex-shrink-0 md:flex-shrink snap-start"
             >
               <Image
                 src={region.image}
