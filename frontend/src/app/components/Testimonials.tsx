@@ -60,7 +60,7 @@ export default function Testimonials() {
 
         <div className="mb-10">
           <p className="text-sky-600 font-semibold text-sm mb-2">Traveler Stories</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 max-w-md leading-tight">
+          <h2 className="text-[24px] md:text-[40px] font-bold text-gray-900 max-w-md leading-tight">
             Voices From Those Who Explored Nepal With Us
           </h2>
         </div>
