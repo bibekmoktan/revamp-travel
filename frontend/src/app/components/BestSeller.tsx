@@ -41,13 +41,13 @@ export default function BestSeller() {
                 {loading ? (
                     <div className="flex gap-6">
                         {[...Array(4)].map((_, i) => (
-                            <div key={i} className="w-[320px] flex-shrink-0 h-[500px] bg-gray-100 animate-pulse" />
+                            <div key={i} className="w-[380px] flex-shrink-0 h-[460px] bg-gray-100 animate-pulse" />
                         ))}
                     </div>
                 ) : (
                     <div ref={scrollRef} className="flex gap-6 overflow-x-auto pb-2 scrollbar-hide">
                         {packages.map((pkg) => (
-                            <div key={pkg._id} className="w-[320px] flex-shrink-0 relative">
+                            <div key={pkg._id} className="w-[380px] flex-shrink-0 relative">
                                 <div className="absolute top-3 left-3 z-10 bg-sky-600 text-white text-[10px] font-bold px-2.5 py-1 uppercase tracking-wider">
                                     Best Seller
                                 </div>
