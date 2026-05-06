@@ -43,32 +43,32 @@ export default function TrekCard({ package: pkg, href }: TrekCardProps) {
               {'★'.repeat(Math.floor(pkg.rating))}
               {pkg.rating % 1 !== 0 && '☆'}
             </div>
-            <span className="text-[12px] text-gray-600">
+            <span className="text-[10px] text-gray-600">
               {pkg.rating} ({pkg.reviews} reviews)
             </span>
           </div>
-          <span className="text-[16px] font-semibold text-[#0F4C81]">${pkg.price.toLocaleString()}</span>
+          <span className="text-[10px] font-semibold text-[#0F4C81]">${pkg.price.toLocaleString()}</span>
         </div>
 
         {/* Title */}
-        <h3 className="text-[18px] h-[40px] font-bold text-gray-900 leading-[1.2] mb-2 line-clamp-2">
+        <h3 className="text-[16px] h-[40px] font-bold text-gray-900 leading-[1.2] mb-2 line-clamp-2">
           {pkg.title}
         </h3>
 
         {/* Duration, Altitude, Difficulty */}
-        <div className="flex items-center justify-between text-[12px] text-[#607D8B]">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between text-[10px] text-[#607D8B]">
+          <div className="flex flex-col items-center gap-0.5">
             <Clock className="w-4 h-4 text-sky-800" />
             <span>{pkg.duration}</span>
           </div>
           {pkg.altitude && (
-            <div className="flex items-center gap-1">
+            <div className="flex flex-col items-center gap-0.5">
               <Mountain className="w-4 h-4 text-sky-800" />
               <span>{pkg.altitude}</span>
             </div>
           )}
           {pkg.difficulty && (
-            <div className="flex items-center gap-1">
+            <div className="flex flex-col items-center gap-0.5">
               <Gauge className="w-4 h-4 text-sky-800" />
               <span className="capitalize">{pkg.difficulty}</span>
             </div>
@@ -78,7 +78,7 @@ export default function TrekCard({ package: pkg, href }: TrekCardProps) {
         {/* CTA — clickable */}
         <Link
           href={dest}
-          className="block w-full mt-6 bg-[#0F4C81] hover:bg-sky-800 text-white font-semibold py-3 px-6 transition-colors duration-200 text-center rounded-[12px]"
+          className="block w-full mt-6 bg-[#0F4C81] hover:bg-sky-800 text-white font-semibold py-3 px-6 transition-colors duration-200 text-center rounded-[12px] text-[16px]"
         >
           View Details
         </Link>
