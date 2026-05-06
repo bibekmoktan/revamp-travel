@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Clock, Mountain } from 'lucide-react';
+import { Clock, Mountain, Gauge } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
 import WishlistButton from './WishlistButton';
+import ShareButton from './ShareButton';
 
 interface TrekCardProps {
   package: ApiPackage;
@@ -13,10 +14,10 @@ export default function TrekCard({ package: pkg, href }: TrekCardProps) {
   const dest = href ?? `/trekking/${pkg.slug}`;
 
   return (
-    <div className="w-full h-[500px] bg-white overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-200">
+    <div className="w-full bg-white overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-200 rounded-[12px]">
 
       {/* Image — clickable */}
-      <div className="relative h-[260px] w-full overflow-hidden">
+      <div className="relative h-[230px] w-full overflow-hidden">
         <Link href={dest} className="block w-full h-full">
           <Image
             src={pkg.featureImage.url}
@@ -26,11 +27,14 @@ export default function TrekCard({ package: pkg, href }: TrekCardProps) {
             className="object-cover hover:scale-105 transition-transform duration-500"
           />
         </Link>
-        <WishlistButton pkg={pkg} className="absolute top-3 right-3 z-10" />
+        <div className="absolute top-3 right-3 z-10 flex gap-2">
+          <ShareButton title={pkg.title} slug={pkg.slug} />
+          <WishlistButton pkg={pkg} />
+        </div>
       </div>
 
       {/* Details */}
-      <div className="px-4 py-2">
+      <div className="px-4 py-2 pb-4">
 
         {/* Rating & Price */}
         <div className="flex justify-between items-center mb-1">
@@ -51,33 +55,22 @@ export default function TrekCard({ package: pkg, href }: TrekCardProps) {
           {pkg.title}
         </h3>
 
-        <div className="space-y-4">
-
-          {/* Duration & Altitude */}
-          <div className="flex items-center justify-between gap-4 text-[12px] text-[#607D8B]">
-            <div className="flex items-center gap-1 text-gray-600">
-              <Clock className="w-4 h-4" />
-              <span>{pkg.duration}</span>
-            </div>
-            {pkg.altitude && (
-              <div className="flex items-center gap-1 text-[#607D8B]">
-                <Mountain className="w-4 h-4" />
-                <span>{pkg.altitude}</span>
-              </div>
-            )}
+        {/* Duration, Altitude, Difficulty */}
+        <div className="flex items-center justify-between text-[12px] text-[#607D8B]">
+          <div className="flex items-center gap-1">
+            <Clock className="w-4 h-4 text-sky-800" />
+            <span>{pkg.duration}</span>
           </div>
-
-          {/* Best Season */}
-          {pkg.bestSeason.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {pkg.bestSeason.slice(0, 4).map((month) => (
-                <span
-                  key={month}
-                  className="bg-[#EEF4FF] text-[#1E88E5] px-3 py-1 rounded-full text-[12px] font-medium"
-                >
-                  {month}
-                </span>
-              ))}
+          {pkg.altitude && (
+            <div className="flex items-center gap-1">
+              <Mountain className="w-4 h-4 text-sky-800" />
+              <span>{pkg.altitude}</span>
+            </div>
+          )}
+          {pkg.difficulty && (
+            <div className="flex items-center gap-1">
+              <Gauge className="w-4 h-4 text-sky-800" />
+              <span className="capitalize">{pkg.difficulty}</span>
             </div>
           )}
         </div>
@@ -85,7 +78,7 @@ export default function TrekCard({ package: pkg, href }: TrekCardProps) {
         {/* CTA — clickable */}
         <Link
           href={dest}
-          className="block w-full mt-6 bg-[#0F4C81] hover:bg-sky-800 text-white font-semibold py-3 px-6 transition-colors duration-200 text-center"
+          className="block w-full mt-6 bg-[#0F4C81] hover:bg-sky-800 text-white font-semibold py-3 px-6 transition-colors duration-200 text-center rounded-[12px]"
         >
           View Details
         </Link>

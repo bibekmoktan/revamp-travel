@@ -36,10 +36,15 @@ export default async function FeaturedTrips() {
                     className="object-cover group-hover:scale-110 transition-all duration-600"
                   />
                 </div>
-                <div className="p-6">
+                <div className="p-4">
                   <h3 className="text-[16px] font-[500] text-black mb-1 leading-tight">
                     {category.name}
                   </h3>
+                  {category.description && (
+                    <p className="text-[12px] text-gray-500 leading-snug line-clamp-2">
+                      {category.description}
+                    </p>
+                  )}
                 </div>
               </div>
             </Link>
