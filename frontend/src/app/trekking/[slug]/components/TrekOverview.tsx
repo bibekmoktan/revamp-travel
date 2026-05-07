@@ -17,11 +17,11 @@ export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
     <div className="space-y-8">
 
       {/* Quick-stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-sky-700 p-4 rounded-xl">
         {stats.map(({ icon: Icon, label, value }) => (
           <div key={label} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
             <Icon className="w-5 h-5 text-sky-600 mx-auto mb-2" />
-            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+            <p className="text-[14px] text-gray-800 uppercase tracking-wide mb-1">{label}</p>
             <p className="text-sm font-semibold text-gray-800">{value}</p>
           </div>
         ))}
@@ -35,7 +35,7 @@ export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
 
       {/* Highlights */}
       {pkg.highlights.length > 0 && (
-        <div>
+        <div className='bg-sky-100 rounded-2xl p-4'>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
           <ul className="space-y-2.5">
             {pkg.highlights.map((h) => (
@@ -50,7 +50,7 @@ export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
 
       {/* Includes */}
       {pkg.includes.length > 0 && (
-        <div>
+        <div className='bg-green-50 rounded-2xl p-4'>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {pkg.includes.map((item) => (

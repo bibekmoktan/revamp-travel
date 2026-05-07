@@ -7,10 +7,10 @@ import HeroImg from '../../../../../public/images/treks/bg-1.jpg';
 import type { ApiPackage } from '@/types/api';
 
 const difficultyColor: Record<string, string> = {
-  easy:        'bg-green-500',
-  moderate:    'bg-yellow-500',
+  easy: 'bg-green-500',
+  moderate: 'bg-yellow-500',
   challenging: 'bg-orange-500',
-  extreme:     'bg-red-500',
+  extreme: 'bg-red-500',
 };
 
 export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
@@ -32,13 +32,28 @@ export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
       }}
     >
       {/* Breadcrumb */}
-      <div className="max-w-[1366px] mx-auto px-6 pt-6 w-full pt-[200px]">
-        <div className="flex items-center gap-2 text-[18px] text-white">
-          <Link href="/" className="hover:text-white transition-colors">Home</Link>
+      <div className="max-w-[1366px] mx-auto px-6 pt-6 w-full pt-[200px] bg-">
+        <div
+          className="flex items-center gap-2 text-[14px] text-white bg-sky-900 max-w-max px-15 py-2"
+          style={{
+            clipPath: "polygon(10% 0, 100% 0%, 90% 99%, 0% 100%)",
+          }}
+        >
+          <Link href="/" className="hover:text-white transition-colors">
+            Home
+          </Link>
+
           <span>&gt;</span>
-          <Link href="/trekking" className="hover:text-white transition-colors">Trekking</Link>
+
+          <Link href="/trekking" className="hover:text-white transition-colors">
+            Trekking
+          </Link>
+
           <span>&gt;</span>
-          <span className="text-white truncate max-w-[200px]">{pkg.title}</span>
+
+          <span className="text-white truncate max-w-[200px]">
+            {pkg.title}
+          </span>
         </div>
       </div>
 
