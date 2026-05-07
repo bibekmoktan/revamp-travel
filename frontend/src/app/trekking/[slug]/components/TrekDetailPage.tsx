@@ -21,7 +21,7 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
         <div className="flex flex-col lg:flex-row gap-6">
 
           {/* Main content */}
-          <div className="flex-1 min-w-0 space-y-6">
+          <div className="flex-1 min-w-0 space-y-6 shadow-lg p-6 bg-white rounded-2xl">
             <TrekGallery gallery={pkg.gallery} title={pkg.title} />
             <TrekOverview pkg={pkg} />
             <TrekItinerary itinerary={pkg.itinerary} />

@@ -40,11 +40,11 @@ export default function TrekExtras({ pkg }: { pkg: ApiPackage }) {
     <>
       {/* What's Not Included */}
       {notIncluded.length > 0 && (
-        <div>
+        <div className='bg-red-50 rounded-2xl p-4'>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Not Included</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-1">
             {notIncluded.map((item) => (
-              <div key={item} className="flex items-start gap-2.5 bg-red-50 rounded-lg px-4 py-2.5">
+              <div key={item} className="flex items-start gap-2.5 bg-red-50 rounded-lg px-4 py-1">
                 <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                 <span className="text-gray-700 text-sm">{item}</span>
               </div>

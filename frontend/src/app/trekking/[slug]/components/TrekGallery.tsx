@@ -21,7 +21,7 @@ export default function TrekGallery({ gallery, title }: { gallery: ApiPackage['g
       <h2 className="text-2xl font-bold text-gray-900 mb-4">Gallery</h2>
 
       {/* Collage grid */}
-      <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[300px] rounded-2xl overflow-hidden gap-2 bg-green-100">
+      <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[300px] rounded-2xl overflow-hidden">
 
         {/* Hero — col 1–2, row 1–2 */}
         {shown[0] && (
@@ -34,7 +34,7 @@ export default function TrekGallery({ gallery, title }: { gallery: ApiPackage['g
               alt={shown[0].alt ?? `${title} photo 1`}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
           </button>
@@ -55,7 +55,7 @@ export default function TrekGallery({ gallery, title }: { gallery: ApiPackage['g
                 alt={img.alt ?? `${title} photo ${idx + 1}`}
                 fill
                 sizes="25vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
               {isLast && extra > 0 && (
