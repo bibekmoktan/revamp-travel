@@ -489,7 +489,7 @@ export default function Navbar() {
                     </Link>
 
                     {/* Desktop Nav Links */}
-                    <div className="hidden lg:flex items-center gap-8 text-[15px] font-medium text-gray-700 shrink-0">
+                    <div className="hidden lg:flex items-center gap-4 text-[15px] font-medium text-gray-700 shrink-0">
                         {/* Trips — triggers mega menu */}
                         <div
                             className="relative"
