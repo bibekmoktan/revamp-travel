@@ -9,7 +9,7 @@ import EnquiryModal from '@/app/components/EnquiryModal';
 import WishlistButton from '@/app/components/WishlistButton';
 
 const GROUP_TIERS = [
-  { label: '1 pax',      min: 1, max: 1,  discount: 0.10 },
+  { label: '1 pax',      min: 1, max: 1,  discount: 0 },
   { label: '2 – 5 pax',  min: 2, max: 5,  discount: 0.15 },
   { label: '6 – 8 pax',  min: 6, max: 8,  discount: 0.22 },
   { label: '9 – 10 pax', min: 9, max: 10, discount: 0.28 },
@@ -24,7 +24,7 @@ function activeTier(travelers: number) {
 }
 
 export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
-  const [groupOpen, setGroupOpen]     = useState(true);
+  const [groupOpen, setGroupOpen]     = useState(false);
   const [date, setDate]               = useState('');
   const [dateError, setDateError]     = useState('');
   const [travelers, setTravelers]     = useState(1);
@@ -44,8 +44,7 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
     return true;
   }
 
-  const base      = pkg.price;
-  const original  = Math.round(base * 1.15);
+  const base      = pkg.price ?? 0;
   const tier      = activeTier(travelers);
   const unitPrice = tierPrice(base, tier.discount);
   const total     = unitPrice * travelers;
@@ -88,7 +87,6 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
           <p className="text-gray-500 text-xs mb-1">Price from:</p>
           <div className="flex items-baseline gap-2">
             <span className="text-[22px] font-bold text-gray-900">US${unitPrice.toLocaleString()}</span>
-            <span className="text-gray-400 line-through text-sm">US${original.toLocaleString()}</span>
             <span className="text-gray-500 text-xs">P/P</span>
           </div>
         </div>
