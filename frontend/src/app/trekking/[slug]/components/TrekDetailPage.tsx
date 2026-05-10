@@ -4,6 +4,7 @@ import TrekOverview from './TrekOverview';
 import TrekItinerary from './TrekItinerary';
 import TrekGallery from './TrekGallery';
 import TrekBookingCard from './TrekBookingCard';
+import TrekAddOns from './TrekAddOns';
 import TrekExtras from './TrekExtras';
 import TrekReviews from './TrekReviews';
 
@@ -30,8 +31,9 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
           </div>
 
           {/* Booking sidebar */}
-          <aside className="lg:w-80 shrink-0">
+          <aside className="lg:w-80 shrink-0 space-y-4">
             <TrekBookingCard pkg={pkg} />
+            <TrekAddOns category={pkg.category} currentSlug={pkg.slug} />
           </aside>
 
         </div>
