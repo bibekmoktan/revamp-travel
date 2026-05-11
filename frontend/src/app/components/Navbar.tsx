@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
-import { User, ShoppingCart, Heart, LogOut, CalendarCheck, Settings, ChevronRight, ChevronDown } from 'lucide-react';
+import { User, ShoppingCart, Heart, LogOut, CalendarCheck, Settings, ChevronRight, ChevronDown, Search, X } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -278,6 +278,16 @@ export default function Navbar() {
     const [destinationsOpen, setDestinationsOpen] = useState(false);
     const [companyOpen, setCompanyOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+    const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
+    const [mobileSubAccordion, setMobileSubAccordion] = useState<string | null>(null);
+
+    const toggleAccordion = (name: string) => {
+        setMobileAccordion(prev => (prev === name ? null : name));
+        setMobileSubAccordion(null);
+    };
+    const toggleSubAccordion = (key: string) =>
+        setMobileSubAccordion(prev => (prev === key ? null : key));
     const [profileOpen, setProfileOpen] = useState(false);
     const { count: cartCount } = useCart();
     const { count: wishlistCount } = useWishlist();
@@ -350,40 +360,41 @@ export default function Navbar() {
         <header className="fixed top-0 left-0 w-full z-50">
             {/* Top Bar */}
             <div className="bg-[#607D8B] w-full">
-                <div className="max-w-[1366px] mx-auto px-6 md:px-8 h-10 flex items-center justify-between text-white text-sm">
+                <div className="max-w-[1366px] mx-auto px-6 md:px-8 h-auto md:h-10 py-2 md:py-0 flex items-center justify-between text-white text-sm">
                     {/* Left — Social + Contact */}
-                    <div className="flex items-center gap-5">
-                        <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-white/80 transition">
+                    <div className="flex flex-col md:flex-row md:items-center gap-0 md:gap-5">
+                        {/* Social icons — desktop only */}
+                        <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hidden md:block hover:text-white/80 transition">
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
                             </svg>
                         </Link>
-                        <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-white/80 transition">
+                        <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hidden md:block hover:text-white/80 transition">
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                                 <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
                                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
                             </svg>
                         </Link>
-                        <Link href="https://wa.me/61481712113" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="hover:text-white/80 transition">
+                        <Link href="https://wa.me/61481712113" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="hidden md:block hover:text-white/80 transition">
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                             </svg>
                         </Link>
 
-                        <span className="text-white/40">|</span>
+                        <span className="hidden md:block text-white/40">|</span>
 
-                        <Link href="tel:+61481712113" className="flex items-center gap-1.5 hover:text-white/80 transition">
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <Link href="tel:+61481712113" className="flex items-center gap-1.5 hover:text-white/80 transition text-xs">
+                            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.9v2.02z"/>
                             </svg>
                             +61481712113
                         </Link>
 
-                        <span className="text-white/40">|</span>
+                        <span className="hidden md:block text-white/40 text-xs">|</span>
 
-                        <Link href="mailto:info@highspiritsnepal.com" className="flex items-center gap-1.5 hover:text-white/80 transition">
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <Link href="mailto:info@highspiritsnepal.com" className="flex items-center gap-1.5 hover:text-white/80 transition text-xs">
+                            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                                 <polyline points="22,6 12,13 2,6"/>
                             </svg>
@@ -598,6 +609,15 @@ export default function Navbar() {
                             Quick Inquiry
                         </Link>
 
+                        {/* Mobile search icon */}
+                        <button
+                            onClick={() => setMobileSearchOpen(o => !o)}
+                            className="lg:hidden flex items-center justify-center w-8 h-8 focus:outline-none text-gray-700"
+                            aria-label="Toggle search"
+                        >
+                            {mobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
+                        </button>
+
                         {/* Hamburger */}
                         <button
                             onClick={toggleMobileMenu}
@@ -610,6 +630,13 @@ export default function Navbar() {
                         </button>
                     </div>
                 </nav>
+            </div>
+
+            {/* Mobile Search Bar */}
+            <div className={`lg:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out ${mobileSearchOpen ? 'max-h-screen py-3 overflow-visible opacity-100' : 'max-h-0 py-0 overflow-hidden opacity-0'}`}>
+                <div className="px-4">
+                    <HeroSearch />
+                </div>
             </div>
 
             {/* ── Trips Mega Menu ─────────────────────────────────────────────── */}
@@ -752,58 +779,93 @@ export default function Navbar() {
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
                 <div className="lg:hidden w-full bg-white shadow-lg border-t border-gray-200 animate-slideDown">
-                    <div className="px-6 py-6 max-w-[1320px] mx-auto space-y-4">
-                        <HeroSearch />
+                    <div className="max-w-[1320px] mx-auto divide-y divide-gray-100">
+                        {[
+                            { label: 'Trips',        key: 'trips',        groups: categories },
+                            { label: 'Trekking',     key: 'trekking',     groups: trekkingRegions },
+                            { label: 'Activities',   key: 'activities',   groups: activityCountries },
+                            {
+                                label: 'Destinations', key: 'destinations',
+                                groups: [
+                                    { name: 'Nepal',  href: '/destinations/nepal',  subItems: [] },
+                                    { name: 'Bhutan', href: '/destinations/bhutan', subItems: [] },
+                                    { name: 'Tibet',  href: '/destinations/tibet',  subItems: [] },
+                                    { name: 'India',  href: '/destinations/india',  subItems: [] },
+                                ],
+                            },
+                            { label: 'Company', key: 'company', groups: companyLinks.map(l => ({ name: l.name, href: l.href, subItems: [] })) },
+                        ].map(({ label, key, groups }) => (
+                            <div key={key}>
+                                {/* Level 1 */}
+                                <button
+                                    onClick={() => toggleAccordion(key)}
+                                    className="w-full flex items-center justify-between px-6 py-4 text-base font-semibold text-gray-900 hover:text-sky-700 transition-colors"
+                                >
+                                    {label}
+                                    <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${mobileAccordion === key ? 'rotate-180' : ''}`} />
+                                </button>
 
-                        {user ? (
-                            <div className="flex items-center gap-3 py-3 border-b border-gray-100 mb-2">
-                                <div className="w-10 h-10 rounded-full bg-sky-500 text-white font-bold text-sm flex items-center justify-center uppercase shrink-0">
-                                    {user.name.charAt(0)}
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="font-semibold text-gray-900 truncate">{user.name}</p>
-                                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                {/* Level 2 */}
+                                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileAccordion === key ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    <div className="bg-gray-50 divide-y divide-gray-100">
+                                        {groups.map((group, gi) => {
+                                            const subKey = `${key}:${gi}`;
+                                            const hasChildren = group.subItems && group.subItems.length > 0;
+                                            return (
+                                                <div key={gi}>
+                                                    {hasChildren ? (
+                                                        <button
+                                                            onClick={() => toggleSubAccordion(subKey)}
+                                                            className="w-full flex items-center justify-between px-6 py-3 text-sm font-medium text-gray-700 hover:text-sky-700 transition-colors"
+                                                        >
+                                                            <span className="flex items-center gap-2">
+                                                                <ChevronRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                                                                {group.name}
+                                                            </span>
+                                                            <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-300 ${mobileSubAccordion === subKey ? 'rotate-180' : ''}`} />
+                                                        </button>
+                                                    ) : (
+                                                        <Link
+                                                            href={group.href}
+                                                            onClick={closeMobileMenu}
+                                                            className="flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-700 hover:text-sky-700 transition-colors"
+                                                        >
+                                                            <ChevronRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                                                            {group.name}
+                                                        </Link>
+                                                    )}
+
+                                                    {/* Level 3 */}
+                                                    {hasChildren && (
+                                                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileSubAccordion === subKey ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                                            <div className="bg-white divide-y divide-gray-50">
+                                                                {group.subItems.map((sub, si) => (
+                                                                    <Link
+                                                                        key={si}
+                                                                        href={sub.href}
+                                                                        onClick={closeMobileMenu}
+                                                                        className="flex items-center gap-2 pl-12 pr-6 py-2.5 text-sm text-gray-500 hover:text-sky-700 transition-colors"
+                                                                    >
+                                                                        <ChevronRight className="w-3 h-3 text-gray-300 shrink-0" />
+                                                                        {sub.name}
+                                                                    </Link>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
-                        ) : null}
-
-                        <Link href="/packages" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Trips</Link>
-                        <Link href="/trekking" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Trekking</Link>
-                        <Link href="/activities" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Activities</Link>
-                        {[
-                            { name: 'Nepal',  href: '/destinations/nepal' },
-                            { name: 'Bhutan', href: '/destinations/bhutan' },
-                            { name: 'Tibet',  href: '/destinations/tibet' },
-                            { name: 'India',  href: '/destinations/india' },
-                        ].map((item) => (
-                            <Link key={item.href} href={item.href} className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>{item.name}</Link>
-                        ))}
-                        {companyLinks.map((item) => (
-                            <Link key={item.href} href={item.href} className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>{item.name}</Link>
                         ))}
 
-                        {user ? (
-                            <>
-                                <Link href="/profile" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>My Profile</Link>
-                                <Link href="/profile" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>My Bookings</Link>
-                                {user.role === 'admin' && (
-                                    <Link href="/admin" className="block text-gray-900 hover:text-sky-700 transition py-2 text-lg font-medium" onClick={closeMobileMenu}>Admin Panel</Link>
-                                )}
-                            </>
-                        ) : null}
-
-                        <Link href="/contact-us" className="block bg-sky-700 text-white hover:bg-sky-800 rounded-xl px-6 py-3 text-center font-semibold transition" onClick={closeMobileMenu}>Quick Inquiry</Link>
-
-                        {user ? (
-                            <button
-                                onClick={() => { handleLogout(); closeMobileMenu(); }}
-                                className="flex items-center justify-center gap-2 w-full border border-red-200 text-red-500 hover:bg-red-50 rounded-xl px-6 py-3 font-semibold transition"
-                            >
-                                <LogOut className="w-4 h-4" /> Sign Out
-                            </button>
-                        ) : (
-                            <Link href="/login" className="block bg-gray-900 text-white hover:bg-black rounded-xl px-6 py-3 text-center font-semibold transition" onClick={closeMobileMenu}>Login</Link>
-                        )}
+                        <div className="px-6 py-4">
+                            <Link href="/contact-us" onClick={closeMobileMenu} className="block bg-sky-700 text-white hover:bg-sky-800 rounded-xl px-6 py-3 text-center font-semibold transition">
+                                Quick Inquiry
+                            </Link>
+                        </div>
                     </div>
                 </div>
             )}
