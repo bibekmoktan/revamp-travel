@@ -15,10 +15,10 @@ import WhyTravelWithUs from "./components/WhyTravelWithUs";
 export default function Home() {
   return (
     <div className="mt-[100px] bg-[#FAFFFF]">
-        {/* <Hero /> */}
+        <Hero />
         {/* <HeroOne /> */}
         {/* <HeroTwo /> */}
-        <HeroThree />
+        {/* <HeroThree /> */}
         <FeaturedTrips />
         <BestSeller />
         <Offer />

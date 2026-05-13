@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <div className="relative h-[850px] w-full overflow-hidden">
+    <div className="relative h-[600px] w-full overflow-hidden">
       {/* Hero Image Background */}
       <Image
         src="/images/hero-background.png"
@@ -30,7 +30,7 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/30 z-10" />
 
-      <div className="absolute z-20 inset-0 flex flex-col justify-start top-[250px] items-center text-white text-center px-4">
+      <div className="absolute z-20 inset-0 flex flex-col justify-start top-[100px] items-center text-white text-center px-4">
          {/* <p className="text-sm md:text-[18px] max-w-[700px] leading-[1.16] mb-6 text-white">Handcrafted Adventures Since 2005</p>  */}
         <h2 className="text-[24px] max-w-[700px] md:text-[42px] font-bold leading-[1.16] mb-4">
           Explore the World with 20+ Years of Trusted Expertise
