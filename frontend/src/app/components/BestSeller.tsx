@@ -27,11 +27,8 @@ export default function BestSeller() {
             <div className="max-w-[1366px] mx-auto">
 
                 {/* Header */}
-                <div className="text-center mb-10">
+                <div className="text-center mb-10 flex justify-between items-center gap-4">
                     <h2 className="text-[24px] lg:text-[40px] font-bold text-gray-800 mb-2">Our Best Sellers</h2>
-                    <p className="text-gray-800 text-[16px] max-w-[440px] mx-auto mb-5">
-                        Top-rated packages loved by thousands of travelers across Nepal and beyond.
-                    </p>
                     <Link href="/trekking" className="inline-block bg-sky-600 hover:bg-sky-700 text-white text-sm px-5 py-2 transition">
                         View All
                     </Link>
