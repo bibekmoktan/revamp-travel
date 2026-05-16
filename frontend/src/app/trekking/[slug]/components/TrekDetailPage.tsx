@@ -6,6 +6,8 @@ import TrekGallery from './TrekGallery';
 import TrekBookingCard from './TrekBookingCard';
 import TrekAddOns from './TrekAddOns';
 import TrekExtras from './TrekExtras';
+import TrekIncludes from './TrekIncludes';
+import TrekSubNav from './TrekSubNav';
 import TrekReviews from './TrekReviews';
 
 const WRAPPER = 'max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8';
@@ -23,11 +25,13 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
 
           {/* Main content */}
           <div className="flex-1 min-w-0 space-y-6 shadow-lg p-6 bg-white rounded-2xl">
-            <TrekGallery gallery={pkg.gallery} title={pkg.title} />
-            <TrekOverview pkg={pkg} />
-            <TrekItinerary itinerary={pkg.itinerary} />
-            <TrekExtras pkg={pkg} />
-            <TrekReviews packageId={pkg._id} />
+            <TrekSubNav />
+            <div id="section-gallery"><TrekGallery gallery={pkg.gallery} title={pkg.title} /></div>
+            <div id="section-overview"><TrekOverview pkg={pkg} /></div>
+            <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} /></div>
+            <div id="section-included"><TrekIncludes includes={pkg.includes} /></div>
+            <div id="section-excluded-wrapper"><TrekExtras pkg={pkg} /></div>
+            <div id="section-reviews"><TrekReviews packageId={pkg._id} /></div>
           </div>
 
           {/* Booking sidebar */}

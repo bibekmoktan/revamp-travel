@@ -347,6 +347,19 @@ export default function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const [navHidden, setNavHidden] = useState(false);
+    useEffect(() => {
+        const onStuck   = () => setNavHidden(true);
+        const onUnstuck = () => setNavHidden(false);
+        window.addEventListener('trek-subnav-stuck',   onStuck);
+        window.addEventListener('trek-subnav-unstuck', onUnstuck);
+        return () => {
+            window.removeEventListener('trek-subnav-stuck',   onStuck);
+            window.removeEventListener('trek-subnav-unstuck', onUnstuck);
+        };
+    }, []);
+
+
     function handleLogout() {
         logout();
         setProfileOpen(false);
@@ -357,7 +370,7 @@ export default function Navbar() {
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
     return (
-        <header className="fixed top-0 left-0 w-full z-50">
+        <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${navHidden ? '-translate-y-full' : 'translate-y-0'}`}>
             {/* Top Bar */}
             <div className="bg-[#607D8B] w-full">
                 <div className="max-w-[1366px] mx-auto px-6 md:px-8 h-auto md:h-10 py-2 md:py-0 flex items-center justify-between text-white text-sm">
