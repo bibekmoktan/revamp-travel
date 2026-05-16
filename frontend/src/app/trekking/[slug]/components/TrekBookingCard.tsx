@@ -24,7 +24,7 @@ function activeTier(travelers: number) {
 }
 
 export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
-  const [groupOpen, setGroupOpen]     = useState(false);
+  const [groupOpen, setGroupOpen]     = useState(true);
   const [date, setDate]               = useState('');
   const [dateError, setDateError]     = useState('');
   const [travelers, setTravelers]     = useState(1);
@@ -82,7 +82,7 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
     <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden text-sm">
 
       {/* Price header */}
-      <div className="px-5 pt-5 pb-4 flex items-start justify-between">
+      <div className="px-5 pt-3 pb-2 flex items-start justify-between">
         <div>
           <p className="text-gray-500 text-xs mb-1">Price from:</p>
           <div className="flex items-baseline gap-2">
@@ -99,7 +99,7 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
       <div className="px-5">
         <button
           onClick={() => setGroupOpen(o => !o)}
-          className="w-full flex items-center justify-between py-3 text-gray-800 font-semibold"
+          className="w-full flex items-center justify-between py-2 text-gray-800 font-semibold"
         >
           <span>We offer group price</span>
           {groupOpen
@@ -108,11 +108,11 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
         </button>
 
         {groupOpen && (
-          <div className="pb-3 space-y-0">
+          <div className="pb-2 space-y-0">
             {GROUP_TIERS.map((t, i) => (
               <div
                 key={t.label}
-                className={`flex justify-between py-2 text-gray-700 ${i < GROUP_TIERS.length - 1 ? 'border-b border-gray-100' : ''} ${tier === t ? 'font-semibold text-sky-800' : ''}`}
+                className={`flex justify-between py-1 text-gray-700 ${i < GROUP_TIERS.length - 1 ? 'border-b border-gray-100' : ''} ${tier === t ? 'font-semibold text-sky-800' : ''}`}
               >
                 <span>{t.label}</span>
                 <span>US${tierPrice(base, t.discount).toLocaleString()}</span>
@@ -125,8 +125,8 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
       <div className="border-t border-gray-100" />
 
       {/* Departure date */}
-      <div className="px-5 py-4">
-        <p className="font-semibold text-gray-800 mb-2">Departure Date <span className="text-red-500">*</span></p>
+      <div className="px-5 py-2">
+        <p className="font-semibold text-gray-800 mb-1.5">Departure Date <span className="text-red-500">*</span></p>
         <div className={`flex items-center border px-3 py-2 ${dateError ? 'border-red-400' : 'border-sky-800'}`}>
           <input
             type="date"
@@ -146,8 +146,8 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
       <div className="border-t border-gray-100" />
 
       {/* Travelers */}
-      <div className="px-5 py-4">
-        <p className="font-semibold text-gray-800 mb-2">No. of Traveler</p>
+      <div className="px-5 py-2">
+        <p className="font-semibold text-gray-800 mb-1.5">No. of Traveler</p>
         <div className="flex items-center border border-gray-200 overflow-hidden">
           <button
             onClick={() => setTravelers(n => Math.max(1, n - 1))}
@@ -168,7 +168,7 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
       <div className="border-t border-gray-100" />
 
       {/* Total */}
-      <div className="px-5 py-3 flex items-center justify-between">
+      <div className="px-5 py-2 flex items-center justify-between">
         <span className="text-gray-600">Total Price</span>
         <span className="text-lg font-bold text-gray-900">US${total.toLocaleString()}</span>
       </div>
@@ -176,7 +176,7 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
       <div className="border-t border-gray-100" />
 
       {/* Buttons */}
-      <div className="px-5 py-4 space-y-2">
+      <div className="px-5 py-2 space-y-2">
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleBookNow}
