@@ -40,7 +40,7 @@ export default function TrekExtras({ pkg }: { pkg: ApiPackage }) {
     <>
       {/* What's Not Included */}
       {notIncluded.length > 0 && (
-        <div className='bg-red-50 rounded-2xl p-4'>
+        <div id="section-excluded" className='bg-red-50 rounded-2xl p-4'>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Not Included</h2>
           <div className="grid grid-cols-1 sm:grid-cols-1">
             {notIncluded.map((item) => (
@@ -81,9 +81,9 @@ export default function TrekExtras({ pkg }: { pkg: ApiPackage }) {
 
       {/* Good to Know */}
       {moreInfo.length > 0 && (
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Good to Know</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div id="section-know-before-you-go">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Know Before You Go</h2>
+          <div className="flex flex-col gap-4">
             {moreInfo.map((info, i) => (
               <div key={i} className="bg-[#F3F6FB] rounded-xl px-5 py-4">
                 <h3 className="text-sm font-bold text-[#0F4C81] mb-2">{info.title}</h3>

@@ -35,7 +35,7 @@ export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
 
       {/* Highlights */}
       {pkg.highlights.length > 0 && (
-        <div className='bg-sky-100 rounded-2xl p-4'>
+        <div id="section-highlights" className='bg-sky-100 rounded-2xl p-4'>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
           <ul className="space-y-2.5">
             {pkg.highlights.map((h) => (
@@ -45,21 +45,6 @@ export default function TrekOverview({ pkg }: { pkg: ApiPackage }) {
               </li>
             ))}
           </ul>
-        </div>
-      )}
-
-      {/* Includes */}
-      {pkg.includes.length > 0 && (
-        <div className='bg-green-50 rounded-2xl p-4'>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {pkg.includes.map((item) => (
-              <div key={item} className="flex items-start gap-2.5 bg-green-50 rounded-lg px-4 py-2.5">
-                <span className="text-green-600 font-bold shrink-0">✓</span>
-                <span className="text-gray-700 text-sm">{item}</span>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
