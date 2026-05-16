@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Gallery',            id: 'section-gallery' },
@@ -15,6 +16,7 @@ const NAV_ITEMS = [
 
 export default function TrekSubNav() {
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollRef   = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState('section-gallery');
 
   // Hide main navbar when this sub-nav becomes sticky, restore on scroll back
@@ -60,18 +62,58 @@ export default function TrekSubNav() {
     window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 60, behavior: 'smooth' });
   };
 
+  const slideNav = (dir: 'left' | 'right') => {
+    scrollRef.current?.scrollBy({ left: dir === 'left' ? -160 : 160, behavior: 'smooth' });
+  };
+
   return (
     <>
-      {/* Sentinel: exits viewport when sub-nav reaches top → hide main navbar */}
+      {/* Sentinel: exits viewport when sub-nav sticks → hide main navbar */}
       <div ref={sentinelRef} className="h-px" />
 
-      <div className="sticky top-0 z-30 bg-white -mx-6 px-6 border-b border-gray-100 shadow-sm">
-        <div className="flex overflow-x-auto scrollbar-hide">
+      <div className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
+
+        {/* Mobile: arrow buttons + scrollable strip */}
+        <div className="flex items-center md:hidden">
+          <button
+            onClick={() => slideNav('left')}
+            className="shrink-0 px-2 py-4 text-gray-400 hover:text-sky-600 transition-colors"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <div ref={scrollRef} className="flex-1 flex overflow-x-auto scrollbar-hide">
+            {NAV_ITEMS.map(({ label, id }) => (
+              <button
+                key={id}
+                onClick={() => scrollTo(id)}
+                className={`shrink-0 px-4 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-150
+                  ${activeId === id
+                    ? 'border-sky-600 text-sky-600'
+                    : 'border-transparent text-gray-500 hover:text-sky-600'}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => slideNav('right')}
+            className="shrink-0 px-2 py-4 text-gray-400 hover:text-sky-600 transition-colors"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Desktop: plain scrollable strip */}
+        <div className="hidden md:flex overflow-x-auto items-center scrollbar-hide px-6 max-w-[1366px] mx-auto">
           {NAV_ITEMS.map(({ label, id }) => (
             <button
               key={id}
               onClick={() => scrollTo(id)}
-              className={`shrink-0 px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-150
+              className={`shrink-0 px-5 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-150
                 ${activeId === id
                   ? 'border-sky-600 text-sky-600'
                   : 'border-transparent text-gray-500 hover:text-sky-600'}`}
@@ -80,6 +122,7 @@ export default function TrekSubNav() {
             </button>
           ))}
         </div>
+
       </div>
     </>
   );

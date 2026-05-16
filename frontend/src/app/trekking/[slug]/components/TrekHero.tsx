@@ -26,35 +26,23 @@ export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
 
   return (
     <div
-      className="w-full min-h-[700px] flex flex-col justify-between"
+      className="w-full min-h-[500px] md:min-h-[700px] flex flex-col justify-between"
       style={{
         background: `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.85) 100%), url(${HeroImg.src}) center/cover no-repeat`,
       }}
     >
-      {/* Breadcrumb */}
-      <div className="max-w-[1366px] mx-auto px-6 pt-6 w-full pt-[200px] bg-">
-        <div
+      {/* Breadcrumb — commented out */}
+      <div className="max-w-[1366px] mx-auto px-6 w-full pt-[200px]">
+        {/* <div
           className="flex items-center gap-2 text-[14px] text-white bg-sky-900 max-w-max px-15 py-2"
-          style={{
-            clipPath: "polygon(10% 0, 100% 0%, 90% 99%, 0% 100%)",
-          }}
+          style={{ clipPath: "polygon(10% 0, 100% 0%, 90% 99%, 0% 100%)" }}
         >
-          <Link href="/" className="hover:text-white transition-colors">
-            Home
-          </Link>
-
+          <Link href="/" className="hover:text-white transition-colors">Home</Link>
           <span>&gt;</span>
-
-          <Link href="/trekking" className="hover:text-white transition-colors">
-            Trekking
-          </Link>
-
+          <Link href="/trekking" className="hover:text-white transition-colors">Trekking</Link>
           <span>&gt;</span>
-
-          <span className="text-white truncate max-w-[200px]">
-            {pkg.title}
-          </span>
-        </div>
+          <span className="text-white truncate max-w-[200px]">{pkg.title}</span>
+        </div> */}
       </div>
 
       {/* Bottom content */}
@@ -86,17 +74,7 @@ export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
             </div>
           )}
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setWished(w => !w)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-white transition-colors duration-200 group"
-            >
-              <Heart className={`w-4 h-4 transition-colors duration-200 ${wished ? 'fill-sky-800 text-sky-800' : 'text-gray-800 group-hover:text-sky-800'}`} />
-              <span className={`transition-colors duration-200 ${wished ? 'text-sky-800' : 'text-gray-800 group-hover:text-sky-800'}`}>
-                {wished ? 'Wishlisted' : 'Wishlist'}
-              </span>
-            </button>
-
+          <div className="flex items-center gap-2 mt-2">
             <button
               onClick={handleShare}
               className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-800 hover:text-sky-800 transition-colors duration-200 group"

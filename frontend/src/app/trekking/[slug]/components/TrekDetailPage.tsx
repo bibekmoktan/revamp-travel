@@ -19,13 +19,15 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
       {/* Hero — full bleed */}
       <TrekHero pkg={pkg} />
 
+      {/* Sub-nav — full-width, sticky works because parent is min-h-screen */}
+      <TrekSubNav />
+
       {/* Body — two-column within 1366px */}
       <div className={`${WRAPPER} py-6`}>
         <div className="flex flex-col lg:flex-row gap-6">
 
           {/* Main content */}
-          <div className="flex-1 min-w-0 space-y-6 shadow-lg p-6 bg-white rounded-2xl">
-            <TrekSubNav />
+          <div className="flex-1 min-w-0 space-y-6 shadow-lg p-4 bg-white rounded-2xl">
             <div id="section-gallery"><TrekGallery gallery={pkg.gallery} title={pkg.title} /></div>
             <div id="section-overview"><TrekOverview pkg={pkg} /></div>
             <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} /></div>
