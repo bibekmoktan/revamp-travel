@@ -15,25 +15,20 @@ const NAV_ITEMS = [
 ];
 
 export default function TrekSubNav() {
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const scrollRef   = useRef<HTMLDivElement>(null);
+  const navRef    = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState('section-gallery');
 
-  // Hide main navbar when this sub-nav becomes sticky, restore on scroll back
+  // Hide main navbar only when this bar is actually stuck at top-0
   useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        window.dispatchEvent(
-          new CustomEvent(entry.isIntersecting ? 'trek-subnav-unstuck' : 'trek-subnav-stuck')
-        );
-      },
-      { threshold: 0 }
-    );
-    obs.observe(sentinel);
+    function onScroll() {
+      if (!navRef.current) return;
+      const stuck = navRef.current.getBoundingClientRect().top <= 0;
+      window.dispatchEvent(new CustomEvent(stuck ? 'trek-subnav-stuck' : 'trek-subnav-unstuck'));
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      obs.disconnect();
+      window.removeEventListener('scroll', onScroll);
       window.dispatchEvent(new CustomEvent('trek-subnav-unstuck'));
     };
   }, []);
@@ -67,53 +62,24 @@ export default function TrekSubNav() {
   };
 
   return (
-    <>
-      {/* Sentinel: exits viewport when sub-nav sticks → hide main navbar */}
-      <div ref={sentinelRef} className="h-px" />
+    <div ref={navRef} className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
 
-      <div className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
+      {/* Mobile: arrow buttons + scrollable strip */}
+      <div className="flex items-center md:hidden">
+        <button
+          onClick={() => slideNav('left')}
+          className="shrink-0 px-2 py-4 text-gray-400 hover:text-sky-600 transition-colors"
+          aria-label="Scroll left"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
 
-        {/* Mobile: arrow buttons + scrollable strip */}
-        <div className="flex items-center md:hidden">
-          <button
-            onClick={() => slideNav('left')}
-            className="shrink-0 px-2 py-4 text-gray-400 hover:text-sky-600 transition-colors"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <div ref={scrollRef} className="flex-1 flex overflow-x-auto scrollbar-hide">
-            {NAV_ITEMS.map(({ label, id }) => (
-              <button
-                key={id}
-                onClick={() => scrollTo(id)}
-                className={`shrink-0 px-4 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-150
-                  ${activeId === id
-                    ? 'border-sky-600 text-sky-600'
-                    : 'border-transparent text-gray-500 hover:text-sky-600'}`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => slideNav('right')}
-            className="shrink-0 px-2 py-4 text-gray-400 hover:text-sky-600 transition-colors"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Desktop: plain scrollable strip */}
-        <div className="hidden md:flex overflow-x-auto items-center scrollbar-hide px-6 max-w-[1366px] mx-auto">
+        <div ref={scrollRef} className="flex-1 flex overflow-x-auto scrollbar-hide">
           {NAV_ITEMS.map(({ label, id }) => (
             <button
               key={id}
               onClick={() => scrollTo(id)}
-              className={`shrink-0 px-5 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-150
+              className={`shrink-0 px-4 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-150
                 ${activeId === id
                   ? 'border-sky-600 text-sky-600'
                   : 'border-transparent text-gray-500 hover:text-sky-600'}`}
@@ -123,7 +89,31 @@ export default function TrekSubNav() {
           ))}
         </div>
 
+        <button
+          onClick={() => slideNav('right')}
+          className="shrink-0 px-2 py-4 text-gray-400 hover:text-sky-600 transition-colors"
+          aria-label="Scroll right"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
       </div>
-    </>
+
+      {/* Desktop: plain scrollable strip */}
+      <div className="hidden md:flex overflow-x-auto items-center scrollbar-hide px-6 max-w-[1366px] mx-auto">
+        {NAV_ITEMS.map(({ label, id }) => (
+          <button
+            key={id}
+            onClick={() => scrollTo(id)}
+            className={`shrink-0 px-5 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-150
+              ${activeId === id
+                ? 'border-sky-600 text-sky-600'
+                : 'border-transparent text-gray-500 hover:text-sky-600'}`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+    </div>
   );
 }
