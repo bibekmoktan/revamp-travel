@@ -110,14 +110,14 @@ export default function TrekGallery({ gallery, title }: { gallery: ApiPackage['g
         {shown[0] && (
           <button
             onClick={() => setLightbox(0)}
-            className="col-span-2 row-span-2 relative group overflow-hidden"
+            className="col-span-2 row-span-2 relative group overflow-hidden rounded-2xl"
           >
             <Image
               src={shown[0].url}
               alt={shown[0].alt ?? `${title} photo 1`}
               fill
               sizes="50vw"
-              className="object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
           </button>
@@ -131,14 +131,14 @@ export default function TrekGallery({ gallery, title }: { gallery: ApiPackage['g
             <button
               key={idx}
               onClick={() => setLightbox(idx)}
-              className="relative group overflow-hidden"
+              className="relative group overflow-hidden rounded-2xl"
             >
               <Image
                 src={img.url}
                 alt={img.alt ?? `${title} photo ${idx + 1}`}
                 fill
                 sizes="25vw"
-                className="object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
               {isLast && extra > 0 && (
