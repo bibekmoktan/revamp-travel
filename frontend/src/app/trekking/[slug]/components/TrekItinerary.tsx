@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
 
@@ -23,17 +24,22 @@ function DayCard({ day, isOpen, onToggle }: { day: Itinerary; isOpen: boolean; o
       </button>
 
       {isOpen && (
-        <div className="px-5 pb-5 pt-1 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm mb-3">{day.description}</p>
-          {day.activities.length > 0 && (
-            <ul className="space-y-1.5">
-              {day.activities.map((act) => (
-                <li key={act} className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                  {act}
-                </li>
+        <div className="px-5 pb-5 pt-1 bg-gray-50 border-t border-gray-100 space-y-3">
+          <p className="text-gray-600 text-sm">{day.description}</p>
+          {day.images && day.images.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {day.images.map((img, i) => (
+                <div key={i} className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                  <Image
+                    src={img.url}
+                    alt={img.alt ?? `Day ${day.day} photo ${i + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
       )}

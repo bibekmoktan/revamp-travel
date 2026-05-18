@@ -13,7 +13,7 @@ export interface IItinerary {
   day: number;
   title: string;
   description: string;
-  activities: string[];
+  images?: IImage[];
 }
 
 export interface IFaq {

@@ -20,7 +20,7 @@ const itinerarySchema = new Schema<IItinerary>({
   day: { type: Number, required: true },
   title: { type: String, required: true, trim: true },
   description: { type: String, required: true },
-  activities: [{ type: String, required: true }],
+  images: { type: [imageSchema], default: [] },
 }, { _id: false });
 
 const packageSchema = new Schema<IPackage>({
