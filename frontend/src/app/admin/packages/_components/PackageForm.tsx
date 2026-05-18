@@ -180,6 +180,71 @@ function GalleryUpload({ values, onChange }: { values: ImageValue[]; onChange: (
   );
 }
 
+// ── Day Images Upload (max 5) ──────────────────────────────────────────────
+function DayImagesUpload({ values, onChange }: { values: ImageValue[]; onChange: (v: ImageValue[]) => void }) {
+  const { token } = useAuth();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const MAX = 5;
+  const remaining = MAX - values.length;
+
+  const handleFiles = async (files: FileList) => {
+    if (!token || remaining <= 0) return;
+    setUploading(true);
+    const results: ImageValue[] = [];
+    for (const file of Array.from(files).slice(0, remaining)) {
+      try {
+        const result = await adminUploadImage(token, file);
+        results.push(result);
+      } catch {}
+    }
+    onChange([...values, ...results].slice(0, MAX));
+    setUploading(false);
+  };
+
+  return (
+    <div>
+      <label className="block text-xs font-medium text-gray-500 mb-1.5">
+        Day images (optional) — {values.length}/{MAX}
+      </label>
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+        {values.map((img, i) => (
+          <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+            <Image src={img.url} alt={`Image ${i + 1}`} fill className="object-cover" />
+            <button
+              type="button"
+              onClick={() => onChange(values.filter((_, j) => j !== i))}
+              className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        ))}
+        {remaining > 0 && (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="aspect-square rounded-lg border-2 border-dashed border-gray-200 hover:border-blue-400 bg-gray-50 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center gap-1 cursor-pointer disabled:opacity-50"
+          >
+            {uploading
+              ? <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              : <><ImageIcon className="w-5 h-5 text-gray-400" /><span className="text-[10px] text-gray-400">Add</span></>}
+          </button>
+        )}
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={(e) => { if (e.target.files?.length) handleFiles(e.target.files); e.target.value = ''; }}
+      />
+    </div>
+  );
+}
+
 // ── Tag Input ──────────────────────────────────────────────────────────────
 function TagInput({ label, values, onChange }: { label: string; values: string[]; onChange: (v: string[]) => void }) {
   const [input, setInput] = useState('');
@@ -262,8 +327,20 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   const [includes, setIncludes]       = useState<string[]>(d?.includes ?? []);
   const [notIncluded, setNotIncluded] = useState<string[]>(d?.notIncluded ?? []);
 
-  const [itinerary, setItinerary] = useState(
-    d?.itinerary?.length ? d.itinerary : [{ day: 1, title: '', description: '', activities: [''] }]
+  const [itinerary, setItinerary] = useState<
+    { day: number; title: string; description: string; images: ImageValue[] }[]
+  >(
+    d?.itinerary?.length
+      ? d.itinerary.map((it) => ({
+          day: it.day,
+          title: it.title,
+          description: it.description,
+          images: ((it as any).images ?? []).map((img: any) => ({
+            url: img.url,
+            public_id: img.public_id ?? '',
+          })),
+        }))
+      : [{ day: 1, title: '', description: '', images: [] }]
   );
   const [faq, setFaq]         = useState(d?.faq?.length ? d.faq : [{ question: '', answer: '' }]);
   const [moreInfo, setMoreInfo] = useState(
@@ -275,21 +352,13 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
 
   // ── Itinerary helpers ──────────────────────────────────────────────────────
   const addDay = () =>
-    setItinerary((prev) => [...prev, { day: prev.length + 1, title: '', description: '', activities: [''] }]);
+    setItinerary((prev) => [...prev, { day: prev.length + 1, title: '', description: '', images: [] }]);
   const removeDay = (i: number) =>
     setItinerary((prev) => prev.filter((_, idx) => idx !== i).map((d, idx) => ({ ...d, day: idx + 1 })));
-  const updateDay = (i: number, field: string, val: string) =>
+  const updateDay = (i: number, field: 'title' | 'description', val: string) =>
     setItinerary((prev) => prev.map((d, idx) => idx === i ? { ...d, [field]: val } : d));
-  const updateActivity = (di: number, ai: number, val: string) =>
-    setItinerary((prev) =>
-      prev.map((d, i) => i !== di ? d : { ...d, activities: d.activities.map((a, j) => j === ai ? val : a) })
-    );
-  const addActivity = (di: number) =>
-    setItinerary((prev) => prev.map((d, i) => i !== di ? d : { ...d, activities: [...d.activities, ''] }));
-  const removeActivity = (di: number, ai: number) =>
-    setItinerary((prev) =>
-      prev.map((d, i) => i !== di ? d : { ...d, activities: d.activities.filter((_, j) => j !== ai) })
-    );
+  const updateDayImages = (i: number, imgs: ImageValue[]) =>
+    setItinerary((prev) => prev.map((d, idx) => idx === i ? { ...d, images: imgs.slice(0, 5) } : d));
 
   // ── FAQ helpers ────────────────────────────────────────────────────────────
   const addFaq = () => setFaq((prev) => [...prev, { question: '', answer: '' }]);
@@ -338,7 +407,14 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
       highlights,
       includes,
       notIncluded,
-      itinerary: itinerary.filter((d) => d.title),
+      itinerary: itinerary
+        .filter((d) => d.title)
+        .map((d) => ({
+          day: d.day,
+          title: d.title,
+          description: d.description,
+          ...(d.images.length > 0 ? { images: d.images } : {}),
+        })),
       faq: faq.filter((f) => f.question && f.answer),
       moreInfo: moreInfo.filter((m) => m.title && m.points.some((p) => p.trim())),
     };
@@ -359,7 +435,7 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form id="package-form" onSubmit={handleSubmit} className="space-y-4">
 
       {/* Basic Info */}
       <div className={SECTION}>
@@ -516,22 +592,10 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
                 </div>
                 <input value={day.title} onChange={(e) => updateDay(i, 'title', e.target.value)} className={INPUT} placeholder="Day title" />
                 <textarea value={day.description} onChange={(e) => updateDay(i, 'description', e.target.value)} rows={2} className={INPUT} placeholder="Description" />
-                <div>
-                  <p className="text-xs font-medium text-gray-500 mb-1.5">Activities</p>
-                  {day.activities.map((act, j) => (
-                    <div key={j} className="flex gap-2 mb-1.5">
-                      <input value={act} onChange={(e) => updateActivity(i, j, e.target.value)} className={INPUT} placeholder="Activity" />
-                      {day.activities.length > 1 && (
-                        <button type="button" onClick={() => removeActivity(i, j)} className="text-red-400 hover:text-red-600 shrink-0">
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button type="button" onClick={() => addActivity(i)} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                    <Plus className="w-3 h-3" /> Add activity
-                  </button>
-                </div>
+                <DayImagesUpload
+                  values={day.images}
+                  onChange={(v) => updateDayImages(i, v)}
+                />
               </div>
             ))}
             <button type="button" onClick={addDay} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
@@ -606,19 +670,6 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
         )}
       </div>
 
-      {/* Submit */}
-      <div className="flex items-center gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={saving}
-          className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
-        >
-          {saving ? 'Saving...' : initialData ? 'Update Package' : 'Create Package'}
-        </button>
-        <a href="/admin/packages" className="px-4 py-2.5 text-sm text-gray-500 hover:text-gray-700">
-          Cancel
-        </a>
-      </div>
     </form>
   );
 }

@@ -57,9 +57,24 @@ export default function EditPackagePage() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Edit Package</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{pkg.title}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Edit Package</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{pkg.title}</p>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <a href="/admin/packages" className="px-4 py-2.5 text-sm text-gray-500 hover:text-gray-700">
+            Cancel
+          </a>
+          <button
+            type="submit"
+            form="package-form"
+            disabled={saving}
+            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+          >
+            {saving ? 'Saving...' : 'Update Package'}
+          </button>
+        </div>
       </div>
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">

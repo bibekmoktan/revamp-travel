@@ -7,7 +7,7 @@ export interface ItineraryDay {
   day: number;
   title: string;
   description: string;
-  activities: string[];
+  images?: ApiImage[];
 }
 
 export interface FaqItem {

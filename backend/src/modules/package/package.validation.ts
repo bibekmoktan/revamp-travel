@@ -10,7 +10,7 @@ export const itinerarySchema = z.object({
   day: z.number().int().min(1, 'Day must be a positive integer'),
   title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
   description: z.string().min(10, 'Description must be at least 10 characters').max(2000, 'Description is too long'),
-  activities: z.array(z.string().min(1, 'Activity cannot be empty')).min(1, 'At least one activity is required'),
+  images: z.array(imageSchema).max(5, 'A day can have at most 5 images').optional(),
 });
 
 export const createPackageSchema = z.object({
