@@ -4,6 +4,7 @@ import { IPackage, IItinerary, IFaq, IMoreInfo } from "./package.interface";
 const imageSchema = new Schema({
   url: { type: String, required: true, trim: true },
   alt: { type: String, trim: true },
+  public_id: { type: String, trim: true },
 }, { _id: false });
 
 const faqSchema = new Schema<IFaq>({

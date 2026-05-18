@@ -156,7 +156,7 @@ export async function getPackageBySlug(
 ): Promise<ApiItemResponse<ApiPackage>> {
   return apiFetch<ApiItemResponse<ApiPackage>>(
     `/packages/${slug}`,
-    { next: { revalidate: 300 } } as RequestInit,
+    { cache: 'no-store' } as RequestInit,
   );
 }
 
