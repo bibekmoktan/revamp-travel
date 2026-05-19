@@ -121,7 +121,7 @@ export const downloadItineraryPdf = catchAsync(async (req: Request, res: Respons
       margin: { top: '15mm', right: '12mm', bottom: '15mm', left: '12mm' },
     });
 
-    logger.info('Itinerary PDF generated', { slug, bytes: pdfBuffer.length });
+    logger.info(`Itinerary PDF generated (${pdfBuffer.length} bytes)`, { slug });
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
