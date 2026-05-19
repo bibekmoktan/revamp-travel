@@ -646,8 +646,8 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Search Bar */}
-            <div className={`lg:hidden bg-white border-t border-gray-200 overflow-hidden transition-all duration-300 ease-in-out ${mobileSearchOpen ? 'max-h-24 opacity-100 py-3' : 'max-h-0 opacity-0 py-0'}`}>
-                <div className="px-4">
+            <div className={`lg:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out ${mobileSearchOpen ? 'max-h-24 opacity-100 py-3 overflow-visible' : 'max-h-0 opacity-0 py-0 overflow-hidden'}`}>
+                <div className="px-4 relative">
                     <HeroSearch />
                 </div>
             </div>

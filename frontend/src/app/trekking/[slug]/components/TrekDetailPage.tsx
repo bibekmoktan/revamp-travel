@@ -30,7 +30,7 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
           <div className="flex-1 min-w-0 space-y-6 shadow-lg p-4 bg-white rounded-2xl">
             <div id="section-gallery"><TrekGallery gallery={pkg.gallery} title={pkg.title} /></div>
             <div id="section-overview"><TrekOverview pkg={pkg} /></div>
-            <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} /></div>
+            <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} slug={pkg.slug} /></div>
             <div id="section-included"><TrekIncludes includes={pkg.includes} /></div>
             <div id="section-excluded-wrapper"><TrekExtras pkg={pkg} /></div>
             <div id="section-reviews"><TrekReviews packageId={pkg._id} /></div>

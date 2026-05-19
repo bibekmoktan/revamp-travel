@@ -28,6 +28,13 @@ router.post(
 router.get("/", ...PackageController.getAllPackages);
 
 /**
+ * @route   GET /api/v1/packages/:slug/itinerary-pdf
+ * @desc    Download a PDF copy of the day-by-day itinerary (Public)
+ * NOTE: declared BEFORE /:slug so Express matches the more-specific path first.
+ */
+router.get("/:slug/itinerary-pdf", PackageController.downloadItineraryPdf);
+
+/**
  * @route   GET /api/v1/packages/:slug
  * @desc    Get detailed view of a single package by its slug (Public)
  */
