@@ -11,7 +11,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://revamp-travel.onren
 
 async function fetchSuggestions(term: string): Promise<ApiPackage[]> {
   try {
-    const params = new URLSearchParams({ searchTerm: term, limit: '6', status: 'active' });
+    const params = new URLSearchParams({ searchTerm: term, limit: '20', status: 'active' });
     const res = await fetch(`${API_BASE}/packages?${params}`);
     if (!res.ok) return [];
     const json = await res.json();
@@ -19,6 +19,30 @@ async function fetchSuggestions(term: string): Promise<ApiPackage[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * Rank results so titles starting with the query appear first.
+ *  0 = title starts with query
+ *  1 = a word in title starts with query
+ *  2 = title contains query
+ *  3 = no title match (location/category hit from backend)
+ */
+function rankSuggestions(results: ApiPackage[], term: string): ApiPackage[] {
+  const q = term.toLowerCase().trim();
+  if (!q) return results;
+  const score = (pkg: ApiPackage) => {
+    const t = pkg.title.toLowerCase();
+    if (t.startsWith(q))                              return 0;
+    if (t.split(/\s+/).some((w) => w.startsWith(q)))  return 1;
+    if (t.includes(q))                                return 2;
+    return 3;
+  };
+  return [...results].sort((a, b) => {
+    const sa = score(a), sb = score(b);
+    if (sa !== sb) return sa - sb;
+    return a.title.localeCompare(b.title);
+  });
 }
 
 export default function HeroSearch() {
@@ -40,8 +64,9 @@ export default function HeroSearch() {
     setLoading(true);
     fetchSuggestions(term).then((results) => {
       if (cancelled) return;
-      setSuggestions(results);
-      setOpen(results.length > 0);
+      const ranked = rankSuggestions(results, term).slice(0, 6);
+      setSuggestions(ranked);
+      setOpen(ranked.length > 0);
       setLoading(false);
     });
     return () => { cancelled = true; };

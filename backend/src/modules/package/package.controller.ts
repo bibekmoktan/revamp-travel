@@ -80,12 +80,59 @@ export const getAllPackages = [
  */
 export const getSinglePackage = catchAsync(async (req: Request, res: Response) => {
   const result = await PackageService.getPackageBySlug(req.params.slug);
-  
+
   res.status(200).json({
     success: true,
     message: "Package retrieved successfully",
     data: result,
   });
+});
+
+/**
+ * DOWNLOAD ITINERARY PDF
+ * Renders /print/itinerary/:slug from the frontend via headless Chrome and
+ * streams a PDF back to the client.
+ */
+export const downloadItineraryPdf = catchAsync(async (req: Request, res: Response) => {
+  const { slug } = req.params;
+
+  // Verify package exists (throws NotFoundError if missing → 404)
+  await PackageService.getPackageBySlug(slug);
+
+  const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+  const printUrl = `${frontendUrl}/print/itinerary/${slug}`;
+
+  // Lazy-load puppeteer so it only initializes when this endpoint is hit
+  const puppeteer = (await import('puppeteer')).default;
+
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+
+  try {
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1024, height: 1400 });
+    await page.goto(printUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '15mm', right: '12mm', bottom: '15mm', left: '12mm' },
+    });
+
+    logger.info('Itinerary PDF generated', { slug, bytes: pdfBuffer.length });
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${slug}-itinerary.pdf"`
+    );
+    res.setHeader('Content-Length', String(pdfBuffer.length));
+    res.end(pdfBuffer);
+  } finally {
+    await browser.close();
+  }
 });
 
 /**

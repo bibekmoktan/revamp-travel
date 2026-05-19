@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { ChevronDown, Download, Sparkles } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
 
 type Itinerary = ApiPackage['itinerary'][number];
@@ -47,16 +48,45 @@ function DayCard({ day, isOpen, onToggle }: { day: Itinerary; isOpen: boolean; o
   );
 }
 
-export default function TrekItinerary({ itinerary }: { itinerary: ApiPackage['itinerary'] }) {
+export default function TrekItinerary({
+  itinerary,
+  slug,
+}: {
+  itinerary: ApiPackage['itinerary'];
+  slug: string;
+}) {
   const [openDay, setOpenDay] = useState<number | null>(1);
 
   if (!itinerary || itinerary.length === 0) return null;
+
+  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'https://revamp-travel.onrender.com/api/v1';
+  const pdfUrl  = `${apiBase}/packages/${slug}/itinerary-pdf`;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-gray-900">Day-by-Day Itinerary</h2>
         <span className="text-sm text-gray-400">{itinerary.length} days</span>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <a
+          href={pdfUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 border border-sky-600 text-sky-700 hover:bg-sky-50 font-semibold text-sm rounded-lg transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          Download Full Itinerary
+        </a>
+        <Link
+          href="/custom-package"
+          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-sky-700 hover:bg-sky-800 text-white font-semibold text-sm rounded-lg transition-colors"
+        >
+          <Sparkles className="w-4 h-4" />
+          Customize Your Trip
+        </Link>
       </div>
 
       <div className="space-y-2">
