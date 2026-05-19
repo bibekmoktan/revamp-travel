@@ -89,6 +89,34 @@ export const getSinglePackage = catchAsync(async (req: Request, res: Response) =
 });
 
 /**
+ * Launch a Chromium browser appropriate for the current environment.
+ * - Production / Linux servers (Render, etc.): @sparticuz/chromium ships the binary,
+ *   no download step needed.
+ * - Local development (Windows / macOS): regular `puppeteer` with its bundled Chrome.
+ */
+async function launchBrowser() {
+  const useServerlessChromium =
+    process.env.NODE_ENV === 'production' || process.env.USE_SPARTICUZ_CHROMIUM === 'true';
+
+  if (useServerlessChromium) {
+    const chromium = (await import('@sparticuz/chromium')).default;
+    const puppeteerCore = (await import('puppeteer-core')).default;
+    return puppeteerCore.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless as unknown as boolean,
+    });
+  }
+
+  const puppeteer = (await import('puppeteer')).default;
+  return puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+}
+
+/**
  * DOWNLOAD ITINERARY PDF
  * Renders /print/itinerary/:slug from the frontend via headless Chrome and
  * streams a PDF back to the client.
@@ -102,13 +130,7 @@ export const downloadItineraryPdf = catchAsync(async (req: Request, res: Respons
   const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
   const printUrl = `${frontendUrl}/print/itinerary/${slug}`;
 
-  // Lazy-load puppeteer so it only initializes when this endpoint is hit
-  const puppeteer = (await import('puppeteer')).default;
-
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
+  const browser = await launchBrowser();
 
   try {
     const page = await browser.newPage();
