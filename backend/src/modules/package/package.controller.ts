@@ -116,6 +116,32 @@ async function launchBrowser() {
 }
 
 /**
+ * Persistent browser kept alive across requests so we only pay Chromium
+ * boot cost on the first call. Subsequent calls reuse the same instance.
+ */
+let browserPromise: Promise<any> | null = null;
+async function getBrowser() {
+  if (!browserPromise) {
+    browserPromise = launchBrowser();
+    // Reset if the browser ever disconnects (crash, timeout, etc.)
+    const b = await browserPromise;
+    b.on('disconnected', () => { browserPromise = null; });
+    return b;
+  }
+  try {
+    const b = await browserPromise;
+    if (!b.connected) {
+      browserPromise = null;
+      return getBrowser();
+    }
+    return b;
+  } catch {
+    browserPromise = null;
+    return getBrowser();
+  }
+}
+
+/**
  * DOWNLOAD ITINERARY PDF
  * Renders /print/itinerary/:slug from the frontend via headless Chrome and
  * streams a PDF back to the client.
@@ -129,12 +155,15 @@ export const downloadItineraryPdf = catchAsync(async (req: Request, res: Respons
   const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
   const printUrl = `${frontendUrl}/print/itinerary/${slug}`;
 
-  const browser = await launchBrowser();
+  const t0 = Date.now();
+  const browser = await getBrowser();
+  const page = await browser.newPage();
 
   try {
-    const page = await browser.newPage();
     await page.setViewport({ width: 1024, height: 1400 });
-    await page.goto(printUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+    // domcontentloaded fires once HTML is parsed — fonts/images continue loading
+    // but Puppeteer's page.pdf() forces a layout flush before capturing.
+    await page.goto(printUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -142,17 +171,15 @@ export const downloadItineraryPdf = catchAsync(async (req: Request, res: Respons
       margin: { top: '15mm', right: '12mm', bottom: '15mm', left: '12mm' },
     });
 
-    logger.info(`Itinerary PDF generated (${pdfBuffer.length} bytes)`, { slug });
+    logger.info(`Itinerary PDF generated (${pdfBuffer.length} bytes, ${Date.now() - t0}ms)`, { slug });
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="${slug}-itinerary.pdf"`
-    );
+    res.setHeader('Content-Disposition', `attachment; filename="${slug}-itinerary.pdf"`);
     res.setHeader('Content-Length', String(pdfBuffer.length));
     res.end(pdfBuffer);
   } finally {
-    await browser.close();
+    // Close the tab but keep the browser alive for the next request.
+    await page.close().catch(() => {});
   }
 });
 
