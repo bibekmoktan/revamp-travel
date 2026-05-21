@@ -263,9 +263,7 @@ const activityCountries = [
 
 const companyLinks = [
     { name: 'Company Info',  href: '/about' },
-    { name: 'Travel Guide',  href: '/travel-guide' },
-    { name: 'Blog',          href: '/blog' },
-    { name: 'Meet Our Team', href: '/our-team' },
+    { name: 'Travel Guide',  href: '/blog' },
 ];
 
 export default function Navbar() {
@@ -558,7 +556,7 @@ export default function Navbar() {
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${destinationsOpen ? 'rotate-180' : ''}`} />
                             </button>
                             <div
-                                className={`absolute top-full left-0 w-44 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 transition-all duration-200 ease-out origin-top ${destinationsOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'}`}
+                                className={`absolute top-full left-0 mt-3 w-32 bg-white shadow-xl rounded-b-md py-1 z-40 transition-all duration-200 ease-out origin-top ${destinationsOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'}`}
                                 onMouseEnter={openDestinations}
                                 onMouseLeave={closeDestinationsDelayed}
                             >
@@ -572,7 +570,7 @@ export default function Navbar() {
                                         key={item.href}
                                         href={item.href}
                                         onClick={() => setDestinationsOpen(false)}
-                                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81] transition-colors"
+                                        className="block px-4 py-1.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81] transition-colors"
                                     >
                                         {item.name}
                                     </Link>
@@ -590,7 +588,7 @@ export default function Navbar() {
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${companyOpen ? 'rotate-180' : ''}`} />
                             </button>
                             <div
-                                className={`absolute top-full left-0 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 transition-all duration-200 ease-out origin-top ${companyOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'}`}
+                                className={`absolute top-full left-0 mt-3 w-36 bg-white shadow-xl rounded-b-md py-1 z-40 transition-all duration-200 ease-out origin-top ${companyOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'}`}
                                 onMouseEnter={openCompany}
                                 onMouseLeave={closeCompanyDelayed}
                             >
@@ -599,7 +597,7 @@ export default function Navbar() {
                                         key={item.href}
                                         href={item.href}
                                         onClick={() => setCompanyOpen(false)}
-                                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81] transition-colors"
+                                        className="block px-4 py-1.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0F4C81] transition-colors"
                                     >
                                         {item.name}
                                     </Link>
