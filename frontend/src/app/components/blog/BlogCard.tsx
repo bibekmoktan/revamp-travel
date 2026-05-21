@@ -9,7 +9,7 @@ interface BlogCardProps {
 export default function BlogCard({ post }: BlogCardProps) {
   return (
     <Link
-      href={`/blog/${post.id}`}
+      href={`/blog/${post.slug}`}
       className="block group"
     >
       <article className="bg-white max-h-[500px] min-h-[500px] overflow-hidden border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300">

@@ -50,6 +50,8 @@ export default async function Page({ searchParams }: PageProps) {
       <Suspense key={filterKey} fallback={<PackageGridSkeleton />}>
         <PackageResults filters={filters} view={view} />
       </Suspense>
+
+      
     </TrekkingPage>
   );
 }

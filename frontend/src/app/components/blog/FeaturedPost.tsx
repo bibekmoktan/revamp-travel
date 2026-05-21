@@ -53,7 +53,7 @@ export default function FeaturedPost({ post }: FeaturedPostProps) {
                 </div>
               </div>
               
-              <Link href={`/blog/${post.id}`}>
+              <Link href={`/blog/${post.slug}`}>
                 <button className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 rounded-lg transition-colors">
                   Read More
                   <ArrowRight className="w-4 h-4" />
