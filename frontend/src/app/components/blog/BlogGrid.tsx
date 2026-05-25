@@ -1,24 +1,24 @@
-import { BlogPost } from '@/data/blog/blogData';
+import type { BlogPostListItem } from '@/lib/sanity/types';
 import BlogCard from './BlogCard';
 
 interface BlogGridProps {
-  posts: BlogPost[];
+  posts: BlogPostListItem[];
   activeCategory?: string;
 }
 
 export default function BlogGrid({ posts, activeCategory = "All" }: BlogGridProps) {
-  
-  // Filter posts based on active category
-  const filteredPosts = posts.filter(post => {
-    if (activeCategory === "All") return !post.featured;
-    return !post.featured && post.category === activeCategory;
+
+  const filteredPosts = posts.filter((post) => {
+    if (post.featured) return false;
+    if (activeCategory === "All") return true;
+    return post.category?.title === activeCategory;
   });
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {filteredPosts.map((post) => (
-        <BlogCard key={post.id} post={post} />
+        <BlogCard key={post._id} post={post} />
       ))}
     </div>
   );
-} 
+}

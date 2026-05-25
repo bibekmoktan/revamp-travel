@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Phone, Mail, MapPin, MessageCircle,
   Facebook, Instagram, Youtube, Star,
@@ -84,35 +85,26 @@ export default function Footer() {
           </p>
           <div className="flex flex-wrap items-center gap-4">
             {[
-              { abbr: 'GON',  name: 'Govt. of Nepal' },
-              { abbr: 'NTB',  name: 'Nepal Tourism Board' },
-              { abbr: 'NMA',  name: 'Nepal Mountaineering Assoc.' },
-              { abbr: 'TAAN', name: 'Trekking Agencies Assoc.' },
-              { abbr: 'KEEP', name: 'Kathmandu Env. Education Project' },
-            ].map(({ abbr, name }) => (
-              <div key={abbr} className="flex items-center gap-2 bg-white/5 border border-white/10 rounded px-3 py-1.5">
-                <span className="text-xs font-extrabold text-white tracking-wide">{abbr}</span>
-                <span className="text-[10px] text-white/40 hidden sm:block">{name}</span>
+              { src: '/images/asociations/NTB.jpg',         name: 'Nepal Tourism Board' },
+              { src: '/images/asociations/taan.jpeg',       name: 'Trekking Agencies Assoc. of Nepal' },
+              { src: '/images/asociations/logo.jpeg',       name: 'Nepal Mountaineering Assoc.' },
+              { src: '/images/asociations/tripadvisor.png', name: 'TripAdvisor' },
+            ].map(({ src, name }) => (
+              <div
+                key={name}
+                title={name}
+                className="flex items-center justify-center bg-white rounded px-2 py-1.5 h-10"
+              >
+                <Image
+                  src={src}
+                  alt={name}
+                  width={80}
+                  height={28}
+                  className="h-7 w-auto object-contain"
+                />
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* ── Trust bar ── */}
-      <div className="border-b border-white/10">
-        <div className="max-w-[1320px] mx-auto px-6 md:px-16 py-6 grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {trustItems.map(({ icon: Icon, label, sub }) => (
-            <div key={label} className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-sky-800/40 flex items-center justify-center shrink-0">
-                <Icon className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-white leading-tight">{label}</p>
-                <p className="text-xs text-white/50 mt-0.5">{sub}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
