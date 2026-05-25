@@ -15,22 +15,7 @@ export default async function PackagesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-
-      {/* Hero */}
-      <div className="relative h-[320px] w-full overflow-hidden">
-        <Image src="/images/treks/bg-1.jpg" alt="Packages" fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">All Packages</h1>
-          <p className="text-gray-300 text-sm max-w-[440px]">
-            Explore Nepal your way — trekking, tours, climbing, heli rides and more.
-          </p>
-          <span className="mt-4 bg-white/20 text-white text-sm font-semibold px-4 py-1.5 backdrop-blur-sm">
-            {categories.length} categories available
-          </span>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50 mt-[100px]">
 
       {/* Category grid */}
       <div className="max-w-[1320px] mx-auto px-6 md:px-16 py-14">

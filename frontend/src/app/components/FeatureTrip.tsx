@@ -14,20 +14,23 @@ export default async function FeaturedTrips() {
   return (
     <section className="relative z-20 bg-[#F2FAFF] py-8 md:py-16 px-6 md:px-16">
       <div className="max-w-[1366px] mx-auto">
-        <div className="mb-8 flex flex-col items-start gap-4">
-          <h2 className="text-[24px] md:text-[40px] font-bold text-gray-800 mb-2">Activities We Offer</h2>
-          {/* <p className="text-gray-800 text-[14px] md:text-[16px] max-w-[480px] mx-auto">
-            Discover Nepal your way from high-altitude treks and cultural tours to thrilling helicopter rides.
-          </p> */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <h2 className="text-[24px] md:text-[40px] font-bold text-gray-800">Activities We Offer</h2>
+          <Link
+            href="/packages"
+            className="inline-flex items-center justify-center px-5 h-[40px] text-sm font-semibold bg-sky-700 text-white hover:bg-sky-800 transition whitespace-nowrap shrink-0"
+          >
+            View all
+          </Link>
         </div>
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide -mx-6 px-6 md:-mx-16 md:px-16 pb-2 snap-x snap-mandatory scroll-pl-6 md:scroll-pl-16">
-          {categories.map((category) => (
+        <div className="flex md:grid md:grid-cols-5 gap-4 overflow-x-auto md:overflow-visible scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0 pb-2 snap-x snap-mandatory md:snap-none scroll-pl-6">
+          {categories.slice(0, 5).map((category) => (
             <Link
               key={category._id}
               href={`/packages/${category.slug}`}
-              className="block flex-shrink-0 snap-start"
+              className="block flex-shrink-0 md:flex-shrink snap-start"
             >
-              <div className="w-[220px] md:w-[250px] bg-white rounded-[12px] overflow-hidden shadow-md group">
+              <div className="w-[220px] md:w-full bg-white rounded-[12px] overflow-hidden shadow-md group">
                 <div className="relative h-[120px] w-full overflow-hidden">
                   <Image
                     src={category.image || '/images/treks/bg-1.jpg'}
