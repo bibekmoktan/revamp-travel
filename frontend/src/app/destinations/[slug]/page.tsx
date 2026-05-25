@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Suspense } from 'react';
 import destinations from '@/data/destinations';
 import { getPackages } from '@/lib/api';
@@ -59,9 +60,9 @@ export default async function DestinationPage({ params }: Props) {
   if (!destination) notFound();
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50 mt-[100px]">
       {/* Hero */}
-      <div className="relative h-[360px] w-full overflow-hidden">
+      <div className="relative h-[600px] w-full overflow-hidden">
         <Image
           src={destination.image}
           alt={destination.label}
@@ -81,6 +82,22 @@ export default async function DestinationPage({ params }: Props) {
           <p className="text-white/80 max-w-[560px] text-sm md:text-base leading-relaxed">
             {destination.description}
           </p>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-6 w-full sm:w-auto max-w-xs sm:max-w-none">
+            <Link
+              href="/custom-package"
+              className="px-6 py-3 sm:py-3.5 bg-sky-700 sm:min-w-[160px] hover:bg-sky-800 text-white font-semibold text-sm transition text-center"
+            >
+              Customize Your Trip
+            </Link>
+            <Link
+              href="/trekking"
+              className="px-6 py-3 sm:py-3.5 bg-sky-700 sm:min-w-[160px] hover:bg-sky-800 text-white font-semibold text-sm transition text-center"
+            >
+              Explore Tours
+            </Link>
+          </div>
         </div>
       </div>
 
