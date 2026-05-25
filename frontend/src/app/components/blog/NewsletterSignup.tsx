@@ -1,3 +1,5 @@
+'use client';
+
 interface NewsletterSignupProps {
   title?: string;
   description?: string;
