@@ -3,9 +3,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Calendar, Clock, ChevronLeft, Facebook, Twitter, Linkedin, Youtube, Instagram, Mail, Link as LinkIcon } from 'lucide-react';
 import BlogCard from '@/app/components/blog/BlogCard';
+import PostBody from '@/app/components/blog/PostBody';
+import TableOfContents from '@/app/components/blog/TableOfContents';
 import { getAllSlugs, getPostBySlug, getPostsByCategory } from '@/lib/sanity/fetch';
 import { urlFor } from '@/lib/sanity/client';
 import { formatPostDate } from '@/lib/sanity/format';
+import { slugify } from '@/lib/sanity/slugify';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -42,6 +45,15 @@ export default async function BlogDetailsPage({ params }: Props) {
   const initials = authorName.split(' ').map((n) => n[0]).join('');
   const heroImageUrl = urlFor(post.image).width(2000).height(1100).fit('crop').url();
   const formattedDate = formatPostDate(post.date);
+
+  type PtBlock = { _type?: string; style?: string; children?: { text?: string }[] };
+  const tocEntries = ((post.content ?? []) as PtBlock[])
+    .filter((b) => b?._type === 'block' && (b.style === 'h2' || b.style === 'h3'))
+    .map((b) => {
+      const text = (b.children ?? []).map((c) => c?.text ?? '').join('');
+      return { text, id: slugify(text), level: b.style ?? 'h2' };
+    })
+    .filter((e) => e.text.length > 0);
 
   return (
     <div className="min-h-screen bg-gray-50 mt-[100px]">
@@ -128,33 +140,7 @@ export default async function BlogDetailsPage({ params }: Props) {
           <aside className="lg:w-64 shrink-0">
             <div className="lg:sticky lg:top-[150px] space-y-6">
 
-              {post.content && post.content.some((b) => b.heading) && (
-                <div>
-                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">
-                    In this article
-                  </h4>
-                  <nav className="border-l border-gray-200">
-                    <ul className="space-y-1">
-                      {post.content
-                        .map((b, i) => ({ ...b, i }))
-                        .filter((b) => !!b.heading)
-                        .map((b) => {
-                          const id = `section-${b.i}`;
-                          return (
-                            <li key={id}>
-                              <a
-                                href={`#${id}`}
-                                className="block text-sm text-gray-600 hover:text-sky-700 hover:border-sky-700 -ml-px pl-3 py-1 border-l-2 border-transparent transition-colors"
-                              >
-                                {b.heading}
-                              </a>
-                            </li>
-                          );
-                        })}
-                    </ul>
-                  </nav>
-                </div>
-              )}
+              <TableOfContents entries={tocEntries} />
 
               <div className="bg-sky-50 border border-sky-100 rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-2">
@@ -221,34 +207,19 @@ export default async function BlogDetailsPage({ params }: Props) {
             )}
 
             {post.content && post.content.length > 0 ? (
-              <div className="space-y-6">
-                {post.content.map((block, i) => (
-                  <div key={i} id={`section-${i}`} className="scroll-mt-[120px]">
-                    {block.heading && (
-                      <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-                        {block.heading}
-                      </h2>
-                    )}
-                    <p className="text-gray-700 leading-relaxed text-base">{block.paragraph}</p>
-                  </div>
-                ))}
-              </div>
+              <PostBody value={post.content} />
             ) : (
               <p className="text-gray-700 leading-relaxed text-base">{post.excerpt}</p>
             )}
 
-            {post.finalThoughts && post.finalThoughts.paragraphs?.length > 0 && (
+            {post.finalThoughts && post.finalThoughts.content?.length > 0 && (
               <div className="bg-gray-100 rounded-xl px-6 sm:px-8 py-6 mt-10">
                 {post.finalThoughts.title && (
                   <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
                     {post.finalThoughts.title}
                   </h3>
                 )}
-                <div className="space-y-4">
-                  {post.finalThoughts.paragraphs.map((p, i) => (
-                    <p key={i} className="text-[15px] text-gray-700 leading-relaxed">{p}</p>
-                  ))}
-                </div>
+                <PostBody value={post.finalThoughts.content} />
               </div>
             )}
 

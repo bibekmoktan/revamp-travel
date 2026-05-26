@@ -34,8 +34,8 @@ export const POST_BY_SLUG_QUERY = `
     readTime,
     featured,
     keyTakeaways,
-    content[]{ heading, paragraph },
-    finalThoughts { title, paragraphs },
+    content,
+    finalThoughts { title, content },
     author-> { name, "slug": slug.current, avatar, bio },
     category-> { title, "slug": slug.current, description }
   }

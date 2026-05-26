@@ -26,14 +26,13 @@ export interface Category {
   description?: string;
 }
 
-export interface ContentBlock {
-  heading?: string;
-  paragraph: string;
-}
+import type { PortableTextBlock } from '@portabletext/react';
+
+export type ContentBlock = PortableTextBlock;
 
 export interface FinalThoughts {
   title?: string;
-  paragraphs: string[];
+  content: ContentBlock[];
 }
 
 export interface BlogPost {
