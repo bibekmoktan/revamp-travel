@@ -19,6 +19,8 @@ export default function Home() {
         {/* <HeroOne /> */}
         {/* <HeroTwo /> */}
         {/* <HeroThree /> */}
+
+        
         <FeaturedTrips />
         <BestSeller />
         <Offer />
