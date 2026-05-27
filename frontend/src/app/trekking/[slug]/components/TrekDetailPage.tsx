@@ -12,6 +12,7 @@ import TrekReviews from './TrekReviews';
 import TrekPricingTiers from './TrekPricingTiers';
 import TrekSeasons from './TrekSeasons';
 import TrekRouteComparison from './TrekRouteComparison';
+import TrekWhyChoose from './TrekWhyChoose';
 
 const WRAPPER = 'max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8';
 
@@ -33,6 +34,11 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
           <div className="flex-1 min-w-0 space-y-6 shadow-lg p-4 bg-white rounded-2xl">
             <div id="section-gallery"><TrekGallery gallery={pkg.gallery} title={pkg.title} /></div>
             <div id="section-overview"><TrekOverview pkg={pkg} /></div>
+            {pkg.whyChoose && (pkg.whyChoose.description || pkg.whyChoose.points.length > 0) && (
+              <div id="section-why-choose">
+                <TrekWhyChoose data={pkg.whyChoose} />
+              </div>
+            )}
             <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} slug={pkg.slug} /></div>
             <div id="section-included"><TrekIncludes includes={pkg.includes} /></div>
             <div id="section-excluded-wrapper"><TrekExtras pkg={pkg} /></div>

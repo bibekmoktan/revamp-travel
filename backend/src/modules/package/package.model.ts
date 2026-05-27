@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IPackage, IItinerary, IFaq, IMoreInfo, IPricingTier, IRouteComparisonRow, ISeason } from "./package.interface";
+import { IPackage, IItinerary, IFaq, IMoreInfo, IPricingTier, IRouteComparisonRow, ISeason, IWhyChoose } from "./package.interface";
 
 const imageSchema = new Schema({
   url: { type: String, required: true, trim: true },
@@ -15,6 +15,11 @@ const faqSchema = new Schema<IFaq>({
 const moreInfoSchema = new Schema<IMoreInfo>({
   title:  { type: String, required: true },
   points: [{ type: String, required: true }],
+}, { _id: false });
+
+const whyChooseSchema = new Schema<IWhyChoose>({
+  description: { type: String, default: '' },
+  points:      [{ type: String }],
 }, { _id: false });
 
 const pricingTierSchema = new Schema<IPricingTier>({
@@ -95,6 +100,12 @@ const packageSchema = new Schema<IPackage>({
       finalPaymentDays:   { type: Number, default: 30 },
       cancellationPolicy: { type: String, default: '' },
     }, { _id: false }),
+    default: undefined,
+  },
+
+  // Why choose this route
+  whyChoose: {
+    type: whyChooseSchema,
     default: undefined,
   },
 

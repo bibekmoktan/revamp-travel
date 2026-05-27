@@ -56,6 +56,11 @@ export interface PackingNotes {
   notes: string;
 }
 
+export interface WhyChoose {
+  description: string;
+  points: string[];
+}
+
 export interface ApiPackage {
   _id: string;
   slug: string;
@@ -84,6 +89,7 @@ export interface ApiPackage {
   faq?: FaqItem[];
   moreInfo?: MoreInfoItem[];
   itinerary: ItineraryDay[];
+  whyChoose?: WhyChoose;
   pricingTiers?: PricingTier[];
   seasons?: Season[];
   routeComparison?: RouteComparison;
