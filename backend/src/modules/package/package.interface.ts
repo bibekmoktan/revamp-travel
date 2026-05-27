@@ -62,6 +62,11 @@ export interface IPackingNotes {
   notes: string;
 }
 
+export interface IWhyChoose {
+  description: string;
+  points: string[];
+}
+
 export interface IPackage {
   slug: string;
   title: string;
@@ -96,4 +101,5 @@ export interface IPackage {
   routeComparison?: IRouteComparison;
   bookingTerms?: IBookingTerms;
   packingNotes?: IPackingNotes;
+  whyChoose?: IWhyChoose;
 }

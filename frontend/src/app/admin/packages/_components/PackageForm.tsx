@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Plus, X, ChevronDown, ChevronUp, UploadCloud, ImageIcon } from 'lucide-react';
-import type { ApiPackage, ApiCategory, PricingTier, Season, RouteComparisonRow } from '@/types/api';
+import type { ApiPackage, ApiCategory, PricingTier, Season, RouteComparisonRow, WhyChoose } from '@/types/api';
 import { useAuth } from '@/context/AuthContext';
 import { adminUploadImage, getCategories } from '@/lib/api';
 
@@ -347,6 +347,10 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
     d?.moreInfo?.length ? d.moreInfo : [{ title: '', points: [''] }]
   );
 
+  // ── Why Choose ────────────────────────────────────────────────────────────
+  const [whyChooseDesc, setWhyChooseDesc]     = useState(d?.whyChoose?.description ?? '');
+  const [whyChoosePoints, setWhyChoosePoints] = useState<string[]>(d?.whyChoose?.points ?? ['']);
+
   // ── New fields ─────────────────────────────────────────────────────────────
   const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(
     d?.pricingTiers ?? []
@@ -456,6 +460,9 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
         })),
       faq: faq.filter((f) => f.question && f.answer),
       moreInfo: moreInfo.filter((m) => m.title && m.points.some((p) => p.trim())),
+      whyChoose: (whyChooseDesc || whyChoosePoints.some(p => p.trim()))
+        ? { description: whyChooseDesc, points: whyChoosePoints.filter(p => p.trim()) }
+        : undefined,
       pricingTiers: pricingTiers.filter(t => t.label && t.pricePerPerson > 0),
       seasons: seasons.filter(s => s.name),
       routeComparison: routeComparisonEnabled
@@ -720,6 +727,56 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
             <button type="button" onClick={addMoreInfo} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
               <Plus className="w-4 h-4" /> Add Section
             </button>
+          </div>
+        )}
+      </div>
+
+      {/* Why Choose */}
+      <div className={SECTION}>
+        <SectionHeader id="whyChoose" label="Why Choose This Route?" />
+        {openSection === 'whyChoose' && (
+          <div className="space-y-4 pt-2">
+            <div>
+              <label className={LABEL}>Short description</label>
+              <textarea
+                value={whyChooseDesc}
+                onChange={e => setWhyChooseDesc(e.target.value)}
+                rows={3}
+                className={INPUT}
+                placeholder="Look, we'll be upfront — this route is longer, tougher, and not for everyone. But for those who choose it…"
+              />
+            </div>
+            <div>
+              <label className={LABEL}>Bullet points</label>
+              <div className="space-y-2">
+                {whyChoosePoints.map((pt, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input
+                      value={pt}
+                      onChange={e => setWhyChoosePoints(prev => prev.map((p, j) => j === i ? e.target.value : p))}
+                      className={INPUT}
+                      placeholder="No Lukla flight risk — drives to trailhead on schedule"
+                    />
+                    {whyChoosePoints.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setWhyChoosePoints(prev => prev.filter((_, j) => j !== i))}
+                        className="text-red-400 hover:text-red-600 shrink-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setWhyChoosePoints(prev => [...prev, ''])}
+                  className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
+                >
+                  <Plus className="w-4 h-4" /> Add point
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
