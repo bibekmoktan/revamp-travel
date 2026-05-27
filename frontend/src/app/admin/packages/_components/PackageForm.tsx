@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Plus, X, ChevronDown, ChevronUp, UploadCloud, ImageIcon } from 'lucide-react';
-import type { ApiPackage, ApiCategory } from '@/types/api';
+import type { ApiPackage, ApiCategory, PricingTier, Season, RouteComparisonRow } from '@/types/api';
 import { useAuth } from '@/context/AuthContext';
 import { adminUploadImage, getCategories } from '@/lib/api';
 
@@ -347,6 +347,27 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
     d?.moreInfo?.length ? d.moreInfo : [{ title: '', points: [''] }]
   );
 
+  // ── New fields ─────────────────────────────────────────────────────────────
+  const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(
+    d?.pricingTiers ?? []
+  );
+  const [seasons, setSeasons] = useState<Season[]>(
+    d?.seasons ?? []
+  );
+  const [routeComparisonEnabled, setRouteComparisonEnabled] = useState(
+    !!(d?.routeComparison?.rows?.length)
+  );
+  const [routeAltName, setRouteAltName] = useState(d?.routeComparison?.alternativeName ?? '');
+  const [routeRows, setRouteRows] = useState<RouteComparisonRow[]>(
+    d?.routeComparison?.rows ?? [{ attribute: '', thisRoute: '', alternativeRoute: '' }]
+  );
+  const [depositPercent, setDepositPercent]     = useState(String(d?.bookingTerms?.depositPercent ?? 25));
+  const [finalPaymentDays, setFinalPaymentDays] = useState(String(d?.bookingTerms?.finalPaymentDays ?? 30));
+  const [cancellationPolicy, setCancellationPolicy] = useState(d?.bookingTerms?.cancellationPolicy ?? '');
+  const [maxDuffelKg, setMaxDuffelKg]   = useState(String(d?.packingNotes?.maxDuffelKg ?? 15));
+  const [maxDaypackKg, setMaxDaypackKg] = useState(String(d?.packingNotes?.maxDaypackKg ?? 7));
+  const [packingNotesText, setPackingNotesText] = useState(d?.packingNotes?.notes ?? '');
+
   const [openSection, setOpenSection] = useState<string | null>('basic');
   const toggleSection = (id: string) => setOpenSection((s) => (s === id ? null : id));
 
@@ -381,6 +402,24 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
     setMoreInfo((prev) =>
       prev.map((m, i) => i !== mi ? m : { ...m, points: m.points.filter((_, j) => j !== pi) })
     );
+
+  // ── PricingTier helpers ────────────────────────────────────────────────────
+  const addTier = () => setPricingTiers(p => [...p, { groupMin: 1, groupMax: 1, label: '', pricePerPerson: 0 }]);
+  const removeTier = (i: number) => setPricingTiers(p => p.filter((_, idx) => idx !== i));
+  const updateTier = (i: number, field: keyof PricingTier, val: string) =>
+    setPricingTiers(p => p.map((t, idx) => idx !== i ? t : { ...t, [field]: field === 'label' ? val : Number(val) }));
+
+  // ── Season helpers ─────────────────────────────────────────────────────────
+  const addSeason = () => setSeasons(s => [...s, { name: '', months: '', notes: '' }]);
+  const removeSeason = (i: number) => setSeasons(s => s.filter((_, idx) => idx !== i));
+  const updateSeason = (i: number, field: keyof Season, val: string) =>
+    setSeasons(s => s.map((x, idx) => idx !== i ? x : { ...x, [field]: val }));
+
+  // ── RouteComparison helpers ────────────────────────────────────────────────
+  const addRouteRow = () => setRouteRows(r => [...r, { attribute: '', thisRoute: '', alternativeRoute: '' }]);
+  const removeRouteRow = (i: number) => setRouteRows(r => r.filter((_, idx) => idx !== i));
+  const updateRouteRow = (i: number, field: keyof RouteComparisonRow, val: string) =>
+    setRouteRows(r => r.map((x, idx) => idx !== i ? x : { ...x, [field]: val }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -417,6 +456,21 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
         })),
       faq: faq.filter((f) => f.question && f.answer),
       moreInfo: moreInfo.filter((m) => m.title && m.points.some((p) => p.trim())),
+      pricingTiers: pricingTiers.filter(t => t.label && t.pricePerPerson > 0),
+      seasons: seasons.filter(s => s.name),
+      routeComparison: routeComparisonEnabled
+        ? { alternativeName: routeAltName, rows: routeRows.filter(r => r.attribute) }
+        : undefined,
+      bookingTerms: {
+        depositPercent:   parseFloat(depositPercent) || 25,
+        finalPaymentDays: parseInt(finalPaymentDays)  || 30,
+        cancellationPolicy,
+      },
+      packingNotes: {
+        maxDuffelKg:  parseFloat(maxDuffelKg)  || 15,
+        maxDaypackKg: parseFloat(maxDaypackKg) || 7,
+        notes: packingNotesText,
+      },
     };
     await onSubmit(data);
   };
@@ -666,6 +720,162 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
             <button type="button" onClick={addMoreInfo} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
               <Plus className="w-4 h-4" /> Add Section
             </button>
+          </div>
+        )}
+      </div>
+
+      {/* Pricing Tiers */}
+      <div className={SECTION}>
+        <SectionHeader id="pricingTiers" label={`Pricing Tiers (${pricingTiers.length})`} />
+        {openSection === 'pricingTiers' && (
+          <div className="space-y-3 pt-2">
+            <p className="text-xs text-gray-500">Define per-person prices by group size. If empty, the booking card falls back to percentage discounts from the base price.</p>
+            {pricingTiers.map((tier, i) => (
+              <div key={i} className="border border-gray-100 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Label</label>
+                  <input value={tier.label} onChange={e => updateTier(i, 'label', e.target.value)} className={INPUT} placeholder="Solo Trekker" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Min Pax</label>
+                  <input type="number" value={tier.groupMin} onChange={e => updateTier(i, 'groupMin', e.target.value)} className={INPUT} min="1" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Max Pax</label>
+                  <input type="number" value={tier.groupMax} onChange={e => updateTier(i, 'groupMax', e.target.value)} className={INPUT} min="1" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Price / Person (USD)</label>
+                  <input type="number" value={tier.pricePerPerson} onChange={e => updateTier(i, 'pricePerPerson', e.target.value)} className={INPUT} min="0" />
+                </div>
+                <div className="flex items-end">
+                  <button type="button" onClick={() => removeTier(i)} className="text-red-400 hover:text-red-600 p-2">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button type="button" onClick={addTier} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+              <Plus className="w-4 h-4" /> Add Tier
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Seasons */}
+      <div className={SECTION}>
+        <SectionHeader id="seasons" label={`Best Seasons (${seasons.length})`} />
+        {openSection === 'seasons' && (
+          <div className="space-y-3 pt-2">
+            {seasons.map((s, i) => (
+              <div key={i} className="border border-gray-100 rounded-lg p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Season Name *</label>
+                  <input value={s.name} onChange={e => updateSeason(i, 'name', e.target.value)} className={INPUT} placeholder="Autumn" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Months</label>
+                  <input value={s.months ?? ''} onChange={e => updateSeason(i, 'months', e.target.value)} className={INPUT} placeholder="Sep–Nov" />
+                </div>
+                <div className="relative">
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Notes</label>
+                  <div className="flex gap-2">
+                    <input value={s.notes ?? ''} onChange={e => updateSeason(i, 'notes', e.target.value)} className={INPUT} placeholder="Clearest skies, dry trails" />
+                    <button type="button" onClick={() => removeSeason(i)} className="text-red-400 hover:text-red-600 shrink-0">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <button type="button" onClick={addSeason} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+              <Plus className="w-4 h-4" /> Add Season
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Route Comparison */}
+      <div className={SECTION}>
+        <SectionHeader id="routeComparison" label="Route Comparison (optional)" />
+        {openSection === 'routeComparison' && (
+          <div className="space-y-4 pt-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={routeComparisonEnabled} onChange={e => setRouteComparisonEnabled(e.target.checked)} className="w-4 h-4 accent-blue-600" />
+              Enable route comparison table
+            </label>
+            {routeComparisonEnabled && (
+              <>
+                <div>
+                  <label className={LABEL}>Alternative route name</label>
+                  <input value={routeAltName} onChange={e => setRouteAltName(e.target.value)} className={INPUT} placeholder="Lukla Route" />
+                </div>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-3 gap-2 text-xs font-semibold text-gray-500 px-1">
+                    <span>Attribute</span><span>This route</span><span>Alternative</span>
+                  </div>
+                  {routeRows.map((row, i) => (
+                    <div key={i} className="grid grid-cols-3 gap-2 items-center">
+                      <input value={row.attribute} onChange={e => updateRouteRow(i, 'attribute', e.target.value)} className={INPUT} placeholder="Duration" />
+                      <input value={row.thisRoute} onChange={e => updateRouteRow(i, 'thisRoute', e.target.value)} className={INPUT} placeholder="20 days" />
+                      <div className="flex gap-1">
+                        <input value={row.alternativeRoute} onChange={e => updateRouteRow(i, 'alternativeRoute', e.target.value)} className={INPUT} placeholder="14 days" />
+                        {routeRows.length > 1 && (
+                          <button type="button" onClick={() => removeRouteRow(i)} className="text-red-400 hover:text-red-600 shrink-0">
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={addRouteRow} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+                    <Plus className="w-4 h-4" /> Add Row
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Booking Terms */}
+      <div className={SECTION}>
+        <SectionHeader id="bookingTerms" label="Booking Terms" />
+        {openSection === 'bookingTerms' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label className={LABEL}>Deposit % required</label>
+              <input type="number" value={depositPercent} onChange={e => setDepositPercent(e.target.value)} className={INPUT} min="0" max="100" placeholder="25" />
+            </div>
+            <div>
+              <label className={LABEL}>Final payment (days before departure)</label>
+              <input type="number" value={finalPaymentDays} onChange={e => setFinalPaymentDays(e.target.value)} className={INPUT} min="0" placeholder="30" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={LABEL}>Cancellation policy</label>
+              <textarea value={cancellationPolicy} onChange={e => setCancellationPolicy(e.target.value)} rows={2} className={INPUT} placeholder="Free cancellation up to 60 days before departure…" />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Packing Notes */}
+      <div className={SECTION}>
+        <SectionHeader id="packingNotes" label="Packing Notes" />
+        {openSection === 'packingNotes' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label className={LABEL}>Max duffel bag weight (kg)</label>
+              <input type="number" value={maxDuffelKg} onChange={e => setMaxDuffelKg(e.target.value)} className={INPUT} min="0" placeholder="15" />
+            </div>
+            <div>
+              <label className={LABEL}>Max daypack weight (kg)</label>
+              <input type="number" value={maxDaypackKg} onChange={e => setMaxDaypackKg(e.target.value)} className={INPUT} min="0" placeholder="7" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={LABEL}>Additional notes</label>
+              <textarea value={packingNotesText} onChange={e => setPackingNotesText(e.target.value)} rows={2} className={INPUT} placeholder="Porters carry up to 20kg total…" />
+            </div>
           </div>
         )}
       </div>
