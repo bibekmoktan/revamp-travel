@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IPackage, IItinerary, IFaq, IMoreInfo } from "./package.interface";
+import { IPackage, IItinerary, IFaq, IMoreInfo, IPricingTier, IRouteComparisonRow, ISeason } from "./package.interface";
 
 const imageSchema = new Schema({
   url: { type: String, required: true, trim: true },
@@ -15,6 +15,25 @@ const faqSchema = new Schema<IFaq>({
 const moreInfoSchema = new Schema<IMoreInfo>({
   title:  { type: String, required: true },
   points: [{ type: String, required: true }],
+}, { _id: false });
+
+const pricingTierSchema = new Schema<IPricingTier>({
+  groupMin:       { type: Number, required: true },
+  groupMax:       { type: Number, required: true },
+  label:          { type: String, required: true, trim: true },
+  pricePerPerson: { type: Number, required: true, min: 0 },
+}, { _id: false });
+
+const routeComparisonRowSchema = new Schema<IRouteComparisonRow>({
+  attribute:        { type: String, required: true },
+  thisRoute:        { type: String, required: true },
+  alternativeRoute: { type: String, required: true },
+}, { _id: false });
+
+const seasonSchema = new Schema<ISeason>({
+  name:   { type: String, required: true },
+  months: { type: String, default: '' },
+  notes:  { type: String, default: '' },
 }, { _id: false });
 
 const itinerarySchema = new Schema<IItinerary>({
@@ -53,6 +72,41 @@ const packageSchema = new Schema<IPackage>({
   itinerary: [itinerarySchema],
   country: { type: String, enum: ['nepal', 'bhutan', 'tibet', 'india'] },
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+
+  // Pricing tiers by group size (replaces single price for multi-tier packages)
+  pricingTiers: { type: [pricingTierSchema], default: [] },
+
+  // Season-specific descriptions
+  seasons: { type: [seasonSchema], default: [] },
+
+  // Route comparison (for packages with a notable alternative route)
+  routeComparison: {
+    type: new Schema({
+      alternativeName: { type: String, default: '' },
+      rows: { type: [routeComparisonRowSchema], default: [] },
+    }, { _id: false }),
+    default: undefined,
+  },
+
+  // Booking terms
+  bookingTerms: {
+    type: new Schema({
+      depositPercent:     { type: Number, default: 25 },
+      finalPaymentDays:   { type: Number, default: 30 },
+      cancellationPolicy: { type: String, default: '' },
+    }, { _id: false }),
+    default: undefined,
+  },
+
+  // Packing weight guidelines
+  packingNotes: {
+    type: new Schema({
+      maxDuffelKg:  { type: Number, default: 15 },
+      maxDaypackKg: { type: Number, default: 7 },
+      notes:        { type: String, default: '' },
+    }, { _id: false }),
+    default: undefined,
+  },
 }, { timestamps: true });
 
 // Indexing for high-performance searching

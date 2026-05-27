@@ -26,6 +26,42 @@ export interface IMoreInfo {
   points: string[];
 }
 
+export interface IPricingTier {
+  groupMin: number;
+  groupMax: number;
+  label: string;
+  pricePerPerson: number;
+}
+
+export interface IRouteComparisonRow {
+  attribute: string;
+  thisRoute: string;
+  alternativeRoute: string;
+}
+
+export interface ISeason {
+  name: string;
+  months?: string;
+  notes?: string;
+}
+
+export interface IRouteComparison {
+  alternativeName: string;
+  rows: IRouteComparisonRow[];
+}
+
+export interface IBookingTerms {
+  depositPercent: number;
+  finalPaymentDays: number;
+  cancellationPolicy: string;
+}
+
+export interface IPackingNotes {
+  maxDuffelKg: number;
+  maxDaypackKg: number;
+  notes: string;
+}
+
 export interface IPackage {
   slug: string;
   title: string;
@@ -55,4 +91,9 @@ export interface IPackage {
   itinerary: IItinerary[];
   country?: 'nepal' | 'bhutan' | 'tibet' | 'india';
   status?: 'active' | 'inactive';
+  pricingTiers: IPricingTier[];
+  seasons: ISeason[];
+  routeComparison?: IRouteComparison;
+  bookingTerms?: IBookingTerms;
+  packingNotes?: IPackingNotes;
 }

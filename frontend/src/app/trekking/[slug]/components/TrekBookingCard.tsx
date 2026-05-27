@@ -8,19 +8,31 @@ import { useCart } from '@/context/CartContext';
 import EnquiryModal from '@/app/components/EnquiryModal';
 import WishlistButton from '@/app/components/WishlistButton';
 
-const GROUP_TIERS = [
-  { label: '1 pax',      min: 1, max: 1,  discount: 0 },
-  { label: '2 – 5 pax',  min: 2, max: 5,  discount: 0.15 },
-  { label: '6 – 8 pax',  min: 6, max: 8,  discount: 0.22 },
-  { label: '9 – 10 pax', min: 9, max: 10, discount: 0.28 },
+const FALLBACK_TIERS = [
+  { label: '1 pax',      min: 1, max: 1,  pricePerPerson: 0 },
+  { label: '2 – 5 pax',  min: 2, max: 5,  pricePerPerson: 0 },
+  { label: '6 – 8 pax',  min: 6, max: 8,  pricePerPerson: 0 },
+  { label: '9 – 10 pax', min: 9, max: 10, pricePerPerson: 0 },
 ];
 
-function tierPrice(base: number, discount: number) {
-  return Math.round(base * (1 - discount));
+function buildDisplayTiers(base: number, sanityTiers?: { groupMin: number; groupMax: number; label: string; pricePerPerson: number }[]) {
+  if (sanityTiers && sanityTiers.length > 0) {
+    return sanityTiers.map(t => ({
+      label: t.label,
+      min: t.groupMin,
+      max: t.groupMax,
+      pricePerPerson: t.pricePerPerson,
+    }));
+  }
+  const discounts = [0, 0.15, 0.22, 0.28];
+  return FALLBACK_TIERS.map((t, i) => ({
+    ...t,
+    pricePerPerson: Math.round(base * (1 - discounts[i])),
+  }));
 }
 
-function activeTier(travelers: number) {
-  return GROUP_TIERS.find(t => travelers >= t.min && travelers <= t.max) ?? GROUP_TIERS[0];
+function activeTier(travelers: number, tiers: { min: number; max: number }[]) {
+  return tiers.findIndex(t => travelers >= t.min && travelers <= t.max);
 }
 
 export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
@@ -44,10 +56,11 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
     return true;
   }
 
-  const base      = pkg.price ?? 0;
-  const tier      = activeTier(travelers);
-  const unitPrice = tierPrice(base, tier.discount);
-  const total     = unitPrice * travelers;
+  const base         = pkg.price ?? 0;
+  const displayTiers = buildDisplayTiers(base, pkg.pricingTiers);
+  const tierIdx      = Math.max(0, activeTier(travelers, displayTiers));
+  const unitPrice    = displayTiers[tierIdx].pricePerPerson;
+  const total        = unitPrice * travelers;
 
   function buildCartItem() {
     return {
@@ -109,13 +122,13 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
 
         {groupOpen && (
           <div className="pb-2 space-y-0">
-            {GROUP_TIERS.map((t, i) => (
+            {displayTiers.map((t, i) => (
               <div
                 key={t.label}
-                className={`flex justify-between py-1 text-gray-700 ${i < GROUP_TIERS.length - 1 ? 'border-b border-gray-100' : ''} ${tier === t ? 'font-semibold text-sky-800' : ''}`}
+                className={`flex justify-between py-1 text-gray-700 ${i < displayTiers.length - 1 ? 'border-b border-gray-100' : ''} ${tierIdx === i ? 'font-semibold text-sky-800' : ''}`}
               >
                 <span>{t.label}</span>
-                <span>US${tierPrice(base, t.discount).toLocaleString()}</span>
+                <span>US${t.pricePerPerson.toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -172,6 +185,22 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
         <span className="text-gray-600">Total Price</span>
         <span className="text-lg font-bold text-gray-900">US${total.toLocaleString()}</span>
       </div>
+
+      {pkg.bookingTerms && (
+        <>
+          <div className="border-t border-gray-100" />
+          <div className="px-5 py-2 text-xs text-gray-500 space-y-0.5">
+            <p>
+              <span className="font-medium text-gray-700">{pkg.bookingTerms.depositPercent}% deposit</span>
+              {' '}required to book — US${Math.round(total * pkg.bookingTerms.depositPercent / 100).toLocaleString()}
+            </p>
+            <p>Final payment due {pkg.bookingTerms.finalPaymentDays} days before departure.</p>
+            {pkg.bookingTerms.cancellationPolicy && (
+              <p>{pkg.bookingTerms.cancellationPolicy}</p>
+            )}
+          </div>
+        </>
+      )}
 
       <div className="border-t border-gray-100" />
 

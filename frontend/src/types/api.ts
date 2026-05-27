@@ -20,6 +20,42 @@ export interface MoreInfoItem {
   points: string[];
 }
 
+export interface PricingTier {
+  groupMin: number;
+  groupMax: number;
+  label: string;
+  pricePerPerson: number;
+}
+
+export interface Season {
+  name: string;
+  months?: string;
+  notes?: string;
+}
+
+export interface RouteComparisonRow {
+  attribute: string;
+  thisRoute: string;
+  alternativeRoute: string;
+}
+
+export interface RouteComparison {
+  alternativeName: string;
+  rows: RouteComparisonRow[];
+}
+
+export interface BookingTerms {
+  depositPercent: number;
+  finalPaymentDays: number;
+  cancellationPolicy: string;
+}
+
+export interface PackingNotes {
+  maxDuffelKg: number;
+  maxDaypackKg: number;
+  notes: string;
+}
+
 export interface ApiPackage {
   _id: string;
   slug: string;
@@ -48,6 +84,11 @@ export interface ApiPackage {
   faq?: FaqItem[];
   moreInfo?: MoreInfoItem[];
   itinerary: ItineraryDay[];
+  pricingTiers?: PricingTier[];
+  seasons?: Season[];
+  routeComparison?: RouteComparison;
+  bookingTerms?: BookingTerms;
+  packingNotes?: PackingNotes;
   status: 'active' | 'inactive';
   createdAt: string;
   updatedAt: string;

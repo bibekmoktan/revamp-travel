@@ -9,6 +9,9 @@ import TrekExtras from './TrekExtras';
 import TrekIncludes from './TrekIncludes';
 import TrekSubNav from './TrekSubNav';
 import TrekReviews from './TrekReviews';
+import TrekPricingTiers from './TrekPricingTiers';
+import TrekSeasons from './TrekSeasons';
+import TrekRouteComparison from './TrekRouteComparison';
 
 const WRAPPER = 'max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8';
 
@@ -33,6 +36,24 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
             <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} slug={pkg.slug} /></div>
             <div id="section-included"><TrekIncludes includes={pkg.includes} /></div>
             <div id="section-excluded-wrapper"><TrekExtras pkg={pkg} /></div>
+            {pkg.pricingTiers && pkg.pricingTiers.length > 0 && (
+              <div id="section-pricing-tiers">
+                <TrekPricingTiers tiers={pkg.pricingTiers} basePrice={pkg.price} />
+              </div>
+            )}
+            {pkg.seasons && pkg.seasons.length > 0 && (
+              <div id="section-seasons">
+                <TrekSeasons seasons={pkg.seasons} />
+              </div>
+            )}
+            {pkg.routeComparison && pkg.routeComparison.rows.length > 0 && (
+              <div id="section-route-comparison">
+                <TrekRouteComparison
+                  comparison={pkg.routeComparison}
+                  thisRouteName={pkg.title}
+                />
+              </div>
+            )}
             <div id="section-reviews"><TrekReviews packageId={pkg._id} /></div>
           </div>
 
