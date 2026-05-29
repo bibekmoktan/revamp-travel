@@ -16,7 +16,7 @@ import TrekWhyChoose from './TrekWhyChoose';
 
 const WRAPPER = 'max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8';
 
-export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
+export default function TrekDetailPage({ pkg, addOns = [] }: { pkg: ApiPackage; addOns?: ApiPackage[] }) {
   return (
     <div className="min-h-screen bg-[#F3F6FB]">
 
@@ -65,7 +65,7 @@ export default function TrekDetailPage({ pkg }: { pkg: ApiPackage }) {
 
           {/* Booking sidebar */}
           <aside className="lg:w-80 shrink-0 sticky top-[80px] self-start">
-            <TrekBookingCard pkg={pkg} />
+            <TrekBookingCard pkg={pkg} addOns={addOns} />
           </aside>
 
         </div>

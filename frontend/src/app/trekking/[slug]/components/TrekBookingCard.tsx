@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, Minus, Plus, ShoppingCart, CheckCircle, Send, AlertCircle } from 'lucide-react';
+import { ChevronDown, Minus, Plus, ShoppingCart, Send, AlertCircle } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
 import { useCart } from '@/context/CartContext';
 import EnquiryModal from '@/app/components/EnquiryModal';
 import WishlistButton from '@/app/components/WishlistButton';
+import AddOnsModal from './AddOnsModal';
 
 const FALLBACK_TIERS = [
   { label: '1 pax',      min: 1, max: 1,  pricePerPerson: 0 },
@@ -35,13 +36,13 @@ function activeTier(travelers: number, tiers: { min: number; max: number }[]) {
   return tiers.findIndex(t => travelers >= t.min && travelers <= t.max);
 }
 
-export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
+export default function TrekBookingCard({ pkg, addOns = [] }: { pkg: ApiPackage; addOns?: ApiPackage[] }) {
   const [groupOpen, setGroupOpen]     = useState(true);
   const [date, setDate]               = useState('');
   const [dateError, setDateError]     = useState('');
   const [travelers, setTravelers]     = useState(1);
-  const [added, setAdded]             = useState(false);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const [addOnsOpen, setAddOnsOpen]   = useState(false);
   const { addItem }                   = useCart();
   const router                        = useRouter();
 
@@ -78,16 +79,34 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
     };
   }
 
-  function handleAddToCart() {
+  function openAddOns() {
     if (!validateDate()) return;
     addItem(buildCartItem());
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setAddOnsOpen(true);
   }
 
-  function handleBookNow() {
-    if (!validateDate()) return;
-    addItem(buildCartItem());
+  function handleAddOnSkip() {
+    setAddOnsOpen(false);
+    router.push('/cart');
+  }
+
+  function handleAddOnConfirm(selectedAddOns: ApiPackage[]) {
+    selectedAddOns.forEach(addon => {
+      addItem({
+        cartId:         crypto.randomUUID(),
+        packageId:      addon._id,
+        slug:           addon.slug,
+        title:          addon.title,
+        image:          addon.featureImage?.url ?? '',
+        duration:       addon.duration,
+        location:       addon.location,
+        date,
+        travelers,
+        pricePerPerson: addon.price,
+        totalAmount:    addon.price * travelers,
+      });
+    });
+    setAddOnsOpen(false);
     router.push('/cart');
   }
 
@@ -208,16 +227,16 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
       <div className="px-5 py-2 space-y-2">
         <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={handleBookNow}
+            onClick={openAddOns}
             className="bg-gray-900 hover:bg-black text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors"
           >
             Book Now
           </button>
           <button
-            onClick={handleAddToCart}
-            className={`font-bold py-2.5 text-xs tracking-wide uppercase transition-colors flex items-center justify-center gap-1.5 ${added ? 'bg-green-600 text-white' : 'bg-gray-900 hover:bg-black text-white'}`}
+            onClick={openAddOns}
+            className="bg-gray-900 hover:bg-black text-white font-bold py-2.5 text-xs tracking-wide uppercase transition-colors flex items-center justify-center gap-1.5"
           >
-            {added ? <><CheckCircle className="w-3.5 h-3.5" /> Added</> : <><ShoppingCart className="w-3.5 h-3.5" /> Add to Cart</>}
+            <ShoppingCart className="w-3.5 h-3.5" /> Add to Cart
           </button>
         </div>
 
@@ -234,6 +253,13 @@ export default function TrekBookingCard({ pkg }: { pkg: ApiPackage }) {
         onClose={() => setEnquiryOpen(false)}
         packageId={pkg._id}
         packageTitle={pkg.title}
+      />
+
+      <AddOnsModal
+        open={addOnsOpen}
+        addOns={addOns}
+        onSkip={handleAddOnSkip}
+        onConfirm={handleAddOnConfirm}
       />
     </div>
   );
