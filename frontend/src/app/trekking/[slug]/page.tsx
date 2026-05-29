@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getPackageBySlug } from '@/lib/api';
+import { getPackageBySlug, getPackages } from '@/lib/api';
 import TrekDetailPage from './components/TrekDetailPage';
 
 interface Props {
@@ -31,5 +31,13 @@ export default async function Page({ params }: Props) {
     notFound();
   }
 
-  return <TrekDetailPage pkg={pkg} />;
+  let addOns: import('@/types/api').ApiPackage[] = [];
+  try {
+    const { data } = await getPackages({ category: pkg.category, limit: 7 });
+    addOns = data.filter(p => p.slug !== slug).slice(0, 6);
+  } catch {
+    // non-critical, proceed without add-ons
+  }
+
+  return <TrekDetailPage pkg={pkg} addOns={addOns} />;
 }
