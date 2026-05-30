@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, Clock, Check, ArrowRight } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
+import { useLenis } from '@/app/components/LenisProvider';
 
 interface AddOnsModalProps {
   open: boolean;
@@ -14,29 +15,28 @@ interface AddOnsModalProps {
 
 export default function AddOnsModal({ open, addOns, onSkip, onConfirm }: AddOnsModalProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const { stop, start } = useLenis();
 
   useEffect(() => {
     if (!open) setSelected(new Set());
   }, [open]);
 
   useEffect(() => {
-    if (typeof document === 'undefined') return;
     if (open) {
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      stop();
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
+      start();
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
     }
     return () => {
+      start();
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
     };
-  }, [open]);
+  }, [open, stop, start]);
 
   if (!open) return null;
 
@@ -54,11 +54,11 @@ export default function AddOnsModal({ open, addOns, onSkip, onConfirm }: AddOnsM
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-in fade-in-0 zoom-in-95 duration-200"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[70vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-gray-100">
+        <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-gray-100">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Enhance Your Trip</h2>
             <p className="text-sm text-gray-500 mt-0.5">Add more packages to make the most of your journey</p>
@@ -73,7 +73,7 @@ export default function AddOnsModal({ open, addOns, onSkip, onConfirm }: AddOnsM
         </div>
 
         {/* Package list */}
-        <div className="overflow-y-auto flex-1 px-6 py-4 space-y-3">
+        <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-5 py-3 space-y-2.5" data-lenis-prevent>
           {addOns.length === 0 ? (
             <p className="text-center text-gray-500 py-8">No add-on packages available.</p>
           ) : (
@@ -132,7 +132,7 @@ export default function AddOnsModal({ open, addOns, onSkip, onConfirm }: AddOnsM
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
+        <div className="px-5 py-3 border-t border-gray-100 flex gap-3">
           <button
             onClick={onSkip}
             className="flex-1 py-3 border border-gray-300 text-gray-700 font-semibold text-sm rounded-xl hover:bg-gray-50 transition-colors"
