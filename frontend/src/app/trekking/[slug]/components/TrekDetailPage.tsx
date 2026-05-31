@@ -65,7 +65,7 @@ export default function TrekDetailPage({ pkg, addOns = [] }: { pkg: ApiPackage; 
 
           {/* Booking sidebar */}
           <aside className="lg:w-80 shrink-0 sticky top-[80px] self-start">
-            <TrekBookingCard pkg={pkg} addOns={addOns} />
+            <TrekBookingCard pkg={pkg} />
           </aside>
 
         </div>

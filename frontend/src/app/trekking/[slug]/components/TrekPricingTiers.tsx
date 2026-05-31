@@ -11,7 +11,7 @@ export default function TrekPricingTiers({ tiers, basePrice }: Props) {
   if (!rows) return null;
 
   return (
-    <div id="section-pricing">
+    <div id="section-pricing-tiers" className="bg-white rounded-2xl py-6 shadow px-4">
       <h2 className="text-2xl font-bold text-gray-900 mb-4">Pricing</h2>
       <div className="overflow-hidden rounded-xl border border-gray-200">
         <table className="w-full text-sm">

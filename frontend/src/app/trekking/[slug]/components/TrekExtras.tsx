@@ -73,7 +73,7 @@ export default function TrekExtras({ pkg }: { pkg: ApiPackage }) {
 
       {/* FAQ */}
       {faq.length > 0 && (
-        <div>
+        <div className='py-6 px-4'>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
           <FaqAccordion items={faq} />
         </div>
@@ -81,7 +81,7 @@ export default function TrekExtras({ pkg }: { pkg: ApiPackage }) {
 
       {/* Good to Know */}
       {moreInfo.length > 0 && (
-        <div id="section-know-before-you-go">
+        <div id="section-know-before-you-go" className='py-6 px-4'>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Know Before You Go</h2>
           <div className="flex flex-col gap-4">
             {moreInfo.map((info, i) => (
