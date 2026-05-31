@@ -68,7 +68,7 @@ export default function TrekkingPage({ children }: TrekkingPageProps) {
       </div>
 
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="max-w-[1366px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
         <div className="bg-gradient-to-r from-[#0F4C81] to-[#1565C0] text-white rounded-2xl p-12 text-center relative overflow-hidden">
           <div className="absolute inset-0 opacity-10 bg-[url('/images/treks/bg-1.jpg')] bg-cover bg-center" />
           <div className="relative z-10">
