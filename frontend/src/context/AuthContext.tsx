@@ -14,6 +14,7 @@ interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
   login: (email: string, password: string) => Promise<AuthUser>;
+  loginWithProvider: (provider: 'google' | 'facebook' | 'apple', code: string, redirectUri: string, token?: string) => Promise<AuthUser>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -67,6 +68,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return userData;
   };
 
+  const loginWithProvider = async (
+    provider: 'google' | 'facebook' | 'apple',
+    code: string,
+    redirectUri: string,
+    token?: string,
+  ): Promise<AuthUser> => {
+    const res = await fetch(`${API_BASE}/auth/oauth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider, code, redirectUri, token }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message ?? 'OAuth login failed');
+
+    const { accessToken, user: userData } = json.data;
+    setToken(accessToken);
+    setUser(userData);
+    localStorage.setItem('auth_token', accessToken);
+    localStorage.setItem('auth_user', JSON.stringify(userData));
+    setCookie('auth_token', accessToken);
+    setCookie('auth_role', userData.role);
+    return userData;
+  };
+
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -77,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, loginWithProvider, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

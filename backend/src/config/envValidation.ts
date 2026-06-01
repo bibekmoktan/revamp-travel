@@ -61,6 +61,14 @@ const envSchema = Joi.object({
   EMAIL_PORT: Joi.number().optional(),
   EMAIL_USER: Joi.string().optional(),
   EMAIL_PASS: Joi.string().optional(),
+
+  // OAuth providers (all optional — only needed when that provider is used)
+  GOOGLE_CLIENT_ID:     Joi.string().optional(),
+  GOOGLE_CLIENT_SECRET: Joi.string().optional(),
+  FACEBOOK_CLIENT_ID:     Joi.string().optional(),
+  FACEBOOK_CLIENT_SECRET: Joi.string().optional(),
+  APPLE_CLIENT_ID: Joi.string().optional(),
+  FRONTEND_URL: Joi.string().default('http://localhost:3000'),
   
   REDIS_URL: Joi.string()
     .pattern(/^redis:\/\/.+/)

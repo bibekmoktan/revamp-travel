@@ -6,6 +6,11 @@ export type TUser = {
   password?: string;
   role: 'user' | 'admin';
   isBlocked: boolean;
+  googleId?: string;
+  facebookId?: string;
+  appleId?: string;
+  provider?: 'local' | 'google' | 'facebook' | 'apple';
+  avatar?: string;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   createdAt?: Date;

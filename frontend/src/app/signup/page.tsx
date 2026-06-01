@@ -1,10 +1,13 @@
-    'use client';
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import OAuthButtons from '@/app/components/OAuthButtons';
+import logo from '../../../public/icons/logo.jpg';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://revamp-travel.onrender.com/api/v1';
 
@@ -61,8 +64,14 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-4">
-            <div className="text-2xl font-bold text-gray-800">Travel Nepal</div>
+          <Link href="/" className="inline-flex items-center gap-2 justify-center mb-4">
+            <div className="relative w-12 h-12">
+              <Image src={logo} alt="Himalayan Highspirits Adventure logo" fill className="object-contain" priority />
+            </div>
+            <span className="flex flex-col leading-tight">
+              <span className="text-[16px] font-bold text-sky-900">Himalayan High</span>
+              <span className="text-[16px] font-bold text-sky-900 tracking-wide">Spirits Adventure</span>
+            </span>
           </Link>
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">Create your account</h1>
           <p className="text-gray-500 text-sm">Fill in the details below to get started</p>
@@ -140,6 +149,17 @@ export default function SignupPage() {
             {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
+
+        <div className="relative my-5">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200" />
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-white px-3 text-gray-400">or sign up with</span>
+          </div>
+        </div>
+
+        <OAuthButtons />
 
         <div className="mt-6 text-center">
           <p className="text-gray-500 text-sm">

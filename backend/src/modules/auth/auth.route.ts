@@ -9,5 +9,6 @@ router.post('/login', authRateLimiter, ...AuthControllers.loginUser);
 router.post('/refresh', ...AuthControllers.refreshToken);
 router.post('/forgot-password', authRateLimiter, ...AuthControllers.forgotPassword);
 router.post('/reset-password', authRateLimiter, ...AuthControllers.resetPassword);
+router.post('/oauth', authRateLimiter, ...AuthControllers.oauthLogin);
 
 export const AuthRoutes = router;
