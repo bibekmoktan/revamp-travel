@@ -28,6 +28,20 @@ export const env = {
   },
   redisUrl: validatedEnv.REDIS_URL,
   logLevel: validatedEnv.LOG_LEVEL,
+  frontendUrl: validatedEnv.FRONTEND_URL as string,
+  oauth: {
+    google: {
+      clientId:     validatedEnv.GOOGLE_CLIENT_ID as string | undefined,
+      clientSecret: validatedEnv.GOOGLE_CLIENT_SECRET as string | undefined,
+    },
+    facebook: {
+      clientId:     validatedEnv.FACEBOOK_CLIENT_ID as string | undefined,
+      clientSecret: validatedEnv.FACEBOOK_CLIENT_SECRET as string | undefined,
+    },
+    apple: {
+      clientId: validatedEnv.APPLE_CLIENT_ID as string | undefined,
+    },
+  },
 };
 
 // Type safety for environment variables

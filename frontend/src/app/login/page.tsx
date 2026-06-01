@@ -2,8 +2,11 @@
 
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import OAuthButtons from '@/app/components/OAuthButtons';
+import logo from '../../../public/icons/logo.jpg';
 
 function LoginForm() {
   const router = useRouter();
@@ -92,16 +95,32 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-6">
-            <div className="text-2xl font-bold text-gray-800">Travel Nepal</div>
+          <Link href="/" className="inline-flex items-center gap-2 justify-center mb-6">
+            <div className="relative w-12 h-12">
+              <Image src={logo} alt="Himalayan Highspirits Adventure logo" fill className="object-contain" priority />
+            </div>
+            <span className="flex flex-col leading-tight">
+              <span className="text-[16px] font-bold text-sky-900">Himalayan High</span>
+              <span className="text-[16px] font-bold text-sky-900 tracking-wide">Spirits Adventure</span>
+            </span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h1>
           <p className="text-gray-600">Sign in to your account to continue</p>
         </div>
 
         <Suspense fallback={<div className="space-y-5 animate-pulse"><div className="h-12 bg-gray-100 rounded-lg" /><div className="h-12 bg-gray-100 rounded-lg" /><div className="h-12 bg-gray-100 rounded-lg" /></div>}>
           <LoginForm />
         </Suspense>
+
+        <div className="relative my-5">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200" />
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-white px-3 text-gray-400">or sign in with</span>
+          </div>
+        </div>
+
+        <OAuthButtons />
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">

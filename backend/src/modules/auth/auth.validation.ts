@@ -59,8 +59,19 @@ export const resetPasswordSchema = z.object({
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number'),
 });
 
+export const oauthSchema = z.object({
+  provider: z.enum(['google', 'facebook', 'apple']),
+  code:        z.string().optional(),
+  token:       z.string().optional(),
+  redirectUri: z.string().url('redirectUri must be a valid URL'),
+}).refine(
+  data => data.code || data.token,
+  { message: 'Either code or token is required' }
+);
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type OAuthInput = z.infer<typeof oauthSchema>;
