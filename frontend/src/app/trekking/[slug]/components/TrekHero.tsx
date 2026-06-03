@@ -17,6 +17,7 @@ export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
   const diffClass = difficultyColor[pkg.difficulty ?? ''] ?? 'bg-gray-500';
   const [wished, setWished] = useState(false);
   const [copied, setCopied] = useState(false);
+  const bgImage = pkg.featureImage?.url ?? HeroImg.src;
 
   function handleShare() {
     navigator.clipboard.writeText(window.location.href);
@@ -28,7 +29,7 @@ export default function TrekHero({ pkg }: { pkg: ApiPackage }) {
     <div
       className="w-full min-h-[500px] md:min-h-[700px] flex flex-col justify-between"
       style={{
-        background: `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.85) 100%), url(${HeroImg.src}) center/cover no-repeat`,
+        background: `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.85) 100%), url(${bgImage}) center/cover no-repeat`,
       }}
     >
       {/* Breadcrumb — commented out */}
