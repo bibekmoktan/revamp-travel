@@ -9,11 +9,11 @@ export default function TrekWhyChoose({ data }: Props) {
   if (!data.description && !data.points.length) return null;
 
   return (
-    <div id="section-why-choose" className="bg-[#0F4C81] rounded-2xl p-6 text-white">
+    <div id="section-why-choose" className="rounded-2xl p-6 text-black">
       <h2 className="text-2xl font-bold mb-3">Why Choose This Route?</h2>
 
       {data.description && (
-        <p className="text-blue-100 leading-relaxed mb-5 text-sm">{data.description}</p>
+        <p className="text-black leading-relaxed mb-5 text-sm">{data.description}</p>
       )}
 
       {data.points.length > 0 && (

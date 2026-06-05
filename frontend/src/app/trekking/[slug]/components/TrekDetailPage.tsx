@@ -39,7 +39,7 @@ export default function TrekDetailPage({ pkg, addOns = [] }: { pkg: ApiPackage; 
                 <TrekWhyChoose data={pkg.whyChoose} />
               </div>
             )}
-            <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} slug={pkg.slug} /></div>
+            <div id="section-itinerary"><TrekItinerary itinerary={pkg.itinerary} slug={pkg.slug} packageTitle={pkg.title} /></div>
             <div id="section-included"><TrekIncludes includes={pkg.includes} /></div>
             <div id="section-excluded-wrapper"><TrekExtras pkg={pkg} /></div>
             {pkg.pricingTiers && pkg.pricingTiers.length > 0 && (
