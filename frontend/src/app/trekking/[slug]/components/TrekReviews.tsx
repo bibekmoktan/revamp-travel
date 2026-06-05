@@ -60,6 +60,7 @@ export default function TrekReviews({ packageId }: { packageId: string }) {
 
   const [reviews, setReviews]     = useState<ApiReview[]>([]);
   const [loading, setLoading]     = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   // form state
   const [rating, setRating]       = useState(0);
@@ -73,6 +74,8 @@ export default function TrekReviews({ packageId }: { packageId: string }) {
     try {
       const res = await getPackageReviews(packageId);
       setReviews(res.data);
+    } catch {
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -136,6 +139,11 @@ export default function TrekReviews({ packageId }: { packageId: string }) {
       {loading ? (
         <div className="flex justify-center py-10">
           <Loader2 className="w-6 h-6 animate-spin text-sky-500" />
+        </div>
+      ) : fetchError ? (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm py-10 text-center text-gray-400 mb-6">
+          <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-30" />
+          <p className="text-sm">Could not load reviews. Please try again later.</p>
         </div>
       ) : reviews.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm py-10 text-center text-gray-400 mb-6">

@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { ChevronDown, Download, Sparkles } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import type { ApiPackage } from '@/types/api';
+import ItineraryActions from './ItineraryActions';
 
 type Itinerary = ApiPackage['itinerary'][number];
 
@@ -51,9 +51,11 @@ function DayCard({ day, isOpen, onToggle }: { day: Itinerary; isOpen: boolean; o
 export default function TrekItinerary({
   itinerary,
   slug,
+  packageTitle,
 }: {
   itinerary: ApiPackage['itinerary'];
   slug: string;
+  packageTitle: string;
 }) {
   const [openDay, setOpenDay] = useState<number | null>(1);
 
@@ -69,25 +71,11 @@ export default function TrekItinerary({
         <span className="text-sm text-gray-400">{itinerary.length} days</span>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <a
-          href={pdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 border border-sky-600 text-sky-700 hover:bg-sky-50 font-semibold text-sm rounded-lg transition-colors"
-        >
-          <Download className="w-4 h-4" />
-          Download Full Itinerary
-        </a>
-        <Link
-          href="/custom-package"
-          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-sky-700 hover:bg-sky-800 text-white font-semibold text-sm rounded-lg transition-colors"
-        >
-          <Sparkles className="w-4 h-4" />
-          Customize Your Trip
-        </Link>
-      </div>
+      <ItineraryActions
+        pdfUrl={pdfUrl}
+        packageTitle={packageTitle}
+        defaultDuration={itinerary.length}
+      />
 
       <div className="space-y-2">
         {itinerary.map((day) => (
