@@ -1,13 +1,20 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import TrekkingPage from './components/TrekkingPage';
 import PackageResults from './components/PackageResults';
 import PackageGridSkeleton from './components/PackageGridSkeleton';
 import type { PackageFilters } from '@/types/api';
+import { SITE_URL } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Trekking Packages | Travel Nepal',
-  description:
-    'Discover breathtaking trekking adventures across the Himalayas. Browse packages by price, duration, difficulty, and season.',
+export const metadata: Metadata = {
+  title: 'Nepal Trekking Packages — Everest, Annapurna & More',
+  description: 'Browse our full range of Nepal trekking packages — Everest Base Camp, Annapurna Circuit, Langtang, Manaslu, and more. All difficulty levels, custom durations, expert guides.',
+  alternates: { canonical: `${SITE_URL}/trekking` },
+  openGraph: {
+    url: `${SITE_URL}/trekking`,
+    title: 'Nepal Trekking Packages — Everest, Annapurna & More',
+    description: 'Browse our full range of Nepal trekking packages — Everest Base Camp, Annapurna Circuit, Langtang, Manaslu and more.',
+  },
 };
 
 interface PageProps {

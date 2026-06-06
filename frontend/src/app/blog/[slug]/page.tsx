@@ -25,9 +25,29 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: 'Article not found' };
+
+  const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://highspiritsnepal.com'}/blog/${slug}`;
+  const ogImage   = post.image ? urlFor(post.image).width(1200).height(630).fit('crop').url() : undefined;
+
   return {
-    title: `${post.title} | Travel Nepal Blog`,
+    title: post.title,
     description: post.excerpt,
+    alternates: { canonical },
+    openGraph: {
+      type: 'article',
+      url: canonical,
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: post.date,
+      authors: post.author?.name ? [post.author.name] : undefined,
+      ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }] } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
   };
 }
 

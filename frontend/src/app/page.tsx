@@ -1,3 +1,17 @@
+import type { Metadata } from 'next';
+import { SITE_URL, SITE_NAME } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Expert Himalayan Trekking & Adventure Tours in Nepal',
+  description: 'Discover world-class trekking, climbing, and adventure tours with Himalayan High Spirits Adventure. Everest Base Camp, Annapurna Circuit, custom packages and more. Book your Nepal adventure today.',
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    url: SITE_URL,
+    title: `Expert Himalayan Trekking & Adventure Tours | ${SITE_NAME}`,
+    description: 'Discover world-class trekking, climbing, and adventure tours in Nepal, Bhutan & Tibet. Expert guides, custom packages, and unforgettable Himalayan experiences.',
+  },
+};
+
 import Hero from "./components/Hero"
 import HeroOne from "./components/HeroOne"
 import HeroTwo from "./components/HeroTwo"
