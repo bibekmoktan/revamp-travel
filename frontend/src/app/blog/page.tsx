@@ -1,5 +1,14 @@
+import type { Metadata } from 'next';
 import { BlogListClient, NewsletterSignup } from '@/app/components/blog';
 import { getAllPosts, getFeaturedPosts } from '@/lib/sanity/fetch';
+import { SITE_URL } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Travel Blog — Trekking Tips, Route Guides & Nepal Travel Advice',
+  description: 'Expert trekking tips, Himalayan route guides, packing lists, and Nepal travel advice from our guides and past adventurers.',
+  alternates: { canonical: `${SITE_URL}/blog` },
+  openGraph: { url: `${SITE_URL}/blog`, title: 'Travel Blog — Trekking Tips & Nepal Travel Advice', description: 'Expert trekking tips, route guides, and Nepal travel advice from our Himalayan guides.' },
+};
 
 export const revalidate = 60;
 

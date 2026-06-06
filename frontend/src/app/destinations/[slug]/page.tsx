@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,6 +7,7 @@ import destinations from '@/data/destinations';
 import { getPackages } from '@/lib/api';
 import TrekCard from '@/app/components/TrekCard';
 import { MapPin } from 'lucide-react';
+import { SITE_URL } from '@/lib/seo';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -47,6 +49,24 @@ function PackageGridSkeleton() {
       ))}
     </div>
   );
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const dest = destinations.find((d) => d.slug === slug);
+  if (!dest) return { title: 'Destination not found' };
+  const canonical = `${SITE_URL}/destinations/${slug}`;
+  return {
+    title: `${dest.label} Trekking & Tours`,
+    description: dest.description,
+    alternates: { canonical },
+    openGraph: {
+      url: canonical,
+      title: `${dest.label} Trekking & Tours`,
+      description: dest.description,
+      images: dest.image.startsWith('/') ? [{ url: `${SITE_URL}${dest.image}`, width: 1200, height: 630, alt: dest.label }] : [],
+    },
+  };
 }
 
 export async function generateStaticParams() {

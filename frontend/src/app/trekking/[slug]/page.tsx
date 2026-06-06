@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getPackageBySlug, getPackages } from '@/lib/api';
 import TrekDetailPage from './components/TrekDetailPage';
+import { SITE_URL, SITE_NAME, trekJsonLd } from '@/lib/seo';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -10,13 +11,30 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   try {
     const { data: pkg } = await getPackageBySlug(slug);
+    const canonical = `${SITE_URL}/trekking/${slug}`;
+    const ogImage   = pkg.featureImage?.url ?? `${SITE_URL}/og-default.jpg`;
+    const description = pkg.description.slice(0, 160);
     return {
-      title: `${pkg.title} | Travel Nepal`,
-      description: pkg.description.slice(0, 160),
-      keywords: `trek, trekking, ${pkg.location}, ${pkg.difficulty}, Nepal, Himalayas`,
+      title: pkg.title,
+      description,
+      keywords: `${pkg.title}, trekking Nepal, ${pkg.location}, ${pkg.difficulty ?? ''} trek, Himalayan adventure, ${SITE_NAME}`,
+      alternates: { canonical },
+      openGraph: {
+        type: 'website',
+        url: canonical,
+        title: pkg.title,
+        description,
+        images: [{ url: ogImage, width: 1200, height: 630, alt: pkg.title }],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: pkg.title,
+        description,
+        images: [ogImage],
+      },
     };
   } catch {
-    return { title: 'Trek Not Found | Travel Nepal' };
+    return { title: 'Trek Not Found' };
   }
 }
 
@@ -39,5 +57,13 @@ export default async function Page({ params }: Props) {
     // non-critical, proceed without add-ons
   }
 
-  return <TrekDetailPage pkg={pkg} addOns={addOns} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(trekJsonLd(pkg)) }}
+      />
+      <TrekDetailPage pkg={pkg} addOns={addOns} />
+    </>
+  );
 }

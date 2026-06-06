@@ -1,7 +1,16 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
 import { topDestinations, trendingDestinations } from '@/data/destinations';
+import { SITE_URL } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Trekking Destinations in Nepal — Regions & Routes',
+  description: 'Explore Nepal\'s most iconic trekking regions — Everest, Annapurna, Langtang, Manaslu, Mustang, and more. Find the perfect destination for your Himalayan adventure.',
+  alternates: { canonical: `${SITE_URL}/destinations` },
+  openGraph: { url: `${SITE_URL}/destinations`, title: 'Trekking Destinations in Nepal', description: 'Explore Nepal\'s most iconic trekking regions — Everest, Annapurna, Langtang, Manaslu and more.' },
+};
 
 export default function DestinationsPage() {
   return (
