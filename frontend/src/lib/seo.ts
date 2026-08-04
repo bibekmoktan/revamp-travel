@@ -1,6 +1,6 @@
 import type { ApiPackage } from '@/types/api';
 
-export const SITE_URL  = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://highspiritsnepal.com').replace(/\/$/, '');
+export const SITE_URL  = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.bibekmoktan.com').replace(/\/$/, '');
 export const SITE_NAME = 'Himalayan High Spirits Adventure';
 export const SITE_DESCRIPTION =
   'Book expert-guided trekking, mountaineering, and adventure tours in Nepal, Bhutan & Tibet. Everest Base Camp, Annapurna Circuit, custom packages and more.';
