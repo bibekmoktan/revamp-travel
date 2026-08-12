@@ -13,6 +13,9 @@ export interface IItinerary {
   day: number;
   title: string;
   description: string;
+  trekTime?: string;
+  distance?: string;
+  note?: string;
   images?: IImage[];
 }
 
@@ -63,6 +66,7 @@ export interface IPackingNotes {
 }
 
 export interface IWhyChoose {
+  title: string;
   description: string;
   points: string[];
 }
@@ -101,5 +105,5 @@ export interface IPackage {
   routeComparison?: IRouteComparison;
   bookingTerms?: IBookingTerms;
   packingNotes?: IPackingNotes;
-  whyChoose?: IWhyChoose;
+  whyChoose?: IWhyChoose[];
 }

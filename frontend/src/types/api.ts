@@ -7,6 +7,9 @@ export interface ItineraryDay {
   day: number;
   title: string;
   description: string;
+  trekTime?: string;
+  distance?: string;
+  note?: string;
   images?: ApiImage[];
 }
 
@@ -57,6 +60,7 @@ export interface PackingNotes {
 }
 
 export interface WhyChoose {
+  title: string;
   description: string;
   points: string[];
 }
@@ -89,7 +93,7 @@ export interface ApiPackage {
   faq?: FaqItem[];
   moreInfo?: MoreInfoItem[];
   itinerary: ItineraryDay[];
-  whyChoose?: WhyChoose;
+  whyChoose?: WhyChoose[];
   pricingTiers?: PricingTier[];
   seasons?: Season[];
   routeComparison?: RouteComparison;

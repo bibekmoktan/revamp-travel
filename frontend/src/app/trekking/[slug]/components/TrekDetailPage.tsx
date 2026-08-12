@@ -34,7 +34,7 @@ export default function TrekDetailPage({ pkg, addOns = [] }: { pkg: ApiPackage; 
           <div className="flex-1 min-w-0 space-y-6 shadow-lg p-4 bg-white rounded-2xl">
             <div id="section-gallery"><TrekGallery gallery={pkg.gallery} title={pkg.title} /></div>
             <div id="section-overview"><TrekOverview pkg={pkg} /></div>
-            {pkg.whyChoose && (pkg.whyChoose.description || pkg.whyChoose.points.length > 0) && (
+            {pkg.whyChoose && pkg.whyChoose.length > 0 && (
               <div id="section-why-choose">
                 <TrekWhyChoose data={pkg.whyChoose} />
               </div>

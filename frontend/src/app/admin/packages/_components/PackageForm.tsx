@@ -328,19 +328,22 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   const [notIncluded, setNotIncluded] = useState<string[]>(d?.notIncluded ?? []);
 
   const [itinerary, setItinerary] = useState<
-    { day: number; title: string; description: string; images: ImageValue[] }[]
+    { day: number; title: string; description: string; trekTime: string; distance: string; note: string; images: ImageValue[] }[]
   >(
     d?.itinerary?.length
       ? d.itinerary.map((it) => ({
           day: it.day,
           title: it.title,
           description: it.description,
+          trekTime: it.trekTime ?? '',
+          distance: it.distance ?? '',
+          note: it.note ?? '',
           images: ((it as any).images ?? []).map((img: any) => ({
             url: img.url,
             public_id: img.public_id ?? '',
           })),
         }))
-      : [{ day: 1, title: '', description: '', images: [] }]
+      : [{ day: 1, title: '', description: '', trekTime: '', distance: '', note: '', images: [] }]
   );
   const [faq, setFaq]         = useState(d?.faq?.length ? d.faq : [{ question: '', answer: '' }]);
   const [moreInfo, setMoreInfo] = useState(
@@ -348,8 +351,11 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   );
 
   // ── Why Choose ────────────────────────────────────────────────────────────
-  const [whyChooseDesc, setWhyChooseDesc]     = useState(d?.whyChoose?.description ?? '');
-  const [whyChoosePoints, setWhyChoosePoints] = useState<string[]>(d?.whyChoose?.points ?? ['']);
+  const [whyChoose, setWhyChoose] = useState<WhyChoose[]>(
+    d?.whyChoose?.length
+      ? d.whyChoose.map((w) => ({ title: w.title, description: w.description, points: w.points.length ? w.points : [''] }))
+      : [{ title: '', description: '', points: [''] }]
+  );
 
   // ── New fields ─────────────────────────────────────────────────────────────
   const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(
@@ -377,10 +383,10 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
 
   // ── Itinerary helpers ──────────────────────────────────────────────────────
   const addDay = () =>
-    setItinerary((prev) => [...prev, { day: prev.length + 1, title: '', description: '', images: [] }]);
+    setItinerary((prev) => [...prev, { day: prev.length + 1, title: '', description: '', trekTime: '', distance: '', note: '', images: [] }]);
   const removeDay = (i: number) =>
     setItinerary((prev) => prev.filter((_, idx) => idx !== i).map((d, idx) => ({ ...d, day: idx + 1 })));
-  const updateDay = (i: number, field: 'title' | 'description', val: string) =>
+  const updateDay = (i: number, field: 'title' | 'description' | 'trekTime' | 'distance' | 'note', val: string) =>
     setItinerary((prev) => prev.map((d, idx) => idx === i ? { ...d, [field]: val } : d));
   const updateDayImages = (i: number, imgs: ImageValue[]) =>
     setItinerary((prev) => prev.map((d, idx) => idx === i ? { ...d, images: imgs.slice(0, 5) } : d));
@@ -425,6 +431,22 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
   const updateRouteRow = (i: number, field: keyof RouteComparisonRow, val: string) =>
     setRouteRows(r => r.map((x, idx) => idx !== i ? x : { ...x, [field]: val }));
 
+  // ── Why Choose helpers ─────────────────────────────────────────────────────
+  const addWhyChoose = () => setWhyChoose(prev => [...prev, { title: '', description: '', points: [''] }]);
+  const removeWhyChoose = (wi: number) => setWhyChoose(prev => prev.filter((_, idx) => idx !== wi));
+  const updateWhyChooseField = (wi: number, field: 'title' | 'description', val: string) =>
+    setWhyChoose(prev => prev.map((w, idx) => idx !== wi ? w : { ...w, [field]: val }));
+  const updateWhyChoosePoint = (wi: number, pi: number, val: string) =>
+    setWhyChoose(prev =>
+      prev.map((w, idx) => idx !== wi ? w : { ...w, points: w.points.map((p, j) => j === pi ? val : p) })
+    );
+  const addWhyChoosePoint = (wi: number) =>
+    setWhyChoose(prev => prev.map((w, idx) => idx !== wi ? w : { ...w, points: [...w.points, ''] }));
+  const removeWhyChoosePoint = (wi: number, pi: number) =>
+    setWhyChoose(prev =>
+      prev.map((w, idx) => idx !== wi ? w : { ...w, points: w.points.filter((_, j) => j !== pi) })
+    );
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
@@ -456,13 +478,16 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
           day: d.day,
           title: d.title,
           description: d.description,
+          ...(d.trekTime.trim() ? { trekTime: d.trekTime.trim() } : {}),
+          ...(d.distance.trim() ? { distance: d.distance.trim() } : {}),
+          ...(d.note.trim() ? { note: d.note.trim() } : {}),
           ...(d.images.length > 0 ? { images: d.images } : {}),
         })),
       faq: faq.filter((f) => f.question && f.answer),
       moreInfo: moreInfo.filter((m) => m.title && m.points.some((p) => p.trim())),
-      whyChoose: (whyChooseDesc || whyChoosePoints.some(p => p.trim()))
-        ? { description: whyChooseDesc, points: whyChoosePoints.filter(p => p.trim()) }
-        : undefined,
+      whyChoose: whyChoose
+        .filter(w => w.title.trim())
+        .map(w => ({ title: w.title, description: w.description, points: w.points.filter(p => p.trim()) })),
       pricingTiers: pricingTiers.filter(t => t.label && t.pricePerPerson > 0),
       seasons: seasons.filter(s => s.name),
       routeComparison: routeComparisonEnabled
@@ -653,6 +678,20 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
                 </div>
                 <input value={day.title} onChange={(e) => updateDay(i, 'title', e.target.value)} className={INPUT} placeholder="Day title" />
                 <textarea value={day.description} onChange={(e) => updateDay(i, 'description', e.target.value)} rows={2} className={INPUT} placeholder="Description" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Trek time</label>
+                    <input value={day.trekTime} onChange={(e) => updateDay(i, 'trekTime', e.target.value)} className={INPUT} placeholder="3–4 hours" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Distance</label>
+                    <input value={day.distance} onChange={(e) => updateDay(i, 'distance', e.target.value)} className={INPUT} placeholder="8 km" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Good to know (optional note)</label>
+                  <textarea value={day.note} onChange={(e) => updateDay(i, 'note', e.target.value)} rows={2} className={INPUT} placeholder="The Ramechhap routing applies during the busy spring and autumn seasons…" />
+                </div>
                 <DayImagesUpload
                   values={day.images}
                   onChange={(v) => updateDayImages(i, v)}
@@ -733,50 +772,63 @@ export default function PackageForm({ initialData, onSubmit, saving }: Props) {
 
       {/* Why Choose */}
       <div className={SECTION}>
-        <SectionHeader id="whyChoose" label="Why Choose This Route?" />
+        <SectionHeader id="whyChoose" label={`Why Choose Blocks (${whyChoose.length})`} />
         {openSection === 'whyChoose' && (
-          <div className="space-y-4 pt-2">
-            <div>
-              <label className={LABEL}>Short description</label>
-              <textarea
-                value={whyChooseDesc}
-                onChange={e => setWhyChooseDesc(e.target.value)}
-                rows={3}
-                className={INPUT}
-                placeholder="Look, we'll be upfront — this route is longer, tougher, and not for everyone. But for those who choose it…"
-              />
-            </div>
-            <div>
-              <label className={LABEL}>Bullet points</label>
-              <div className="space-y-2">
-                {whyChoosePoints.map((pt, i) => (
-                  <div key={i} className="flex gap-2">
-                    <input
-                      value={pt}
-                      onChange={e => setWhyChoosePoints(prev => prev.map((p, j) => j === i ? e.target.value : p))}
-                      className={INPUT}
-                      placeholder="No Lukla flight risk — drives to trailhead on schedule"
-                    />
-                    {whyChoosePoints.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => setWhyChoosePoints(prev => prev.filter((_, j) => j !== i))}
-                        className="text-red-400 hover:text-red-600 shrink-0"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setWhyChoosePoints(prev => [...prev, ''])}
-                  className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
-                >
-                  <Plus className="w-4 h-4" /> Add point
-                </button>
+          <div className="space-y-3 pt-2">
+            <p className="text-xs text-gray-500">
+              Each block renders as its own titled section on the trek page — e.g. "Why Trek to Everest Base Camp With Us" and "Why Trekkers Trust High Spirits Nepal".
+            </p>
+            {whyChoose.map((block, wi) => (
+              <div key={wi} className="border border-gray-100 rounded-lg p-4 space-y-3">
+                <div className="flex justify-between items-center gap-2">
+                  <input
+                    value={block.title}
+                    onChange={e => updateWhyChooseField(wi, 'title', e.target.value)}
+                    className={INPUT}
+                    placeholder="Why Trek to Everest Base Camp With Us"
+                  />
+                  {whyChoose.length > 1 && (
+                    <button type="button" onClick={() => removeWhyChoose(wi)} className="text-red-400 hover:text-red-600 shrink-0">
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <textarea
+                  value={block.description}
+                  onChange={e => updateWhyChooseField(wi, 'description', e.target.value)}
+                  rows={3}
+                  className={INPUT}
+                  placeholder="Reaching Everest Base Camp is more than a line on a map…"
+                />
+                <div className="pl-2 space-y-1.5">
+                  {block.points.map((pt, pi) => (
+                    <div key={pi} className="flex gap-2">
+                      <input
+                        value={pt}
+                        onChange={e => updateWhyChoosePoint(wi, pi, e.target.value)}
+                        className={INPUT}
+                        placeholder="Thoughtful altitude pacing — two full acclimatization days"
+                      />
+                      {block.points.length > 1 && (
+                        <button type="button" onClick={() => removeWhyChoosePoint(wi, pi)} className="text-red-400 hover:text-red-600 shrink-0">
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addWhyChoosePoint(wi)}
+                    className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" /> Add point
+                  </button>
+                </div>
               </div>
-            </div>
+            ))}
+            <button type="button" onClick={addWhyChoose} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+              <Plus className="w-4 h-4" /> Add Block
+            </button>
           </div>
         )}
       </div>

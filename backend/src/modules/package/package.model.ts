@@ -18,6 +18,7 @@ const moreInfoSchema = new Schema<IMoreInfo>({
 }, { _id: false });
 
 const whyChooseSchema = new Schema<IWhyChoose>({
+  title:       { type: String, required: true, trim: true },
   description: { type: String, default: '' },
   points:      [{ type: String }],
 }, { _id: false });
@@ -45,6 +46,9 @@ const itinerarySchema = new Schema<IItinerary>({
   day: { type: Number, required: true },
   title: { type: String, required: true, trim: true },
   description: { type: String, required: true },
+  trekTime: { type: String, trim: true },
+  distance: { type: String, trim: true },
+  note: { type: String, trim: true },
   images: { type: [imageSchema], default: [] },
 }, { _id: false });
 
@@ -103,11 +107,8 @@ const packageSchema = new Schema<IPackage>({
     default: undefined,
   },
 
-  // Why choose this route
-  whyChoose: {
-    type: whyChooseSchema,
-    default: undefined,
-  },
+  // Why choose this route (multiple titled blocks, e.g. "Why Trek With Us", "Why Trekkers Trust Us")
+  whyChoose: { type: [whyChooseSchema], default: [] },
 
   // Packing weight guidelines
   packingNotes: {
