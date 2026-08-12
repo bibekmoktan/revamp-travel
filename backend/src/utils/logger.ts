@@ -19,6 +19,7 @@ export interface LogEntry {
   groupId?: string;
   email?: string;
   role?: string;
+  provider?: string;
   tokenType?: string;
   count?: number;
   total?: number;
